@@ -1,14 +1,14 @@
 import { z } from "zod";
 
 const serverSchema = z.object({
-  SUPABASE_SERVICE_ROLE_KEY: z.string().min(1),
-  TOSS_SECRET_KEY: z.string().min(1),
+  SUPABASE_SERVICE_ROLE_KEY: z.string().default(""),
+  TOSS_SECRET_KEY: z.string().default(""),
   MANSERYEOK_API_URL: z.string().url().optional().or(z.literal("")),
   MANSERYEOK_API_KEY: z.string().optional(),
   SAJU_API_URL: z.string().url().optional().or(z.literal("")),
   SAJU_API_KEY: z.string().optional(),
   LLM_PROVIDER: z.enum(["openai", "anthropic", "gemini"]).default("anthropic"),
-  LLM_MODEL: z.string().min(1),
+  LLM_MODEL: z.string().default("claude-sonnet-4-6"),
   OPENAI_API_KEY: z.string().optional(),
   ANTHROPIC_API_KEY: z.string().optional(),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().optional(),
@@ -16,10 +16,10 @@ const serverSchema = z.object({
 });
 
 const publicSchema = z.object({
-  NEXT_PUBLIC_SITE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().url(),
-  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().min(1),
-  NEXT_PUBLIC_TOSS_CLIENT_KEY: z.string().min(1),
+  NEXT_PUBLIC_SITE_URL: z.string().default("http://localhost:3000"),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().default("https://placeholder.supabase.co"),
+  NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().default(""),
+  NEXT_PUBLIC_TOSS_CLIENT_KEY: z.string().default(""),
 });
 
 export const publicEnv = publicSchema.parse({
