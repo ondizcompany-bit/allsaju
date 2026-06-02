@@ -1,9 +1,14 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import type { Database } from "@/types/database";
-import { publicEnv } from "@/lib/env";
+import { publicEnv, isSupabaseConfigured } from "@/lib/env";
 
 export async function updateSession(request: NextRequest) {
+  // Supabase 미설정(데모 모드)이면 인증 체크 없이 그냥 통과
+  if (!isSupabaseConfigured()) {
+    return NextResponse.next({ request });
+  }
+
   let response = NextResponse.next({ request });
 
   const supabase = createServerClient<Database>(

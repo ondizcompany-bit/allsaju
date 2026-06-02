@@ -34,25 +34,24 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   );
 }
 
-// Ollama: 56px utility nav, primary nav on canvas, no shadow.
 function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
-    <header className="border-b border-hairline bg-canvas">
+    <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/80 backdrop-blur-md">
       <div className="container flex h-14 items-center justify-between">
-        <Link href="/" className="font-semibold text-[15px] text-ink">
+        <Link href="/" className="font-semibold text-[15px] text-gradient">
           {siteConfig.name}
         </Link>
         <nav className="flex items-center gap-6 text-[13px] font-medium">
-          <Link href="/products" className="text-ink hover:text-body">상품</Link>
+          <Link href="/products" className="text-ink/70 hover:text-purple-light transition-colors">상품</Link>
           {isLoggedIn ? (
             <>
-              <Link href="/mypage" className="text-ink hover:text-body">마이페이지</Link>
+              <Link href="/mypage" className="text-ink/70 hover:text-purple-light transition-colors">마이페이지</Link>
               <form action="/api/auth/signout" method="post">
-                <button type="submit" className="text-ink hover:text-body">로그아웃</button>
+                <button type="submit" className="text-ink/70 hover:text-purple-light transition-colors">로그아웃</button>
               </form>
             </>
           ) : (
-            <Link href="/login" className="text-ink hover:text-body">로그인</Link>
+            <Link href="/login" className="text-ink/70 hover:text-purple-light transition-colors">로그인</Link>
           )}
         </nav>
       </div>
@@ -60,7 +59,6 @@ function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   );
 }
 
-// Ollama: footer is a quiet caption-gray strip with hairline divider.
 function SiteFooter() {
   // 사업자정보 한 줄 — 운세위키 푸터 포맷: "회사 | 사업자등록번호: ... | 통신판매업 신고번호: ... | 대표: ... | 주소: ..."
   const businessLine = [
@@ -81,12 +79,12 @@ function SiteFooter() {
     .join(" | ");
 
   return (
-    <footer className="border-t border-hairline mt-20">
+    <footer className="border-t border-hairline mt-20 bg-surface-soft">
       <div className="container py-10 text-xs text-body space-y-4">
         <div className="flex flex-wrap gap-x-5 gap-y-1.5">
-          <Link href="/legal/terms" className="hover:text-ink">이용약관</Link>
-          <Link href="/legal/privacy" className="hover:text-ink">개인정보처리방침</Link>
-          <Link href="/legal/refund-policy" className="hover:text-ink">환불정책</Link>
+          <Link href="/legal/terms" className="hover:text-purple-light transition-colors">이용약관</Link>
+          <Link href="/legal/privacy" className="hover:text-purple-light transition-colors">개인정보처리방침</Link>
+          <Link href="/legal/refund-policy" className="hover:text-purple-light transition-colors">환불정책</Link>
         </div>
         <p className="text-mute leading-relaxed">{businessLine}</p>
         <p className="text-mute leading-relaxed">{contactLine}</p>

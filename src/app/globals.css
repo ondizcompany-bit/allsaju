@@ -2,30 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Ollama-inspired design system — see DESIGN.md
-   Paper-white canvas, pure black primary, no shadows, hairline borders,
-   full-rounded pill geometry on interactive elements. */
+/* 명리사주 — Dark Premium Design System
+   Near-black canvas, high-end purple accent, subtle gradient glow */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;          /* canvas #ffffff */
-    --foreground: 0 0% 0%;            /* ink #000000 */
-    --card: 0 0% 100%;
-    --card-foreground: 0 0% 0%;
-    --primary: 0 0% 0%;               /* pure black */
+    --background: 244 25% 4%;           /* #07070e near-black */
+    --foreground: 0 0% 94%;             /* #f0f0f0 near-white */
+    --card: 244 28% 7%;                 /* #0c0c1a dark card */
+    --card-foreground: 0 0% 94%;
+    --primary: 263 72% 55%;             /* #7c3aed rich purple */
     --primary-foreground: 0 0% 100%;
-    --secondary: 0 0% 98%;            /* surface-soft #fafafa */
-    --secondary-foreground: 0 0% 0%;
-    --muted: 0 0% 98%;
-    --muted-foreground: 0 0% 45%;     /* body #737373 */
-    --accent: 0 0% 98%;
-    --accent-foreground: 0 0% 0%;
-    --destructive: 0 75% 50%;
+    --secondary: 244 22% 11%;           /* #141420 surface */
+    --secondary-foreground: 0 0% 88%;
+    --muted: 244 22% 11%;
+    --muted-foreground: 0 0% 52%;       /* subdued text */
+    --accent: 263 72% 55%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 50%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 90%;               /* hairline #e5e5e5 */
-    --input: 0 0% 90%;
-    --ring: 217 91% 60%;              /* focus-ring blue */
-    --radius: 0.75rem;                /* lg used for cards */
+    --border: 263 35% 18%;              /* #1e1040 purple-tint border */
+    --input: 244 22% 11%;
+    --ring: 263 72% 62%;                /* purple focus ring */
+    --radius: 0.75rem;
   }
 }
 
@@ -42,19 +41,58 @@
     font-family:
       "SF Pro Rounded", -apple-system, BlinkMacSystemFont, ui-sans-serif,
       system-ui, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+    background-color: #07070e;
   }
   code, pre, kbd, samp {
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
       Consolas, "Liberation Mono", monospace;
   }
-  /* Heading: SF Pro Rounded weight 500–600. Centered hero handled inline. */
   h1, h2, h3 {
     @apply tracking-tight;
     font-weight: 600;
   }
 }
 
-/* Markdown result body — flat type scale, body neutral on white. */
+/* ── 공통 그라데이션 유틸 ── */
+@layer utilities {
+  /* 보라 그라데이션 텍스트 */
+  .text-gradient {
+    background: linear-gradient(135deg, #ffffff 0%, #d8b4fe 50%, #a78bfa 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  /* 보라 글로우 버튼 */
+  .btn-glow {
+    box-shadow: 0 0 24px rgba(139, 92, 246, 0.45), 0 0 6px rgba(139, 92, 246, 0.3);
+  }
+  .btn-glow:hover {
+    box-shadow: 0 0 36px rgba(139, 92, 246, 0.6), 0 0 10px rgba(139, 92, 246, 0.4);
+  }
+  /* 히어로 섹션 배경 글로우 */
+  .hero-glow {
+    background:
+      radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124, 58, 237, 0.22) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 30% at 80% 50%, rgba(88, 28, 135, 0.1) 0%, transparent 60%),
+      #07070e;
+  }
+  /* 카드 보라 테두리 호버 */
+  .card-purple-hover {
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .card-purple-hover:hover {
+    border-color: rgba(139, 92, 246, 0.6) !important;
+    box-shadow: 0 0 20px rgba(124, 58, 237, 0.15);
+  }
+  /* 구분선 보라 그라데이션 */
+  .divider-purple {
+    border: none;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.4), transparent);
+  }
+}
+
+/* ── 마크다운 결과 본문 ── */
 @layer components {
   .prose-saju h2 {
     @apply mt-10 mb-3 text-2xl font-semibold text-foreground;
@@ -63,15 +101,15 @@
     @apply mt-6 mb-2 text-lg font-semibold text-foreground;
   }
   .prose-saju p {
-    @apply my-3 leading-7 text-[#525252];
+    @apply my-3 leading-7 text-[#9a9ab0];
   }
   .prose-saju ul {
-    @apply my-3 list-disc space-y-1 pl-6 text-[#525252];
+    @apply my-3 list-disc space-y-1 pl-6 text-[#9a9ab0];
   }
   .prose-saju strong {
     @apply font-semibold text-foreground;
   }
   .prose-saju code {
-    @apply rounded-md bg-[#fafafa] px-1.5 py-0.5 text-sm;
+    @apply rounded-md bg-[#13131f] px-1.5 py-0.5 text-sm text-[#a78bfa];
   }
 }
