@@ -17,7 +17,7 @@ const serverSchema = z.object({
 
 const publicSchema = z.object({
   NEXT_PUBLIC_SITE_URL: z.string().default("http://localhost:3000"),
-  NEXT_PUBLIC_SUPABASE_URL: z.string().default("https://placeholder.supabase.co"),
+  NEXT_PUBLIC_SUPABASE_URL: z.string().default("https://YOUR_PROJECT.supabase.co"),
   NEXT_PUBLIC_SUPABASE_ANON_KEY: z.string().default(""),
   NEXT_PUBLIC_TOSS_CLIENT_KEY: z.string().default(""),
 });
