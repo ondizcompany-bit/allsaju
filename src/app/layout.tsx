@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Toaster } from "sonner";
-import { Nanum_Myeongjo } from "next/font/google";
+import { Noto_Serif_KR } from "next/font/google";
 import { siteConfig, businessInfo } from "@/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth";
 import Logo from "@/components/ui/Logo";
 import "./globals.css";
 
-const nanumMyeongjo = Nanum_Myeongjo({
-  weight: ["800"],
+const notoSerifKR = Noto_Serif_KR({
+  weight: ["900"],
   subsets: ["latin"],
   variable: "--font-myeongjo",
   display: "swap",
@@ -32,7 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const isLoggedIn = isSupabaseConfigured() ? !!(await getCurrentUser()) : false;
 
   return (
-    <html lang="ko" className={nanumMyeongjo.variable}>
+    <html lang="ko" className={notoSerifKR.variable}>
       <body suppressHydrationWarning>
         <SiteHeader isLoggedIn={isLoggedIn} />
         <main className="min-h-[calc(100vh-7rem)]">{children}</main>
@@ -51,7 +51,7 @@ function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
           <Logo size={26} />
           <span
             className="text-gradient tracking-tight"
-            style={{ fontFamily: 'var(--font-myeongjo)', fontSize: '17px', fontWeight: 800, letterSpacing: '-0.01em' }}
+            style={{ fontFamily: 'var(--font-myeongjo)', fontSize: '18px', fontWeight: 900, letterSpacing: '-0.02em' }}
           >{siteConfig.name}</span>
         </Link>
         <nav className="flex items-center gap-6 text-[13px] font-medium">
