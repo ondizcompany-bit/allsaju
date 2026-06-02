@@ -1,11 +1,19 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Toaster } from "sonner";
+import { Nanum_Myeongjo } from "next/font/google";
 import { siteConfig, businessInfo } from "@/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth";
 import Logo from "@/components/ui/Logo";
 import "./globals.css";
+
+const nanumMyeongjo = Nanum_Myeongjo({
+  weight: ["800"],
+  subsets: ["latin"],
+  variable: "--font-myeongjo",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: { default: siteConfig.name, template: `%s | ${siteConfig.name}` },
@@ -24,7 +32,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const isLoggedIn = isSupabaseConfigured() ? !!(await getCurrentUser()) : false;
 
   return (
-    <html lang="ko">
+    <html lang="ko" className={nanumMyeongjo.variable}>
       <body suppressHydrationWarning>
         <SiteHeader isLoggedIn={isLoggedIn} />
         <main className="min-h-[calc(100vh-7rem)]">{children}</main>
@@ -41,7 +49,10 @@ function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
       <div className="container flex h-14 items-center justify-between">
         <Link href="/" className="flex items-center gap-2 group">
           <Logo size={26} />
-          <span className="font-bold text-[15px] text-gradient tracking-tight">{siteConfig.name}</span>
+          <span
+            className="text-gradient tracking-tight"
+            style={{ fontFamily: 'var(--font-myeongjo)', fontSize: '17px', fontWeight: 800, letterSpacing: '-0.01em' }}
+          >{siteConfig.name}</span>
         </Link>
         <nav className="flex items-center gap-6 text-[13px] font-medium">
           <Link href="/products" className="text-ink/70 hover:text-purple-light transition-colors">상품</Link>
