@@ -4,6 +4,7 @@ import { Toaster } from "sonner";
 import { siteConfig, businessInfo } from "@/config/site";
 import { isSupabaseConfigured } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth";
+import Logo from "@/components/ui/Logo";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -38,8 +39,9 @@ function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/80 backdrop-blur-md">
       <div className="container flex h-14 items-center justify-between">
-        <Link href="/" className="font-semibold text-[15px] text-gradient">
-          {siteConfig.name}
+        <Link href="/" className="flex items-center gap-2 group">
+          <Logo size={26} />
+          <span className="font-bold text-[15px] text-gradient tracking-tight">{siteConfig.name}</span>
         </Link>
         <nav className="flex items-center gap-6 text-[13px] font-medium">
           <Link href="/products" className="text-ink/70 hover:text-purple-light transition-colors">상품</Link>
