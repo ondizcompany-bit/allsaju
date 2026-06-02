@@ -548,7 +548,7 @@ export function HeroCarousel() {
                   href={tab.href}
                   className={cn(
                     'px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors',
-                    activeTab === i ? 'border-purple-rich text-purple-bright' : 'border-transparent text-mute hover:text-ink'
+                    activeTab === i ? 'border-gold text-gold' : 'border-transparent text-ink/55 hover:text-ink'
                   )}
                   onClick={() => setActiveTab(i)}
                 >
@@ -560,7 +560,7 @@ export function HeroCarousel() {
                   onClick={() => setActiveTab(i)}
                   className={cn(
                     'px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors',
-                    activeTab === i ? 'border-purple-rich text-purple-bright' : 'border-transparent text-mute hover:text-ink'
+                    activeTab === i ? 'border-gold text-gold' : 'border-transparent text-ink/55 hover:text-ink'
                   )}
                 >
                   {tab.label}

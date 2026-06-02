@@ -40,35 +40,41 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        // 명리사주 Dark + Purple 팔레트
-        ink: "#f0f0f5",                  // 기본 텍스트 (near-white)
-        canvas: "#07070e",               // 배경 (near-black)
-        "surface-soft": "#0e0e1c",       // 카드/서피스
-        "surface-dark": "#050508",       // 더 어두운 서피스
-        charcoal: "#9494aa",             // 중간 텍스트
-        body: "#7070a0",                 // 본문 텍스트
-        mute: "#4a4a6a",                 // 흐린 텍스트
-        hairline: "rgba(139,92,246,0.18)",       // 보라빛 테두리
-        "hairline-strong": "rgba(139,92,246,0.35)",
-        // 보라 포인트 팔레트
-        "purple-deep": "#2e1065",        // 가장 진한 보라
-        "purple-rich": "#7c3aed",        // 시그니처 보라
-        "purple-mid": "#8b5cf6",         // 중간 보라
-        "purple-bright": "#a78bfa",      // 밝은 보라
+        // 명리공방 Luxury Dark Palette
+        ink: "#f2eed8",                  // 기본 텍스트 (warm white)
+        canvas: "#060209",               // 배경 (deep royal black)
+        "surface-soft": "#0d0817",       // 카드/서피스
+        "surface-dark": "#040107",       // 더 어두운 서피스
+        charcoal: "#9b96b8",             // 중간 텍스트
+        body: "#7a7598",                 // 본문 텍스트
+        mute: "#4e4868",                 // 흐린 텍스트
+        hairline: "rgba(91,33,182,0.22)",        // 딥바이올렛 테두리
+        "hairline-strong": "rgba(91,33,182,0.42)",
+        // 로열 퍼플 팔레트 (더 깊고 진한)
+        "purple-deep": "#1e0533",        // 가장 진한 — 미드나잇 바이올렛
+        "purple-rich": "#5b21b6",        // 시그니처 — 딥 로열 퍼플
+        "purple-mid": "#7c3aed",         // 중간 보라
+        "purple-bright": "#9d6fe8",      // 밝은 보라
         "purple-light": "#c4b5fd",       // 연한 보라
-        "purple-glow": "rgba(124,58,237,0.3)", // 글로우용
+        "purple-glow": "rgba(91,33,182,0.35)",  // 글로우용
+        // 골드 포인트 (럭셔리 강조)
+        "gold": "#c9a84c",               // 시그니처 골드
+        "gold-light": "#e8d5a0",         // 밝은 샴페인
+        "gold-glow": "rgba(201,168,76,0.35)",
       },
       backgroundImage: {
-        "purple-gradient": "linear-gradient(135deg, #7c3aed 0%, #9333ea 100%)",
-        "purple-gradient-dark": "linear-gradient(135deg, #4c1d95 0%, #6d28d9 100%)",
-        "hero-radial": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(124,58,237,0.22) 0%, transparent 70%)",
-        "text-gradient": "linear-gradient(135deg, #ffffff 0%, #d8b4fe 50%, #a78bfa 100%)",
-        "cta-gradient": "linear-gradient(135deg, rgba(76,29,149,0.6) 0%, rgba(109,40,217,0.4) 50%, rgba(30,10,80,0.8) 100%)",
+        "purple-gradient": "linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%)",
+        "purple-gradient-dark": "linear-gradient(135deg, #1e0533 0%, #4c1d95 100%)",
+        "hero-radial": "radial-gradient(ellipse 80% 50% at 50% -10%, rgba(91,33,182,0.28) 0%, transparent 70%)",
+        "text-gradient": "linear-gradient(135deg, #ffffff 0%, #ede0c4 45%, #c9a84c 100%)",
+        "cta-gradient": "linear-gradient(135deg, rgba(30,5,51,0.7) 0%, rgba(91,33,182,0.45) 50%, rgba(10,3,25,0.85) 100%)",
+        "gold-gradient": "linear-gradient(135deg, #c9a84c 0%, #e8d5a0 50%, #c9a84c 100%)",
       },
       boxShadow: {
-        "purple-glow": "0 0 24px rgba(139,92,246,0.45), 0 0 6px rgba(139,92,246,0.3)",
-        "purple-glow-lg": "0 0 48px rgba(139,92,246,0.35), 0 0 16px rgba(139,92,246,0.2)",
-        "card-hover": "0 0 20px rgba(124,58,237,0.15)",
+        "purple-glow": "0 0 28px rgba(91,33,182,0.55), 0 0 8px rgba(139,92,246,0.3)",
+        "purple-glow-lg": "0 0 52px rgba(91,33,182,0.4), 0 0 18px rgba(139,92,246,0.22)",
+        "card-hover": "0 0 24px rgba(91,33,182,0.18)",
+        "gold-glow": "0 0 20px rgba(201,168,76,0.4), 0 0 6px rgba(201,168,76,0.25)",
       },
       borderRadius: {
         lg: "var(--radius)",
