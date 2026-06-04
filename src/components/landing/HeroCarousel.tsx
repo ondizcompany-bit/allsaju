@@ -540,7 +540,7 @@ export function HeroCarousel() {
       {/* 탭 */}
       <div className="border-b border-hairline">
         <div className="container">
-          <nav className="flex overflow-x-auto">
+          <nav className="flex overflow-x-auto scrollbar-hide">
             {TABS.map((tab, i) =>
               tab.href ? (
                 <Link
