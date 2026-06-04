@@ -43,6 +43,21 @@
       system-ui, "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
     background-color: #060209;
   }
+
+  /* PC에서 모바일 앱처럼 가운데 정렬 */
+  @media (min-width: 500px) {
+    body {
+      background-color: #020104;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    body > * {
+      width: 100%;
+      max-width: 480px;
+      overflow-x: hidden;
+    }
+  }
   code, pre, kbd, samp {
     font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
       Consolas, "Liberation Mono", monospace;

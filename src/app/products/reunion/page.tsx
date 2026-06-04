@@ -354,7 +354,7 @@ export default function ReunionPage() {
     <div style={{ background: '#07070e', color: '#fff', overflowX: 'hidden' }}>
 
       {/* 뒤로가기 */}
-      <div className="fixed top-4 left-4 z-50">
+      <div className="fixed top-[62px] left-4 z-50">
         <Link href="/" className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full transition-colors"
           style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(8px)' }}>
           ← 홈

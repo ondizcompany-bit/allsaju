@@ -6,8 +6,14 @@ const config: Config = {
   theme: {
     container: {
       center: true,
-      padding: "1.5rem",
-      screens: { "2xl": "1100px" },
+      padding: "1.25rem",
+      screens: {
+        sm: "480px",
+        md: "480px",
+        lg: "480px",
+        xl: "480px",
+        "2xl": "480px",
+      },
     },
     extend: {
       colors: {

@@ -577,7 +577,7 @@ export function HeroCarousel() {
           {SLIDES.map((slide, i) => (
             <Link key={slide.id} href={slide.href}
               className={cn('relative flex-shrink-0 rounded-2xl overflow-hidden block transition-all duration-500', i === current ? 'opacity-100 scale-100' : 'opacity-50 scale-[0.97]')}
-              style={{ width: cardWidth > 0 ? `${cardWidth}px` : `calc(100% - ${PEEK * 2}px)`, aspectRatio: '4 / 3' }}>
+              style={{ width: cardWidth > 0 ? `${cardWidth}px` : `calc(100% - ${PEEK * 2}px)`, aspectRatio: '4 / 3', maxHeight: '520px' }}>
 
               {/* 원본 사진 */}
               {/* eslint-disable-next-line @next/next/no-img-element */}
