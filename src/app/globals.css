@@ -107,6 +107,10 @@
   }
 }
 
+/* ── 가로 스크롤 숨김 ── */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* ── 마크다운 결과 본문 ── */
 @layer components {
   .prose-saju h2 {

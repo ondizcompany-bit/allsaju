@@ -1,0 +1,79 @@
+'use client';
+import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+function useFadeIn(threshold = 0.1) { const ref = useRef<HTMLDivElement>(null); const [v, setV] = useState(false); useEffect(() => { const el = ref.current; if (!el) return; const io = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setV(true); io.disconnect(); } }, { threshold }); io.observe(el); return () => io.disconnect(); }, [threshold]); return { ref, v }; }
+function FadeIn({ children, delay = 0, className = '' }: { children: React.ReactNode; delay?: number; className?: string }) { const { ref, v } = useFadeIn(); return (<div ref={ref} className={className} style={{ opacity: v ? 1 : 0, transform: v ? 'translateY(0)' : 'translateY(24px)', transition: `opacity 0.8s ease ${delay}ms, transform 0.8s ease ${delay}ms` }}>{children}</div>); }
+function useCountdown() { const getTick = () => { const tick = Math.floor(Date.now() / 333); const totalSecs = 3599 - (tick % 3600); return { m: Math.floor(totalSecs / 60), s: totalSecs % 60 }; }; const [time, setTime] = useState(getTick); useEffect(() => { const id = setInterval(() => setTime(getTick()), 333); return () => clearInterval(id); }, []); const pad = (n: number) => String(n).padStart(2, '0'); return { m: pad(time.m), s: pad(time.s) }; }
+function useCountUp(target: number, suffix = '') { const ref = useRef<HTMLSpanElement>(null); const started = useRef(false); const [display, setDisplay] = useState('0' + suffix); useEffect(() => { const el = ref.current; if (!el) return; const io = new IntersectionObserver(([e]) => { if (!e.isIntersecting || started.current) return; started.current = true; const dur = 1800, start = performance.now(); const tick = (now: number) => { const p = Math.min((now - start) / dur, 1); const ease = 1 - Math.pow(1 - p, 3); setDisplay(Math.floor(target * ease).toLocaleString('ko-KR') + suffix); if (p < 1) requestAnimationFrame(tick); else setDisplay(target.toLocaleString('ko-KR') + suffix); }; requestAnimationFrame(tick); }, { threshold: 0.3 }); io.observe(el); return () => io.disconnect(); }, [target, suffix]); return { ref, display }; }
+function StatItem({ target, suffix, label, big }: { target: number; suffix: string; label: string; big: boolean }) { const { ref, display } = useCountUp(target, suffix); if (big) return (<div className="col-span-2 rounded-2xl p-6 text-center relative overflow-hidden" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(232,121,249,0.2)' }}><div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 70% 55% at 50% 110%,rgba(232,121,249,0.14),transparent)' }} /><span ref={ref} className="block text-5xl font-black tabular-nums relative z-10" style={{ background: 'linear-gradient(90deg,#e879f9,#f0abfc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{display}</span><p className="text-sm font-semibold text-white mt-1 relative z-10">{label}</p></div>); return (<div className="rounded-2xl py-5 text-center" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.06)' }}><span ref={ref} className="block text-2xl font-black tabular-nums text-white">{display}</span><p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>{label}</p></div>); }
+
+const STATS = [
+  { target: 87, suffix: '%', label: '상대 마음 예측 적중률', big: true },
+  { target: 9800, suffix: '+', label: '누적 분석 건수', big: false },
+  { target: 96, suffix: '%', label: '이용자 만족도', big: false },
+  { target: 90, suffix: '%', label: '감정 상태 일치율', big: false },
+];
+const CONCERNS = [
+  { emoji: '💭', text: '그 사람이 나를 가끔이라도 생각하는지, 미련이 남아 있는지 알고 싶어요.', delay: 0 },
+  { emoji: '😶', text: '연락이 없으니 속마음을 알 수가 없어요. 지금 어떤 마음인지 궁금해요.', delay: 140 },
+  { emoji: '🌙', text: '내가 너무 혼자 기다리는 건지, 상대방도 나를 그리워하는지 모르겠어요.', delay: 280 },
+  { emoji: '💔', text: '헤어진 뒤 완전히 정리한 건지, 아니면 마음이 남아있는 건지 알고 싶어요.', delay: 420 },
+];
+const REVIEWS = [
+  { emoji: '🌹', name: '윤○○', age: '20대 여성', rating: 5, text: '상대 마음에 미련 있다고 했는데 얼마 후 직접 연락해서 아직도 생각난다고 했어요. 소름이에요.' },
+  { emoji: '💜', name: '강○○', age: '30대 여성', rating: 5, text: '정리한 것 같다고 했는데 실제로 새 연애를 시작했더라고요. 현실적인 답이 오히려 도움됐어요.' },
+  { emoji: '🌸', name: '한○○', age: '20대 여성', rating: 5, text: '그 사람 마음 상태가 딱 맞았어요. 덕분에 기다리는 것을 그만하고 마음을 정리할 수 있었어요.' },
+  { emoji: '🌷', name: '오○○', age: '30대 여성', rating: 4, text: '알고 싶었던 속마음을 알고 나니 오히려 마음이 편해졌어요. 어떻게 할지 결정할 수 있었어요.' },
+];
+
+function BottomCTA() {
+  const { m, s } = useCountdown();
+  return (<><section className="relative overflow-hidden" style={{ background: '#04020a' }}><div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 110% 50% at 50% 100%, rgba(232,121,249,0.2), transparent)' }} /><div className="relative z-10 px-6 pt-14 pb-10 max-w-md mx-auto"><div className="text-center mb-10"><span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold" style={{ background: 'rgba(232,121,249,0.12)', border: '1px solid rgba(232,121,249,0.35)', color: '#f0abfc' }}>🔥 오늘만 적용되는 한정 할인</span></div><div className="text-center mb-10"><p className="font-black leading-[0.95]" style={{ fontSize: 'clamp(3.2rem,14vw,5.5rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,#fff 10%,rgba(255,255,255,0.5) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>그 사람</p><p className="font-black leading-[0.95]" style={{ fontSize: 'clamp(3.2rem,14vw,5.5rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.18) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>속마음</p></div><div className="mb-10 space-y-3 max-w-xs mx-auto">{[{text:'상대방의 현재 감정 상태 분석',dim:false},{text:'나에 대한 미련·감정 잔량',dim:false},{text:'재회를 원하는지 여부',dim:false},{text:'상대가 연락하지 않는 이유',dim:false},{text:'지금 어떻게 접근할지까지..',dim:true}].map((f,i)=>(<div key={i} className="flex items-center gap-3 text-sm" style={{color:f.dim?'rgba(255,255,255,0.28)':'rgba(255,255,255,0.68)'}}><span style={{color:f.dim?'rgba(255,255,255,0.2)':'#e879f9',flexShrink:0}}>{f.dim?'··':'✓'}</span>{f.text}</div>))}</div><div style={{height:1,background:'rgba(255,255,255,0.06)',marginBottom:32}}/><div className="text-center mb-8"><p className="text-sm line-through mb-2" style={{color:'rgba(255,255,255,0.28)'}}>정가 39,800원</p><div className="flex items-center justify-center gap-3 mb-3"><span className="font-black text-white" style={{fontSize:'clamp(2.4rem,10vw,3.5rem)',letterSpacing:'-0.02em'}}>19,900원</span><span className="rounded-full px-3 py-1 text-xs font-bold" style={{background:'rgba(232,121,249,0.15)',color:'#f0abfc',border:'1px solid rgba(232,121,249,0.4)'}}>한정 할인</span></div></div><div className="text-center mb-8"><p className="text-[11px] font-bold tracking-[0.25em] uppercase mb-5" style={{color:'rgba(255,255,255,0.3)'}}>할인 혜택 종료까지</p><div className="inline-flex items-center rounded-2xl px-10 py-4" style={{background:'rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.07)'}}><span className="tabular-nums font-black text-white" style={{fontSize:'clamp(2.6rem,11vw,4rem)',lineHeight:1,letterSpacing:'-0.03em',textShadow:'0 0 28px rgba(232,121,249,0.5)'}}>{m}</span><span className="font-black mx-1.5" style={{color:'rgba(255,255,255,0.25)',fontSize:'clamp(2rem,8vw,3rem)',lineHeight:1}}>:</span><span className="tabular-nums font-black text-white" style={{fontSize:'clamp(2.6rem,11vw,4rem)',lineHeight:1,letterSpacing:'-0.03em',textShadow:'0 0 28px rgba(232,121,249,0.5)'}}>{s}</span></div></div><Link href="/start?cat=ex-feelings" className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]" style={{background:'linear-gradient(90deg,#86198f,#d946ef,#f0abfc)',boxShadow:'0 0 70px rgba(232,121,249,0.5), 0 10px 40px rgba(0,0,0,0.5)'}}>그 사람 속마음 보기 →</Link><p className="text-center text-[11px] mt-3" style={{color:'rgba(255,255,255,0.2)'}}>결과 확인 전 전액 환불 · 회원가입 불필요 · 24시간 이용 가능</p><div className="h-20"/></div></section><div className="fixed bottom-0 left-0 right-0 z-50" style={{background:'rgba(4,2,10,0.97)',borderTop:'1px solid rgba(232,121,249,0.18)',backdropFilter:'blur(20px)'}}><div className="max-w-md mx-auto px-4 py-2.5 flex items-center gap-3"><div className="flex-shrink-0"><p className="text-[9px] font-bold tracking-[0.18em] uppercase leading-none mb-0.5" style={{color:'rgba(255,255,255,0.3)'}}>할인혜택 종료까지</p><p className="font-black tabular-nums leading-none" style={{fontSize:'1.65rem',letterSpacing:'-0.04em',color:'#e879f9',textShadow:'0 0 20px rgba(232,121,249,0.8)'}}>{m}<span style={{color:'rgba(255,255,255,0.2)',fontSize:'1.2rem',margin:'0 1px'}}>:</span>{s}</p></div><Link href="/start?cat=ex-feelings" className="flex-1 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all active:scale-[0.97]" style={{background:'linear-gradient(90deg,#86198f,#d946ef)',boxShadow:'0 0 24px rgba(232,121,249,0.45)'}}>속마음 분석 신청하기 →</Link></div></div></>);
+}
+
+export default function ExFeelingsPage() {
+  return (
+    <div style={{ background: '#07070e', color: '#fff', overflowX: 'hidden' }}>
+      <div className="fixed top-[62px] left-4 z-50"><Link href="/" className="flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-full transition-colors" style={{ background: 'rgba(0,0,0,0.55)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.45)', backdropFilter: 'blur(8px)' }}>← 홈</Link></div>
+      <div className="relative overflow-hidden" style={{ height: '60vw', maxHeight: '480px', minHeight: '300px' }}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?w=1200&q=85&fit=crop" alt="그 사람 속마음" className="absolute inset-0 w-full h-full object-cover" />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to top,#07070e 0%,rgba(7,7,14,0.55) 45%,rgba(7,7,14,0.15) 100%)' }} />
+        <div className="absolute inset-0" style={{ background: 'linear-gradient(to right,rgba(134,25,143,0.4),transparent 65%)' }} />
+        <div className="absolute bottom-0 left-0 w-full px-5 pb-7">
+          <div className="flex items-center gap-2 mb-2.5">
+            <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: 'linear-gradient(90deg,#86198f,#d946ef)' }}>✦ 재회·사랑</span>
+            <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-red-500 text-white">NEW</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white leading-tight drop-shadow-lg">그 사람도 내 생각 할까?</h1>
+          <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>사주·타로로 들여다보는 상대방의 속마음과 미련</p>
+          <div className="flex items-center gap-2 mt-3">
+            <div className="flex gap-0.5">{[1,2,3,4,5].map(i => <svg key={i} width="13" height="13" viewBox="0 0 14 14" fill="#f59e0b"><path d="M7 1L8.6 5.2H13L9.7 7.8L10.9 12L7 9.4L3.1 12L4.3 7.8L1 5.2H5.4L7 1Z"/></svg>)}</div>
+            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>4.9 · 9,800+ 분석 완료</span>
+          </div>
+        </div>
+      </div>
+      <section className="px-5 pt-8 pb-4 max-w-md mx-auto">
+        <FadeIn><div className="grid grid-cols-2 gap-3">{STATS.map((st, i) => <StatItem key={i} {...st} />)}</div></FadeIn>
+        <FadeIn delay={100} className="mt-3"><div className="rounded-2xl px-5 py-4 flex items-start gap-3" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}><span className="text-xl flex-shrink-0">💬</span><div><p className="text-sm text-white leading-relaxed">&ldquo;상대 마음에 미련 있다고 했는데 <strong>얼마 후 정말 연락이 왔어요.</strong>&rdquo;</p><p className="text-[11px] mt-1" style={{ color: 'rgba(255,255,255,0.28)' }}>— 윤○○, 20대 여성</p></div></div></FadeIn>
+      </section>
+      <section className="px-6 py-14 max-w-md mx-auto text-center">
+        <FadeIn><p className="font-black leading-[1.1]" style={{ fontSize: 'clamp(1.8rem,7vw,2.8rem)', letterSpacing: '-0.01em' }}><span style={{ color: 'rgba(255,255,255,0.85)' }}>그 사람 마음</span><br /><span style={{ color: 'rgba(255,255,255,0.18)' }}>속에</span>{' '}<span style={{ background: 'linear-gradient(90deg,#e879f9,#f0abfc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>내가 있을까?</span></p></FadeIn>
+      </section>
+      <section className="px-5 pt-2 pb-12 max-w-md mx-auto">
+        <div className="space-y-3">
+          {CONCERNS.map((c, i) => (<FadeIn key={i} delay={c.delay}><div className="flex items-start gap-3"><div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-base" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>{c.emoji}</div><div className="rounded-2xl rounded-tl-md px-4 py-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', maxWidth: 'calc(100% - 52px)' }}><p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{c.text}</p></div></div></FadeIn>))}
+          <FadeIn delay={580}><div className="flex items-start gap-3 flex-row-reverse"><div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-black" style={{ background: 'linear-gradient(135deg,#86198f,#d946ef)', color: 'white' }}>命</div><div className="rounded-2xl rounded-tr-md px-4 py-3" style={{ background: 'rgba(134,25,143,0.15)', border: '1px solid rgba(232,121,249,0.22)', maxWidth: 'calc(100% - 52px)' }}><p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>사주와 타로로 지금 이 순간 그 사람의 감정 에너지를 읽을 수 있어요. 미련이 남아 있는지, 이미 정리했는지, 솔직하게 알려드릴게요. 💜</p></div></div></FadeIn>
+        </div>
+      </section>
+      <section className="px-5 py-12 max-w-md mx-auto">
+        <FadeIn><p className="text-center text-[10px] font-bold tracking-[0.3em] uppercase mb-8" style={{ color: 'rgba(255,255,255,0.2)' }}>분석 항목</p><div className="space-y-3">{[{icon:'💭',title:'상대방 현재 감정 상태',desc:'지금 그 사람의 마음속에 무엇이 있는지'},{icon:'💔',title:'나에 대한 미련 잔량',desc:'아직 감정이 남아있는지 에너지 분석'},{icon:'📱',title:'연락하지 않는 진짜 이유',desc:'왜 연락이 없는지 사주·타로 해석'},{icon:'🔮',title:'재회 의지 여부',desc:'상대방이 재회를 원하는지 아닌지'},].map((item,i)=>(<FadeIn key={i} delay={i*80}><div className="flex items-start gap-4 rounded-2xl px-5 py-4" style={{background:'rgba(255,255,255,0.03)',border:'1px solid rgba(232,121,249,0.1)'}}><span className="text-2xl flex-shrink-0">{item.icon}</span><div><p className="font-bold text-white text-sm mb-1">{item.title}</p><p className="text-xs leading-relaxed" style={{color:'rgba(255,255,255,0.45)'}}>{item.desc}</p></div></div></FadeIn>))}</div></FadeIn>
+      </section>
+      <section className="px-5 py-12 max-w-md mx-auto">
+        <FadeIn><p className="text-center text-[10px] font-bold tracking-[0.3em] uppercase mb-8" style={{ color: 'rgba(255,255,255,0.2)' }}>실제 이용 후기</p></FadeIn>
+        <div className="space-y-3">{REVIEWS.map((r,i)=>(<FadeIn key={i} delay={i*80}><div className="rounded-2xl px-5 py-4" style={{background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.07)'}}><div className="flex items-center gap-2 mb-2"><span className="text-xl">{r.emoji}</span><div><p className="text-xs font-bold text-white">{r.name} <span style={{color:'rgba(255,255,255,0.35)',fontWeight:400}}>{r.age}</span></p><div className="flex gap-0.5 mt-0.5">{Array.from({length:r.rating}).map((_,j)=><svg key={j} width="10" height="10" viewBox="0 0 14 14" fill="#f59e0b"><path d="M7 1L8.6 5.2H13L9.7 7.8L10.9 12L7 9.4L3.1 12L4.3 7.8L1 5.2H5.4L7 1Z"/></svg>)}</div></div></div><p className="text-sm leading-relaxed" style={{color:'rgba(255,255,255,0.6)'}}>{r.text}</p></div></FadeIn>))}</div>
+      </section>
+      <BottomCTA />
+    </div>
+  );
+}
