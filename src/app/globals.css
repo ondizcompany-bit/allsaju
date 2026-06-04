@@ -55,7 +55,6 @@
     body > * {
       width: 100%;
       max-width: 480px;
-      overflow-x: hidden;
     }
   }
   code, pre, kbd, samp {

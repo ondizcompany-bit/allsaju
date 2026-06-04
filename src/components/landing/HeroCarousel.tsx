@@ -11,6 +11,7 @@ const TABS = [
   { label: '커리어',   href: '/products/career' },
   { label: '재테크',   href: '/products/investment' },
   { label: '속궁합', href: '/products/secret' },
+  { label: '임신·육아', href: '/products?category=임신·육아' },
 ];
 
 const SLIDES = [
@@ -547,7 +548,7 @@ export function HeroCarousel() {
                   key={tab.label}
                   href={tab.href}
                   className={cn(
-                    'px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors',
+                    'px-3 py-3.5 text-[13px] font-medium whitespace-nowrap border-b-2 -mb-px transition-colors',
                     activeTab === i ? 'border-gold text-gold' : 'border-transparent text-ink/55 hover:text-ink'
                   )}
                   onClick={() => setActiveTab(i)}
@@ -559,7 +560,7 @@ export function HeroCarousel() {
                   key={tab.label}
                   onClick={() => setActiveTab(i)}
                   className={cn(
-                    'px-5 py-3.5 text-sm font-medium whitespace-nowrap border-b-2 -mb-px transition-colors',
+                    'px-3 py-3.5 text-[13px] font-medium whitespace-nowrap border-b-2 -mb-px transition-colors',
                     activeTab === i ? 'border-gold text-gold' : 'border-transparent text-ink/55 hover:text-ink'
                   )}
                 >
