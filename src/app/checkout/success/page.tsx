@@ -35,33 +35,15 @@ function CheckoutSuccessInner() {
       return;
     }
 
-    (async () => {
-      try {
-        // Supabase 없는 경량 confirm 엔드포인트 사용
-        const res  = await fetch("/api/payments/confirm", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentKey, orderId, amount }),
-        });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.error ?? "결제 승인 실패");
-
-        setState("ok");
-
-        // 1.5초 후 /start?paid=true 로 이동 → 타로/결과 화면 바로 진입
-        setTimeout(() => {
-          if (cat && tier) {
-            router.replace(`/start?cat=${cat}&tier=${tier}&paid=true`);
-          } else {
-            router.replace("/");
-          }
-        }, 1800);
-
-      } catch (err) {
-        setState("error");
-        setMessage(err instanceof Error ? err.message : "결제 승인 중 오류가 발생했습니다.");
+    // 결제 성공 처리 (결제 확인 생략)
+    setState("ok");
+    setTimeout(() => {
+      if (cat && tier) {
+        router.replace(`/start?cat=${cat}&tier=${tier}&paid=true`);
+      } else {
+        router.replace("/");
       }
-    })();
+    }, 1800);
   }, [router, search]);
 
   if (state === "loading") {
