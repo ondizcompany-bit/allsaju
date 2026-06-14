@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
 const CLIENT_KEY = "test_ck_DpexMgkW36zEjXK9MZR43GbR5ozO";
 
@@ -24,8 +24,9 @@ export function TossWidget({ orderId, amount, productName, customerEmail, succes
     setPaying(true);
     try {
       const tossPayments = await loadTossPayments(CLIENT_KEY);
-      await tossPayments.requestPayment({
-        method: "카드",
+      const payment = tossPayments.payment({ customerKey: ANONYMOUS });
+      await payment.requestPayment({
+        method: "CARD",
         amount: { currency: "KRW", value: amount },
         orderId,
         orderName: productName,
