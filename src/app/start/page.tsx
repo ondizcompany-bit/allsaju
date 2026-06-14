@@ -365,6 +365,9 @@ function FormScreen({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    // 결제 후 돌아올 때 사용할 수 있도록 저장
+    sessionStorage.setItem('saju_birth_me', JSON.stringify(me));
+    if (category.needsPartner) sessionStorage.setItem('saju_birth_partner', JSON.stringify(partner));
     onSubmit({ me: me as PersonInfo, partner: category.needsPartner ? (partner as PersonInfo) : undefined });
   };
 
@@ -728,8 +731,46 @@ function ResultScreen({
   onReset: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<'saju' | 'jami' | 'tarot'>('saju');
+  const [apiResult, setApiResult] = useState<string | null>(null);
+  const [apiLoading, setApiLoading] = useState(true);
   const hasTarot = tier === 'premium' && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem('saju_birth_me');
+    if (!raw) { setApiLoading(false); return; }
+    const me = JSON.parse(raw) as Partial<PersonInfo>;
+    if (!me.birthDate || !me.gender) { setApiLoading(false); return; }
+    const [y, m, d] = (me.birthDate as string).split('-');
+    const HOUR_MAP: Record<string, string> = {
+      '자시': '0', '축시': '2', '인시': '4', '묘시': '6', '진시': '8', '사시': '10',
+      '오시': '12', '미시': '14', '신시': '16', '유시': '18', '술시': '20', '해시': '22',
+    };
+    const birthInfo = {
+      birthYear: y, birthMonth: String(Number(m)), birthDay: String(Number(d)),
+      birthHour: me.birthTime ? HOUR_MAP[me.birthTime] : undefined,
+      calendarType: me.calendarType === 'lunar' ? '음력' : '양력' as '양력' | '음력',
+      gender: me.gender as 'male' | 'female',
+    };
+    fetch('/api/generate-manseryeok', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ birthInfo }),
+    })
+      .then(r => r.json())
+      .then(data => { if (data.status === 'success') setApiResult(data.manseryeok); })
+      .catch(() => {})
+      .finally(() => setApiLoading(false));
+  }, []);
+
+  if (apiLoading) {
+    return (
+      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center gap-6">
+        <div className="w-16 h-16 rounded-full border-4 border-purple-rich/30 border-t-purple-rich animate-spin" />
+        <p className="text-sm text-body">사주를 분석하고 있어요...</p>
+      </div>
+    );
+  }
 
   const tabs = [
     { id: 'saju' as const,  label: '사주 분석', always: true },
@@ -783,24 +824,30 @@ function ResultScreen({
       {/* ── 사주 탭 ── */}
       {activeTab === 'saju' && (
         <div className="animate-in fade-in duration-300">
-          <ResultSection title="전반적 흐름">
-            <p className="text-sm text-white/80 leading-7">{MOCK_SAJU.overview}</p>
-          </ResultSection>
-
-          <ResultSection title="월별 운의 흐름">
-            <div className="grid grid-cols-2 gap-2">
-              {MOCK_SAJU.monthly.map(({ m, desc }) => (
-                <div key={m} className="rounded-xl bg-canvas/60 border border-hairline p-3">
-                  <p className="text-[11px] font-bold text-purple-bright mb-1">{m}</p>
-                  <p className="text-xs text-body leading-relaxed">{desc}</p>
+          {apiResult ? (
+            <ResultSection title="사주 명식 분석">
+              <pre className="text-xs text-white/80 leading-6 whitespace-pre-wrap font-sans">{apiResult}</pre>
+            </ResultSection>
+          ) : (
+            <>
+              <ResultSection title="전반적 흐름">
+                <p className="text-sm text-white/80 leading-7">{MOCK_SAJU.overview}</p>
+              </ResultSection>
+              <ResultSection title="월별 운의 흐름">
+                <div className="grid grid-cols-2 gap-2">
+                  {MOCK_SAJU.monthly.map(({ m, desc }) => (
+                    <div key={m} className="rounded-xl bg-canvas/60 border border-hairline p-3">
+                      <p className="text-[11px] font-bold text-purple-bright mb-1">{m}</p>
+                      <p className="text-xs text-body leading-relaxed">{desc}</p>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </ResultSection>
-
-          <ResultSection title="⚠️ 주의 시기">
-            <p className="text-sm text-white/80 leading-7">{MOCK_SAJU.caution}</p>
-          </ResultSection>
+              </ResultSection>
+              <ResultSection title="⚠️ 주의 시기">
+                <p className="text-sm text-white/80 leading-7">{MOCK_SAJU.caution}</p>
+              </ResultSection>
+            </>
+          )}
         </div>
       )}
 
