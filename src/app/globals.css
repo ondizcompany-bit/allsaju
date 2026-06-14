@@ -106,6 +106,14 @@
   }
 }
 
+/* ── 결제 페이지 전체 너비 (토스 팝업 중앙 정렬) ── */
+body.checkout-page {
+  display: block !important;
+}
+body.checkout-page > * {
+  max-width: 100% !important;
+}
+
 /* ── 가로 스크롤 숨김 ── */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
 .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }

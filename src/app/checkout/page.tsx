@@ -1,6 +1,6 @@
 'use client';
 
-import { Suspense, useState } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { TossWidget } from '@/components/checkout/TossWidget';
@@ -30,6 +30,11 @@ function CheckoutInner() {
   const name   = search.get('name') ?? '명리사주 분석';
 
   const tierLabel = TIER_LABEL[tier] ?? tier;
+
+  useEffect(() => {
+    document.body.classList.add('checkout-page');
+    return () => document.body.classList.remove('checkout-page');
+  }, []);
 
   // 주문 ID는 클라이언트에서 1회 생성
   const [orderId] = useState(() => {
