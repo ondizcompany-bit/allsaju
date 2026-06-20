@@ -731,8 +731,9 @@ function ResultScreen({
   onReset: () => void;
 }) {
   const [activeTab, setActiveTab] = useState<'saju' | 'jami' | 'tarot'>('saju');
-  const [apiResult, setApiResult] = useState<string | null>(null);
+  const [interpretSections, setInterpretSections] = useState<string[] | null>(null);
   const [apiLoading, setApiLoading] = useState(true);
+  const [loadingMsg, setLoadingMsg] = useState('사주를 분석하고 있어요...');
   const hasTarot = tier === 'premium' && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
 
@@ -752,22 +753,45 @@ function ResultScreen({
       calendarType: me.calendarType === 'lunar' ? '음력' : '양력' as '양력' | '음력',
       gender: me.gender as 'male' | 'female',
     };
+
+    // 1단계: 만세력 가져오기
     fetch('/api/generate-manseryeok', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ birthInfo }),
     })
       .then(r => r.json())
-      .then(data => { if (data.status === 'success') setApiResult(data.manseryeok); })
+      .then(async data => {
+        if (data.status !== 'success') return;
+        // 2단계: AI 해석 요청
+        setLoadingMsg('AI가 결과지를 작성하고 있어요... (최대 1분 소요)');
+        const res = await fetch('/api/interpret', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            productSlug: tier === 'single' ? 'danpum-new-year' : tier === 'basic' ? 'basic-new-year' : 'premium-new-year',
+            name: me.name ?? '',
+            birthDate: me.birthDate,
+            birthTime: me.birthTime ?? null,
+            timeUnknown: !me.birthTime,
+            gender: me.gender as 'male' | 'female',
+            manseryeokText: data.manseryeok,
+          }),
+        });
+        const interpret = await res.json();
+        if (interpret.status === 'success') {
+          setInterpretSections(interpret.sections as string[]);
+        }
+      })
       .catch(() => {})
       .finally(() => setApiLoading(false));
-  }, []);
+  }, [tier]);
 
   if (apiLoading) {
     return (
-      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center gap-6">
+      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center gap-6 px-6">
         <div className="w-16 h-16 rounded-full border-4 border-purple-rich/30 border-t-purple-rich animate-spin" />
-        <p className="text-sm text-body">사주를 분석하고 있어요...</p>
+        <p className="text-sm text-body text-center">{loadingMsg}</p>
       </div>
     );
   }
@@ -824,10 +848,18 @@ function ResultScreen({
       {/* ── 사주 탭 ── */}
       {activeTab === 'saju' && (
         <div className="animate-in fade-in duration-300">
-          {apiResult ? (
-            <ResultSection title="사주 명식 분석">
-              <pre className="text-xs text-white/80 leading-6 whitespace-pre-wrap font-sans">{apiResult}</pre>
-            </ResultSection>
+          {interpretSections ? (
+            interpretSections.map((section, i) => (
+              <div key={i} className="rounded-2xl border border-hairline bg-surface-soft/50 p-6 mb-4 prose-saju">
+                {section.split('\n').map((line, li) => {
+                  if (line.startsWith('## ')) return <h2 key={li}>{line.replace('## ', '')}</h2>;
+                  if (line.startsWith('### ')) return <h3 key={li}>{line.replace('### ', '')}</h3>;
+                  if (line.startsWith('- ')) return <ul key={li}><li>{line.replace('- ', '')}</li></ul>;
+                  if (line.trim() === '') return <br key={li} />;
+                  return <p key={li}>{line}</p>;
+                })}
+              </div>
+            ))
           ) : (
             <>
               <ResultSection title="전반적 흐름">
