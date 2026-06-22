@@ -2,6 +2,54 @@
 // 사주 해석 프롬프트 빌더
 // =====================================================
 
+import type { Myeongsik } from "./manseryeok";
+
+// orders/confirm 에서 사용하는 레거시 타입 — DB 기반 플로우용
+export type LegacyPromptInput = {
+  productSlug: string;
+  productName: string;
+  myeongsik: Myeongsik;
+  manseryeokText?: string;
+  birthDate: string;
+  birthTime: string | null;
+  timeUnknown: boolean;
+  gender: "male" | "female";
+  concerns: string[];
+};
+
+const LEGACY_SYSTEM = `당신은 정통 명리학 기반의 사주 분석 전문가입니다.
+- 첫 문장에서 바로 결론을 말한다.
+- 단정문으로 쓴다.
+- 구체적인 연도와 나이를 명시한다.
+- 명리학적 근거를 반드시 언급한다.
+- 한국어로 작성한다.`;
+
+export function buildSajuPrompt(input: LegacyPromptInput): { system: string; user: string } {
+  const m = input.myeongsik;
+  const pillar = (p: { cheongan: string; jiji: string } | null) =>
+    p ? `${p.cheongan}${p.jiji}` : "(시 미상)";
+
+  const sajuSection = input.manseryeokText
+    ? `[사주 풀 명식]\n${input.manseryeokText}`
+    : [
+        `[사주 4기둥]`,
+        `- 년주: ${pillar(m.year)}`,
+        `- 월주: ${pillar(m.month)}`,
+        `- 일주: ${pillar(m.day)}`,
+        `- 시주: ${pillar(m.hour)}`,
+      ].join("\n");
+
+  const user = `[상품] ${input.productName}
+${sajuSection}
+[생년월일] ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
+[성별] ${input.gender === "male" ? "남성" : "여성"}
+[고민] ${input.concerns.length > 0 ? input.concerns.join(", ") : "(미입력)"}
+
+위 정보를 바탕으로 마크다운 리포트를 작성해 주세요.`;
+
+  return { system: LEGACY_SYSTEM, user };
+}
+
 export type PromptInput = {
   productSlug: string;
   productName: string;
