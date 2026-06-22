@@ -21,24 +21,29 @@ export default function SignupPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
-    const supabase = createClient();
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { display_name: name },
-        emailRedirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/callback`,
-      },
-    });
-    setLoading(false);
-    if (error) {
-      toast.error(error.message);
-      alert("가입 에러: " + error.message + " (code: " + error.status + ")");
-      return;
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { display_name: name },
+          emailRedirectTo: `${publicEnv.NEXT_PUBLIC_SITE_URL}/auth/callback`,
+        },
+      });
+      if (error) {
+        alert("가입 실패: " + error.message);
+        toast.error(error.message);
+        return;
+      }
+      toast.success("가입 완료!");
+      router.push("/");
+      router.refresh();
+    } catch (err) {
+      alert("오류 발생: " + String(err));
+    } finally {
+      setLoading(false);
     }
-    toast.success("가입 완료! 마이페이지로 이동합니다.");
-    router.push("/mypage");
-    router.refresh();
   }
 
   return (
