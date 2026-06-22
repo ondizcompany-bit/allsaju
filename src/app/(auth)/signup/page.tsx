@@ -33,6 +33,7 @@ export default function SignupPage() {
     setLoading(false);
     if (error) {
       toast.error(error.message);
+      alert("가입 에러: " + error.message + " (code: " + error.status + ")");
       return;
     }
     toast.success("가입 완료! 마이페이지로 이동합니다.");
