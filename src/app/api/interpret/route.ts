@@ -64,12 +64,10 @@ export async function POST(request: NextRequest) {
   };
 
   try {
-    // 3번 호출로 ~3만자 생성
-    const [r1, r2, r3] = await Promise.all([
-      generateInterpretation(buildDanpumSection1(promptInput)),
-      generateInterpretation(buildDanpumSection2(promptInput)),
-      generateInterpretation(buildDanpumSection3(promptInput)),
-    ]);
+    // 순차 호출 (TPM 한도 초과 방지)
+    const r1 = await generateInterpretation(buildDanpumSection1(promptInput));
+    const r2 = await generateInterpretation(buildDanpumSection2(promptInput));
+    const r3 = await generateInterpretation(buildDanpumSection3(promptInput));
 
     return NextResponse.json({
       status: "success" as const,
