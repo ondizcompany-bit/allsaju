@@ -735,6 +735,7 @@ function ResultScreen({
   const [apiLoading, setApiLoading] = useState(true);
   const [apiError, setApiError] = useState<string | null>(null);
   const [loadingMsg, setLoadingMsg] = useState('사주를 분석하고 있어요...');
+  const [progress, setProgress] = useState(0);
   const hasTarot = tier === 'premium' && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
 
@@ -755,7 +756,15 @@ function ResultScreen({
       gender: me.gender as 'male' | 'female',
     };
 
-    // 1단계: 만세력 가져오기
+    // 진행률 자동 증가 (실제 완료 전까지 95%까지만)
+    setProgress(5);
+    const timer = setInterval(() => {
+      setProgress(p => {
+        if (p >= 95) { clearInterval(timer); return 95; }
+        return p + Math.random() * 3;
+      });
+    }, 1000);
+
     fetch('/api/generate-manseryeok', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -764,8 +773,7 @@ function ResultScreen({
       .then(r => r.json())
       .then(async data => {
         if (data.status !== 'success') return;
-        // 2단계: AI 해석 요청
-        setLoadingMsg('AI가 결과지를 작성하고 있어요... (최대 1분 소요)');
+        setProgress(30);
         const res = await fetch('/api/interpret', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -781,20 +789,44 @@ function ResultScreen({
         });
         const interpret = await res.json();
         if (interpret.status === 'success') {
+          clearInterval(timer);
+          setProgress(100);
           setInterpretSections(interpret.sections as string[]);
         } else {
           setApiError(interpret.error ?? 'AI 해석 실패');
         }
       })
       .catch((e) => setApiError(String(e)))
-      .finally(() => setApiLoading(false));
+      .finally(() => { clearInterval(timer); setApiLoading(false); });
   }, [tier]);
 
   if (apiLoading) {
+    const pct = Math.min(Math.round(progress), 99);
     return (
-      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center gap-6 px-6">
-        <div className="w-16 h-16 rounded-full border-4 border-purple-rich/30 border-t-purple-rich animate-spin" />
-        <p className="text-sm text-body text-center">{loadingMsg}</p>
+      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center gap-8 px-6">
+        {/* 로고 심볼 */}
+        <div className="w-20 h-20 rounded-full flex items-center justify-center"
+          style={{ background: 'linear-gradient(135deg,rgba(76,29,149,0.4),rgba(30,10,80,0.7))', border: '2px solid rgba(139,92,246,0.4)' }}>
+          <span className="text-3xl" style={{ fontFamily: 'serif', color: '#a78bfa' }}>命</span>
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-bold text-white mb-1">분석중</p>
+          <p className="text-sm text-mute">사주팔자를 정밀 분석하고 있습니다</p>
+        </div>
+        {/* 진행률 바 */}
+        <div className="w-full max-w-xs">
+          <div className="flex justify-between text-xs text-mute mb-2">
+            <span>분석 진행률</span>
+            <span className="font-bold text-purple-light">{pct}%</span>
+          </div>
+          <div className="w-full h-2 rounded-full bg-purple-deep/40 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-700"
+              style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#7c3aed,#a78bfa)' }}
+            />
+          </div>
+        </div>
+        <p className="text-xs text-mute text-center">최대 1분 정도 소요됩니다</p>
       </div>
     );
   }
