@@ -85,7 +85,7 @@ function SiteFooter() {
   const contactLine = [
     `고객센터: ${businessInfo.email}`,
     businessInfo.phone
-      ? `핸드폰${businessInfo.phoneNote ? `(${businessInfo.phoneNote})` : ""}: ${businessInfo.phone}`
+      ? `${businessInfo.phoneNote || "고객센터"}: ${businessInfo.phone}`
       : null,
   ]
     .filter(Boolean)
