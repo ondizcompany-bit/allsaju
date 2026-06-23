@@ -733,6 +733,7 @@ function ResultScreen({
   const [activeTab, setActiveTab] = useState<'saju' | 'jami' | 'tarot'>('saju');
   const [interpretSections, setInterpretSections] = useState<string[] | null>(null);
   const [apiLoading, setApiLoading] = useState(true);
+  const [apiError, setApiError] = useState<string | null>(null);
   const [loadingMsg, setLoadingMsg] = useState('사주를 분석하고 있어요...');
   const hasTarot = tier === 'premium' && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
@@ -781,9 +782,11 @@ function ResultScreen({
         const interpret = await res.json();
         if (interpret.status === 'success') {
           setInterpretSections(interpret.sections as string[]);
+        } else {
+          setApiError(interpret.error ?? 'AI 해석 실패');
         }
       })
-      .catch(() => {})
+      .catch((e) => setApiError(String(e)))
       .finally(() => setApiLoading(false));
   }, [tier]);
 
@@ -848,6 +851,11 @@ function ResultScreen({
       {/* ── 사주 탭 ── */}
       {activeTab === 'saju' && (
         <div className="animate-in fade-in duration-300">
+          {apiError && (
+            <div className="rounded-2xl border border-red-500/40 bg-red-900/20 p-4 mb-4 text-sm text-red-300">
+              ⚠️ 오류: {apiError}
+            </div>
+          )}
           {interpretSections ? (
             interpretSections.map((section, i) => (
               <div key={i} className="rounded-2xl border border-hairline bg-surface-soft/50 p-6 mb-4 prose-saju">

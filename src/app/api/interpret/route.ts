@@ -8,6 +8,8 @@
 // Response: { status: "success", sections: string[] }
 
 import { NextResponse, type NextRequest } from "next/server";
+
+export const maxDuration = 60;
 import { z } from "zod";
 import { generateInterpretation } from "@/lib/saju/llm";
 import {
