@@ -19,8 +19,8 @@ export const businessInfo = {
   businessNumber: "242-02-03814",
   mailOrderNumber: "2026-서울금천-1267",
   address: "서울특별시 금천구 가산디지털2로 34, 2층 210-D7호(가산동)",
-  phone: "",
-  phoneNote: "",
+  phone: "070-8064-7358",
+  phoneNote: "고객센터",
   email: "hisoulcode@gmail.com",
   privacyOfficer: "김세희",
   // 호스팅 / 주요 처리 위탁 업체 — 개인정보처리방침에 노출
