@@ -454,15 +454,7 @@ function PackageScreen({
           return (
             <button
               key={tier}
-              onClick={() => {
-                const params = new URLSearchParams({
-                  cat:    category.id,
-                  tier,
-                  amount: String(pkg.price),
-                  name:   category.title,
-                });
-                window.location.href = `/checkout?${params.toString()}`;
-              }}
+              onClick={() => onSelect(tier)}
               className={cn(
                 'relative w-full text-left rounded-2xl border p-5 transition-all duration-200 hover:scale-[1.01] active:scale-[0.99]',
                 isPop
