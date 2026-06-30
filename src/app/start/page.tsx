@@ -710,6 +710,56 @@ const MOCK_JAMI = {
   weakness: '완벽주의 성향으로 인해 시작을 너무 늦추는 경향이 있습니다. 80%의 준비가 되었을 때 행동하는 연습이 필요합니다.',
 };
 
+function AccordionResult({ sections }: { sections: string[] }) {
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
+
+  // 각 섹션을 ## 소제목 기준으로 파싱
+  const allBlocks: { title: string; body: string }[] = [];
+  sections.forEach(section => {
+    const lines = section.split('\n');
+    let curTitle = '';
+    let curBody: string[] = [];
+    lines.forEach(line => {
+      if (line.startsWith('## ')) {
+        if (curTitle) allBlocks.push({ title: curTitle, body: curBody.join('\n').trim() });
+        curTitle = line.replace(/^##\s*/, '');
+        curBody = [];
+      } else {
+        curBody.push(line);
+      }
+    });
+    if (curTitle) allBlocks.push({ title: curTitle, body: curBody.join('\n').trim() });
+  });
+
+  return (
+    <div className="space-y-3">
+      <p className="text-xs text-center text-mute mb-4">각 제목을 클릭하면 해설이 펼쳐져요</p>
+      {allBlocks.map((block, i) => (
+        <div key={i} className="rounded-2xl border border-hairline bg-surface-soft/50 overflow-hidden">
+          <button
+            onClick={() => setOpenIdx(openIdx === i ? null : i)}
+            className="w-full flex items-start gap-3 px-5 py-4 text-left hover:bg-purple-rich/10 transition-colors"
+          >
+            <span className="text-purple-bright mt-0.5 flex-shrink-0">✦</span>
+            <span className="flex-1 text-sm font-bold text-white leading-snug">{block.title}</span>
+            <span className="text-mute text-xs flex-shrink-0 mt-0.5">{openIdx === i ? '∧' : '∨'}</span>
+          </button>
+          {openIdx === i && (
+            <div className="px-5 pb-5 space-y-3 border-t border-hairline/50 pt-4">
+              {block.body.split('\n').map((line, li) => {
+                if (line.trim() === '') return null;
+                if (line.startsWith('### ')) return <h3 key={li} className="text-xs font-bold text-purple-bright mt-3">{line.replace(/^###\s*/, '')}</h3>;
+                if (line.startsWith('- ')) return <p key={li} className="text-sm text-white/80 leading-7 pl-3 border-l-2 border-purple-rich/40">{line.replace(/^-\s*/, '')}</p>;
+                return <p key={li} className="text-sm text-white/80 leading-8">{line}</p>;
+              })}
+            </div>
+          )}
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function ResultSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-hairline bg-surface-soft/50 p-6 mb-4">
@@ -889,17 +939,7 @@ function ResultScreen({
             </div>
           )}
           {interpretSections ? (
-            interpretSections.map((section, i) => (
-              <div key={i} className="rounded-2xl border border-hairline bg-surface-soft/50 p-6 mb-4 prose-saju">
-                {section.split('\n').map((line, li) => {
-                  if (line.startsWith('## ')) return <h2 key={li}>{line.replace('## ', '')}</h2>;
-                  if (line.startsWith('### ')) return <h3 key={li}>{line.replace('### ', '')}</h3>;
-                  if (line.startsWith('- ')) return <ul key={li}><li>{line.replace('- ', '')}</li></ul>;
-                  if (line.trim() === '') return <br key={li} />;
-                  return <p key={li}>{line}</p>;
-                })}
-              </div>
-            ))
+            <AccordionResult sections={interpretSections} />
           ) : (
             <>
               <ResultSection title="전반적 흐름">
