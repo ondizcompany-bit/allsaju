@@ -366,8 +366,8 @@ function FormScreen({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // 결제 후 돌아올 때 사용할 수 있도록 저장
-    sessionStorage.setItem('saju_birth_me', JSON.stringify(me));
-    if (category.needsPartner) sessionStorage.setItem('saju_birth_partner', JSON.stringify(partner));
+    localStorage.setItem('saju_birth_me', JSON.stringify(me));
+    if (category.needsPartner) localStorage.setItem('saju_birth_partner', JSON.stringify(partner));
     onSubmit({ me: me as PersonInfo, partner: category.needsPartner ? (partner as PersonInfo) : undefined });
   };
 
@@ -740,7 +740,7 @@ function ResultScreen({
   const hasJami  = tier === 'basic' || tier === 'premium';
 
   useEffect(() => {
-    const raw = sessionStorage.getItem('saju_birth_me');
+    const raw = localStorage.getItem('saju_birth_me');
     if (!raw) { setApiLoading(false); return; }
     const me = JSON.parse(raw) as Partial<PersonInfo>;
     if (!me.birthDate || !me.gender) { setApiLoading(false); return; }
