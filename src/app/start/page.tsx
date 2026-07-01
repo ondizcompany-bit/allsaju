@@ -782,18 +782,18 @@ function ResultScreen({
 }) {
   const [activeTab, setActiveTab] = useState<'saju' | 'jami' | 'tarot'>('saju');
   const [interpretSections, setInterpretSections] = useState<string[] | null>(null);
-  const [apiLoading, setApiLoading] = useState(true);
+  const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
-  const [loadingMsg, setLoadingMsg] = useState('사주를 분석하고 있어요...');
   const [progress, setProgress] = useState(0);
+  const [needsInfo, setNeedsInfo] = useState(false);
+  const [inlineMe, setInlineMe] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
   const hasTarot = tier === 'premium' && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
 
-  useEffect(() => {
-    const raw = localStorage.getItem('saju_birth_me');
-    if (!raw) { setApiLoading(false); return; }
-    const me = JSON.parse(raw) as Partial<PersonInfo>;
-    if (!me.birthDate || !me.gender) { setApiLoading(false); return; }
+  const runAnalysis = (me: Partial<PersonInfo>) => {
+    if (!me.birthDate || !me.gender) return;
+    setApiLoading(true);
+    setNeedsInfo(false);
     const [y, m, d] = (me.birthDate as string).split('-');
     const HOUR_MAP: Record<string, string> = {
       '자시': '0', '축시': '2', '인시': '4', '묘시': '6', '진시': '8', '사시': '10',
@@ -805,8 +805,6 @@ function ResultScreen({
       calendarType: me.calendarType === 'lunar' ? '음력' : '양력' as '양력' | '음력',
       gender: me.gender as 'male' | 'female',
     };
-
-    // 진행률 자동 증가 (실제 완료 전까지 95%까지만)
     setProgress(5);
     const timer = setInterval(() => {
       setProgress(p => {
@@ -814,7 +812,6 @@ function ResultScreen({
         return p + Math.random() * 3;
       });
     }, 1000);
-
     fetch('/api/generate-manseryeok', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -848,7 +845,68 @@ function ResultScreen({
       })
       .catch((e) => setApiError(String(e)))
       .finally(() => { clearInterval(timer); setApiLoading(false); });
+  };
+
+  useEffect(() => {
+    const raw = localStorage.getItem('saju_birth_me');
+    if (!raw) { setNeedsInfo(true); return; }
+    const me = JSON.parse(raw) as Partial<PersonInfo>;
+    if (!me.birthDate || !me.gender) { setNeedsInfo(true); return; }
+    runAnalysis(me);
   }, [tier]);
+
+  if (needsInfo) {
+    const inputCls = 'w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 transition placeholder:text-mute';
+    const selectCls = inputCls + ' appearance-none cursor-pointer';
+    return (
+      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center px-6">
+        <div className="w-full max-w-sm">
+          <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6"
+            style={{ background: 'linear-gradient(135deg,rgba(76,29,149,0.4),rgba(30,10,80,0.7))', border: '2px solid rgba(139,92,246,0.4)' }}>
+            <span className="text-2xl" style={{ fontFamily: 'serif', color: '#a78bfa' }}>命</span>
+          </div>
+          <h2 className="text-xl font-bold text-white text-center mb-2">사주 정보 입력</h2>
+          <p className="text-sm text-mute text-center mb-8">결제가 완료되었습니다! 아래 정보를 입력하면 AI 분석을 시작해요.</p>
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs text-body mb-1.5">이름</label>
+                <input className={inputCls} placeholder="홍길동" value={inlineMe.name ?? ''} onChange={e => setInlineMe(p => ({ ...p, name: e.target.value }))} />
+              </div>
+              <div>
+                <label className="block text-xs text-body mb-1.5">성별</label>
+                <select className={selectCls} value={inlineMe.gender ?? ''} onChange={e => setInlineMe(p => ({ ...p, gender: e.target.value }))}>
+                  <option value="">선택</option>
+                  <option value="male">남성</option>
+                  <option value="female">여성</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">생년월일</label>
+              <input type="date" className={inputCls} value={inlineMe.birthDate ?? ''} onChange={e => setInlineMe(p => ({ ...p, birthDate: e.target.value }))} />
+            </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">출생 시간 (모르면 생략)</label>
+              <select className={selectCls} value={inlineMe.birthTime ?? ''} onChange={e => setInlineMe(p => ({ ...p, birthTime: e.target.value }))}>
+                <option value="">모름 / 선택 안 함</option>
+                {[['자시','23:00–01:00'],['축시','01:00–03:00'],['인시','03:00–05:00'],['묘시','05:00–07:00'],['진시','07:00–09:00'],['사시','09:00–11:00'],['오시','11:00–13:00'],['미시','13:00–15:00'],['신시','15:00–17:00'],['유시','17:00–19:00'],['술시','19:00–21:00'],['해시','21:00–23:00']].map(([n,t]) => (
+                  <option key={n} value={n}>{n} ({t})</option>
+                ))}
+              </select>
+            </div>
+            <button
+              onClick={() => { localStorage.setItem('saju_birth_me', JSON.stringify(inlineMe)); runAnalysis(inlineMe); }}
+              disabled={!inlineMe.birthDate || !inlineMe.gender}
+              className="w-full h-12 rounded-full bg-purple-gradient text-white font-semibold text-sm shadow-purple-glow hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
+            >
+              AI 분석 시작하기 →
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (apiLoading) {
     const pct = Math.min(Math.round(progress), 99);
