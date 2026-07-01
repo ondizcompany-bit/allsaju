@@ -9,6 +9,7 @@
 
 import { NextResponse, type NextRequest } from "next/server";
 
+export const runtime = 'edge';
 export const maxDuration = 60;
 import { z } from "zod";
 import { generateInterpretation } from "@/lib/saju/llm";
@@ -64,10 +65,12 @@ export async function POST(request: NextRequest) {
   };
 
   try {
-    // 순차 호출 (TPM 한도 초과 방지)
-    const r1 = await generateInterpretation(buildDanpumSection1(promptInput));
-    const r2 = await generateInterpretation(buildDanpumSection2(promptInput));
-    const r3 = await generateInterpretation(buildDanpumSection3(promptInput));
+    // 병렬 호출 (Edge 런타임 — gpt-5.4-mini TPM 여유)
+    const [r1, r2, r3] = await Promise.all([
+      generateInterpretation(buildDanpumSection1(promptInput)),
+      generateInterpretation(buildDanpumSection2(promptInput)),
+      generateInterpretation(buildDanpumSection3(promptInput)),
+    ]);
 
     return NextResponse.json({
       status: "success" as const,
