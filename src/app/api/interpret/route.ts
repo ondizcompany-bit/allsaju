@@ -17,6 +17,9 @@ import {
   buildDanpumSection1,
   buildDanpumSection2,
   buildDanpumSection3,
+  buildBasicSection1,
+  buildBasicSection2,
+  buildBasicSection3,
 } from "@/lib/saju/prompt";
 
 const bodySchema = z.object({
@@ -51,9 +54,12 @@ export async function POST(request: NextRequest) {
   const currentYear = new Date().getFullYear();
   const currentAge = getAge(d.birthDate);
 
+  const isBasic = d.productSlug === 'basic-new-year';
+  const isPremium = d.productSlug === 'premium-new-year';
+
   const promptInput = {
     productSlug: d.productSlug,
-    productName: "2026 병오년 신년 총운 — 단품",
+    productName: isBasic ? "2026 병오년 신년 총운 — 베이직" : isPremium ? "2026 병오년 신년 총운 — 종합" : "2026 병오년 신년 총운 — 단품",
     manseryeokText: d.manseryeokText,
     name: d.name,
     birthDate: d.birthDate,
@@ -64,12 +70,16 @@ export async function POST(request: NextRequest) {
     currentAge,
   };
 
+  const builders = isBasic || isPremium
+    ? [buildBasicSection1, buildBasicSection2, buildBasicSection3]
+    : [buildDanpumSection1, buildDanpumSection2, buildDanpumSection3];
+
   try {
     // 병렬 호출 (Edge 런타임 — gpt-5.4-mini TPM 여유)
     const [r1, r2, r3] = await Promise.all([
-      generateInterpretation(buildDanpumSection1(promptInput)),
-      generateInterpretation(buildDanpumSection2(promptInput)),
-      generateInterpretation(buildDanpumSection3(promptInput)),
+      generateInterpretation(builders[0](promptInput)),
+      generateInterpretation(builders[1](promptInput)),
+      generateInterpretation(builders[2](promptInput)),
     ]);
 
     return NextResponse.json({

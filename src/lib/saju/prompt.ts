@@ -77,6 +77,115 @@ const SYSTEM_BASE = `당신은 정통 명리학 기반의 따뜻하고 공감력
 - 마크다운 헤딩(##)으로 소제목을 구분하고, 소제목은 감성적이고 시적인 한 줄 문장으로 만든다.
 - 한국어로 작성한다.`;
 
+// ── 베이직: 섹션 1 — 사주 파트 (단품과 동일 깊이) ──────────────────────
+export function buildBasicSection1(input: PromptInput): { system: string; user: string } {
+  return buildDanpumSection1(input);
+}
+
+// ── 베이직: 섹션 2 — 직업/재물/관계 + 자미두수 명반 도입 ────────────────
+export function buildBasicSection2(input: PromptInput): { system: string; user: string } {
+  return {
+    system: SYSTEM_BASE,
+    user: `[분석 대상]
+이름: ${input.name}
+생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
+성별: ${input.gender === "male" ? "남성" : "여성"}
+현재 나이: 만 ${input.currentAge}세
+기준 연도: ${input.currentYear}년
+
+[만세력 명식 데이터]
+${input.manseryeokText}
+
+---
+
+위 명식을 바탕으로 아래 5개 섹션을 작성하라.
+각 섹션마다 문단을 2~3개로 나눠 작성한다. 문단 사이에는 빈 줄을 넣는다.
+각 문단은 최소 150자 이상으로 풀어서 쓴다.
+${input.name}님을 자주 불러주고 친근하고 따뜻한 말투로 쓴다.
+
+## 💼 직업 / 커리어운 — [${input.name}님만의 감성적 한 줄 소제목]
+
+${input.currentYear}년 관성과 식상 흐름을 바탕으로 직업운을 분석한다.
+직장인이라면 승진/이직, 사업자라면 사업 흐름을 명리학 근거와 함께 설명한다.
+올해 커리어에서 해야 할 것 2가지, 피해야 할 것 1가지를 단정문으로 제시한다.
+
+## 💰 재물운 — [${input.name}님만의 감성적 한 줄 소제목]
+
+${input.currentYear}년 재성 흐름을 바탕으로 수입·지출·투자 흐름을 분석한다.
+주의해야 할 재물 시기와 기회의 시기를 구체적으로 설명한다.
+올해 재물 관리에서 해야 할 것 2가지, 피해야 할 것 1가지를 단정문으로 제시한다.
+
+## 💕 연애 / 관계운 — [${input.name}님만의 감성적 한 줄 소제목]
+
+${input.currentYear}년 관성/식상 흐름으로 연애운과 인간관계를 분석한다.
+미혼이라면 새 인연, 기혼이라면 부부/가족 관계 흐름을 명리학 근거와 함께 설명한다.
+올해 관계에서 해야 할 것 2가지, 피해야 할 것 1가지를 단정문으로 제시한다.
+
+## ✦✦✦ 자미두수 심층 분석 ✦✦✦
+
+위 구분선은 UI 렌더링용 배너입니다. 본문은 아래 두 섹션부터 시작합니다.
+
+## 🌌 자미두수 명반 — [${input.name}님만의 감성적 한 줄 소제목]
+
+${input.name}님의 생년월일 기준으로 자미두수 명반의 핵심 성계를 분석한다.
+자미성(紫微星), 천기성(天機星), 태양성(太陽星) 등 주요 성계가 어느 궁위에 위치하는지 설명하고, 이것이 ${input.name}님의 삶에 어떤 의미인지 쉬운 말로 풀어 쓴다.
+명궁(命宮)과 재백궁(財帛宮)을 중심으로 타고난 운명의 방향을 따뜻하게 서술한다.
+
+## ⭐ 나의 운명 궁위 분석 — [${input.name}님만의 감성적 한 줄 소제목]
+
+자미두수 12궁위 중 ${input.name}님에게 가장 강하게 작용하는 궁위 2~3개를 선별해 깊이 분석한다.
+각 궁위의 성계 배치가 ${input.name}님의 성격, 직업, 관계에 미치는 영향을 구체적으로 설명한다.
+사주 분석과 자미두수 분석이 일치하는 지점을 짚어주며 "두 시스템이 같은 말을 한다"는 신뢰감을 전달한다.`,
+  };
+}
+
+// ── 베이직: 섹션 3 — 자미두수 대운 + 교차분석 + 건강 + 핵심조언 ────────
+export function buildBasicSection3(input: PromptInput): { system: string; user: string } {
+  return {
+    system: SYSTEM_BASE,
+    user: `[분석 대상]
+이름: ${input.name}
+생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
+성별: ${input.gender === "male" ? "남성" : "여성"}
+현재 나이: 만 ${input.currentAge}세
+기준 연도: ${input.currentYear}년
+
+[만세력 명식 데이터]
+${input.manseryeokText}
+
+---
+
+위 명식을 바탕으로 아래 4개 섹션을 작성하라.
+각 섹션마다 문단을 2~3개로 나눠 작성한다. 문단 사이에는 빈 줄을 넣는다.
+각 문단은 최소 150자 이상으로 풀어서 쓴다.
+${input.name}님을 자주 불러주고 친근하고 따뜻한 말투로 쓴다.
+
+## 🔭 현재 대운 10년 분석 — [${input.name}님만의 감성적 한 줄 소제목]
+
+자미두수 기준 현재 ${input.name}님이 걷고 있는 대운(大運) 10년의 흐름을 분석한다.
+이 대운의 주요 성계가 어떤 에너지를 가져오는지, 삶의 어떤 영역에 영향을 미치는지 설명한다.
+이 대운 안에서 ${input.currentYear}년이 특히 어떤 의미를 갖는지 사주 세운과 연결해 설명한다.
+
+## 🔮 사주 × 자미두수 교차 분석 — [${input.name}님만의 감성적 한 줄 소제목]
+
+사주팔자와 자미두수 두 시스템이 ${input.name}님에 대해 공통으로 말하는 핵심 메시지를 도출한다.
+두 시스템이 일치하는 강점, 주의 시기, 재능을 구체적으로 짚어준다.
+"사주도 자미두수도 같은 방향을 가리키고 있어요"라는 확신을 따뜻하게 전달한다.
+
+## 🌿 건강운 — [${input.name}님만의 감성적 한 줄 소제목]
+
+${input.currentYear}년 ${input.name}님의 사주와 자미두수 기준 건강 약점과 주의 부위를 설명한다.
+오행 불균형과 자미두수 질액궁(疾厄宮) 분석을 결합해 건강 흐름을 서술한다.
+올해 건강을 지키기 위한 구체적인 생활 습관 조언을 제시한다.
+
+## 🌠 ${input.currentYear}년 핵심 조언 — [${input.name}님만의 감성적 한 줄 소제목]
+
+사주와 자미두수를 종합해 지금 이 시기가 ${input.name}님 인생에서 어떤 위치인지 설명한다.
+올해 반드시 집중해야 할 영역 2가지와 피해야 할 함정 2가지를 단정문으로 제시한다.
+${input.currentYear + 1}~${input.currentYear + 2}년의 흐름을 조망하며 ${input.name}님의 가장 큰 잠재력으로 따뜻하게 마무리한다.`,
+  };
+}
+
 // ── 단품: 섹션 1 — 타고난 기질 + 강점과 재능 + 삶의 패턴 + 2026 총운 ──
 export function buildDanpumSection1(input: PromptInput): { system: string; user: string } {
   return {

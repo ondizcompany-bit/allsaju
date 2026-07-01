@@ -710,11 +710,13 @@ const MOCK_JAMI = {
   weakness: '완벽주의 성향으로 인해 시작을 너무 늦추는 경향이 있습니다. 80%의 준비가 되었을 때 행동하는 연습이 필요합니다.',
 };
 
+const JAMI_BANNER_KEY = '✦✦✦ 자미두수 심층 분석 ✦✦✦';
+
 function AccordionResult({ sections }: { sections: string[] }) {
   const [openIdx, setOpenIdx] = useState<number | null>(0);
 
-  // 각 섹션을 ## 소제목 기준으로 파싱
-  const allBlocks: { title: string; body: string }[] = [];
+  type Block = { title: string; body: string; isBanner?: boolean };
+  const allBlocks: Block[] = [];
   sections.forEach(section => {
     const lines = section.split('\n');
     let curTitle = '';
@@ -734,28 +736,55 @@ function AccordionResult({ sections }: { sections: string[] }) {
   return (
     <div className="space-y-3">
       <p className="text-xs text-center text-mute mb-4">각 제목을 클릭하면 해설이 펼쳐져요</p>
-      {allBlocks.map((block, i) => (
-        <div key={i} className="rounded-2xl border border-hairline bg-surface-soft/50 overflow-hidden">
-          <button
-            onClick={() => setOpenIdx(openIdx === i ? null : i)}
-            className="w-full flex items-start gap-3 px-5 py-4 text-left hover:bg-purple-rich/10 transition-colors"
-          >
-            <span className="text-purple-bright mt-0.5 flex-shrink-0">✦</span>
-            <span className="flex-1 text-sm font-bold text-white leading-snug">{block.title}</span>
-            <span className="text-mute text-xs flex-shrink-0 mt-0.5">{openIdx === i ? '∧' : '∨'}</span>
-          </button>
-          {openIdx === i && (
-            <div className="px-5 pb-5 space-y-3 border-t border-hairline/50 pt-4">
-              {block.body.split('\n').map((line, li) => {
-                if (line.trim() === '') return null;
-                if (line.startsWith('### ')) return <h3 key={li} className="text-xs font-bold text-purple-bright mt-3">{line.replace(/^###\s*/, '')}</h3>;
-                if (line.startsWith('- ')) return <p key={li} className="text-sm text-white/80 leading-7 pl-3 border-l-2 border-purple-rich/40">{line.replace(/^-\s*/, '')}</p>;
-                return <p key={li} className="text-sm text-white/80 leading-8">{line}</p>;
-              })}
+      {allBlocks.map((block, i) => {
+        // 자미두수 배너
+        if (block.title.includes('자미두수 심층 분석')) {
+          return (
+            <div key={i} className="relative my-6">
+              <div className="absolute inset-0 rounded-2xl opacity-60" style={{ background: 'linear-gradient(135deg,#3b0764,#1e1040,#0f0a2e)', border: '1px solid rgba(234,179,8,0.4)' }} />
+              <div className="relative flex flex-col items-center justify-center py-5 px-4 text-center">
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to right, transparent, rgba(234,179,8,0.6))' }} />
+                  <span className="text-yellow-400 text-lg">✦</span>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to left, transparent, rgba(234,179,8,0.6))' }} />
+                </div>
+                <p className="text-xs font-bold tracking-[0.25em] uppercase mb-1" style={{ color: '#fbbf24' }}>ZIWEI DOUSHU · 紫微斗數</p>
+                <p className="text-base font-black text-white mb-1">✨ 자미두수 심층 분석 ✨</p>
+                <p className="text-xs text-white/50">사주팔자를 넘어 동양 점성술로 바라본 {`${block.body || '당신'}`}의 운명</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to right, transparent, rgba(234,179,8,0.6))' }} />
+                  <span className="text-yellow-400 text-lg">✦</span>
+                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to left, transparent, rgba(234,179,8,0.6))' }} />
+                </div>
+              </div>
             </div>
-          )}
-        </div>
-      ))}
+          );
+        }
+
+        const isJami = i > 0 && allBlocks.slice(0, i).some(b => b.title.includes('자미두수 심층 분석'));
+        return (
+          <div key={i} className="rounded-2xl overflow-hidden" style={isJami ? { border: '1px solid rgba(234,179,8,0.25)', background: 'rgba(15,10,46,0.8)' } : { border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)' }}>
+            <button
+              onClick={() => setOpenIdx(openIdx === i ? null : i)}
+              className="w-full flex items-start gap-3 px-5 py-4 text-left transition-colors hover:bg-white/5"
+            >
+              <span className="mt-0.5 flex-shrink-0 text-sm" style={{ color: isJami ? '#fbbf24' : '#a78bfa' }}>{isJami ? '⭐' : '✦'}</span>
+              <span className="flex-1 text-sm font-bold leading-snug" style={{ color: isJami ? '#fde68a' : '#ffffff' }}>{block.title}</span>
+              <span className="text-mute text-xs flex-shrink-0 mt-0.5">{openIdx === i ? '∧' : '∨'}</span>
+            </button>
+            {openIdx === i && (
+              <div className="px-5 pb-5 space-y-3 border-t pt-4" style={{ borderColor: isJami ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.06)' }}>
+                {block.body.split('\n').map((line, li) => {
+                  if (line.trim() === '') return <div key={li} className="h-2" />;
+                  if (line.startsWith('### ')) return <h3 key={li} className="text-xs font-bold mt-3" style={{ color: isJami ? '#fbbf24' : '#a78bfa' }}>{line.replace(/^###\s*/, '')}</h3>;
+                  if (line.startsWith('- ')) return <p key={li} className="text-sm text-white/80 leading-7 pl-3" style={{ borderLeft: `2px solid ${isJami ? 'rgba(234,179,8,0.4)' : 'rgba(139,92,246,0.4)'}` }}>{line.replace(/^-\s*/, '')}</p>;
+                  return <p key={li} className="text-sm text-white/80 leading-8">{line}</p>;
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 }
