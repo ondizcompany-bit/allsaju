@@ -861,6 +861,7 @@ function ResultScreen({
             timeUnknown: !me.birthTime,
             gender: me.gender as 'male' | 'female',
             manseryeokText: data.manseryeok,
+            tarotCard: tarotCard ? { name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice } : null,
           }),
         });
         const interpret = await res.json();

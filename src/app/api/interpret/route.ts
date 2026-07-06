@@ -20,6 +20,9 @@ import {
   buildBasicSection1,
   buildBasicSection2,
   buildBasicSection3,
+  buildPremiumSection1,
+  buildPremiumSection2,
+  buildPremiumSection3,
 } from "@/lib/saju/prompt";
 
 const bodySchema = z.object({
@@ -30,6 +33,7 @@ const bodySchema = z.object({
   timeUnknown: z.boolean().default(false),
   gender: z.enum(["male", "female"]),
   manseryeokText: z.string(),
+  tarotCard: z.object({ name: z.string(), keyword: z.string(), advice: z.string() }).nullable().default(null),
 });
 
 function getAge(birthDate: string): number {
@@ -68,9 +72,12 @@ export async function POST(request: NextRequest) {
     gender: d.gender,
     currentYear,
     currentAge,
+    tarotCard: d.tarotCard,
   };
 
-  const builders = isBasic || isPremium
+  const builders = isPremium
+    ? [buildPremiumSection1, buildPremiumSection2, buildPremiumSection3]
+    : isBasic
     ? [buildBasicSection1, buildBasicSection2, buildBasicSection3]
     : [buildDanpumSection1, buildDanpumSection2, buildDanpumSection3];
 
