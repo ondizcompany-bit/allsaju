@@ -313,7 +313,7 @@ export default function NewYearPage() {
       <section className="px-5 pb-16 max-w-md mx-auto">
         <FadeIn className="mb-7"><p className="text-[10px] font-bold tracking-[0.35em] uppercase mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>분석 항목</p><h2 className="text-2xl font-black" style={{ color: 'rgba(255,255,255,0.85)' }}>이런 걸 알 수 있어요</h2></FadeIn>
         <div className="space-y-2">
-          {[['🌟', '2026 병오년 전체 운기 흐름'], ['📅', '기회가 찾아오는 달 vs 조심해야 할 달'], ['💰', '재물·직업·건강·연애운 종합'], ['🔮', '10년 대운과 올해의 연관성'], ['⏰', '올해 가장 좋은 결정 타이밍']].map(([icon, text], i) => (
+          {[['🌟', '2026 병오년 총운 — 내 일간과 올해 에너지의 관계'], ['✨', '타고난 기질·강점·삶의 패턴 분석'], ['💼', '직업·커리어운 — 승진·이직·사업 흐름'], ['💰', '재물운 — 수입·지출·투자 주의 시기'], ['💕', '연애·관계운 — 새 인연 또는 부부 흐름'], ['🌿', '건강운 — 주의 신체 부위와 관리법'], ['🔭', '현재 대운 10년의 방향과 올해의 의미'], ['🌠', '사주×자미두수 핵심 조언']].map(([icon, text], i) => (
             <FadeIn key={i} delay={i * 55}>
               <div className="flex items-center gap-4 rounded-2xl px-5 py-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <span className="text-lg flex-shrink-0">{icon}</span>
@@ -330,7 +330,12 @@ export default function NewYearPage() {
         <FadeIn>
           <div className="rounded-2xl overflow-hidden relative" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="p-5 space-y-2.5" style={{ background: 'rgba(10,8,20,0.9)' }}>
-              {['1월 – 새로운 인연의 씨앗이 심어지는 달', '2월 – 재물운 상승, 투자보다 저축 유리', '3월 – ⚠️ 건강 주의, 과로 조심', '4월~12월 – 월별 상세 운세 (분석 후 공개)'].map((t, i) => (
+              {[
+                '✨ 타고난 기질 — 경금(庚金) 일간, 강한 의지와 날카로운 판단력을 타고났어요',
+                '💰 재물운 — 병오년 병화가 일간과 충(沖)을 이뤄 3월·9월 지출 주의',
+                '💼 커리어운 — 식신 흐름이 살아나는 하반기, 새 기회를 잡을 타이밍',
+                '💕 연애운 · 🌿 건강운 · 🔭 대운 10년 · 🌠 핵심 조언 (분석 후 공개)',
+              ].map((t, i) => (
                 <div key={i} className="rounded-xl px-4 py-3 text-sm" style={{ background: 'rgba(25,15,50,0.7)', border: '1px solid rgba(100,70,200,0.15)', color: 'rgba(255,255,255,0.7)', filter: i > 1 ? 'blur(5px)' : 'none', userSelect: i > 1 ? 'none' : 'auto' }}>{t}</div>
               ))}
             </div>
