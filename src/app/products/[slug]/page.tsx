@@ -317,8 +317,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
               <span className="rounded px-2 py-0.5 text-[10px] font-bold bg-red-900/80 text-red-300 border border-red-600/50">19+</span>
             )}
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white whitespace-pre-line leading-tight drop-shadow-lg">
-            {product.title}
+          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">
+            {product.title.replace(/\n/g, ' ')}
           </h1>
           <div className="flex items-center gap-2 mt-2">
             <StarRating rating={5} />

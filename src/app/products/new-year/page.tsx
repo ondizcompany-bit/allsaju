@@ -146,8 +146,7 @@ function BottomCTA() {
             <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold" style={{ background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.35)', color: '#c4b5fd' }}>🔥 2026년 한정 신년 할인</span>
           </div>
           <div className="text-center mb-10">
-            <p className="font-black leading-[0.95]" style={{ fontSize: 'clamp(3.6rem,16vw,6rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,#fff 10%,rgba(255,255,255,0.5) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>2026</p>
-            <p className="font-black leading-[0.95]" style={{ fontSize: 'clamp(3.6rem,16vw,6rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.18) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>신년 총운</p>
+            <p className="font-black leading-[1.1]" style={{ fontSize: 'clamp(2.8rem,13vw,5rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,#fff 10%,rgba(255,255,255,0.5) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>2026<br />신년 총운</p>
           </div>
           <div className="mb-10 space-y-3 max-w-xs mx-auto">
             {[
@@ -221,8 +220,8 @@ export default function NewYearPage() {
           <div className="flex items-center gap-2 mb-2.5">
             <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: 'linear-gradient(90deg,#7c3aed,#a855f7)' }}>✦ 2026 신년 총운</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">2026 병오년<br />신년 총운</h1>
-          <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>새해 운기 · 월별 흐름 · 주의 시기 완전 분석</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">2026 병오년 신년 총운</h1>
+          <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>사주×자미두수 통합 분석 · 기질·운세·대운 완전 해석</p>
           <div className="flex items-center gap-2 mt-3">
             <div className="flex gap-0.5">{[1,2,3,4,5].map(i => (<svg key={i} width="13" height="13" viewBox="0 0 14 14" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1.2"><path d="M7 1L8.6 5.2H13L9.7 7.8L10.9 12L7 9.4L3.1 12L4.3 7.8L1 5.2H5.4L7 1Z"/></svg>))}</div>
             <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>4.9 · 12,400+ 분석 완료</span>
