@@ -864,7 +864,15 @@ function ResultScreen({
             tarotCard: tarotCard ? { name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice } : null,
           }),
         });
-        const interpret = await res.json();
+        const rawText = await res.text();
+        let interpret: { status: string; sections?: string[]; error?: string };
+        try {
+          interpret = JSON.parse(rawText);
+        } catch {
+          // Vercel 타임아웃 or 크래시 시 plain text 반환됨
+          setApiError('AI 분석 시간이 초과됐어요. 다시 시도해주세요. (서버 응답 오류)');
+          clearInterval(timer); setApiLoading(false); return;
+        }
         if (interpret.status === 'success') {
           clearInterval(timer);
           setProgress(100);
