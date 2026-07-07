@@ -42,8 +42,8 @@ export type BirthInfo = {
 // 응답은 요청한 field 만 포함됩니다. 자세한 필드별 스키마는 API 문서를 따르세요.
 export type SajuAnalysisResponse = Partial<Record<AnalysisField, unknown>>;
 
-const DEFAULT_TIMEOUT_MS = 30_000;
-const MAX_RETRIES = 3;
+const DEFAULT_TIMEOUT_MS = 8_000;
+const MAX_RETRIES = 1;
 const RETRY_DELAYS_MS = [500, 1500, 3500];
 
 export class SajuApiError extends Error {
