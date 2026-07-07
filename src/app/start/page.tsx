@@ -710,81 +710,148 @@ const MOCK_JAMI = {
   weakness: '완벽주의 성향으로 인해 시작을 너무 늦추는 경향이 있습니다. 80%의 준비가 되었을 때 행동하는 연습이 필요합니다.',
 };
 
-const JAMI_BANNER_KEY = '✦✦✦ 자미두수 심층 분석 ✦✦✦';
+const CHAPTER_ICONS = ['✨','💎','🌟','💼','💰','💕','🌿','🔭','🌌','🃏','🔮'];
 
-function AccordionResult({ sections }: { sections: string[] }) {
-  const [openIdx, setOpenIdx] = useState<number | null>(0);
+function ChapterResult({ sections }: { sections: string[] }) {
+  const [screen, setScreen] = useState<'toc' | 'chapter'>('toc');
+  const [cur, setCur] = useState(0);
 
-  type Block = { title: string; body: string; isBanner?: boolean };
-  const allBlocks: Block[] = [];
+  type Block = { title: string; body: string; isJami: boolean };
+  const blocks: Block[] = [];
+  let afterJami = false;
   sections.forEach(section => {
     const lines = section.split('\n');
     let curTitle = '';
     let curBody: string[] = [];
     lines.forEach(line => {
       if (line.startsWith('## ')) {
-        if (curTitle) allBlocks.push({ title: curTitle, body: curBody.join('\n').trim() });
+        if (curTitle && !curTitle.includes('자미두수 심층 분석')) {
+          blocks.push({ title: curTitle, body: curBody.join('\n').trim(), isJami: afterJami });
+        }
         curTitle = line.replace(/^##\s*/, '');
         curBody = [];
+        if (curTitle.includes('자미두수 심층 분석')) { afterJami = true; curTitle = ''; }
       } else {
         curBody.push(line);
       }
     });
-    if (curTitle) allBlocks.push({ title: curTitle, body: curBody.join('\n').trim() });
+    if (curTitle && !curTitle.includes('자미두수 심층 분석')) {
+      blocks.push({ title: curTitle, body: curBody.join('\n').trim(), isJami: afterJami });
+    }
   });
 
-  return (
-    <div className="space-y-3">
-      <p className="text-xs text-center text-mute mb-4">각 제목을 클릭하면 해설이 펼쳐져요</p>
-      {allBlocks.map((block, i) => {
-        // 자미두수 배너
-        if (block.title.includes('자미두수 심층 분석')) {
-          return (
-            <div key={i} className="relative my-6">
-              <div className="absolute inset-0 rounded-2xl opacity-60" style={{ background: 'linear-gradient(135deg,#3b0764,#1e1040,#0f0a2e)', border: '1px solid rgba(234,179,8,0.4)' }} />
-              <div className="relative flex flex-col items-center justify-center py-5 px-4 text-center">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to right, transparent, rgba(234,179,8,0.6))' }} />
-                  <span className="text-yellow-400 text-lg">✦</span>
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to left, transparent, rgba(234,179,8,0.6))' }} />
-                </div>
-                <p className="text-xs font-bold tracking-[0.25em] uppercase mb-1" style={{ color: '#fbbf24' }}>ZIWEI DOUSHU · 紫微斗數</p>
-                <p className="text-base font-black text-white mb-1">✨ 자미두수 심층 분석 ✨</p>
-                <p className="text-xs text-white/50">사주팔자를 넘어 동양 점성술로 바라본 {`${block.body || '당신'}`}의 운명</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to right, transparent, rgba(234,179,8,0.6))' }} />
-                  <span className="text-yellow-400 text-lg">✦</span>
-                  <div className="h-px flex-1" style={{ background: 'linear-gradient(to left, transparent, rgba(234,179,8,0.6))' }} />
-                </div>
-              </div>
-            </div>
-          );
-        }
+  const total = blocks.length;
+  const progress = screen === 'toc' ? 0 : Math.round(((cur + 1) / total) * 100);
 
-        const isJami = i > 0 && allBlocks.slice(0, i).some(b => b.title.includes('자미두수 심층 분석'));
-        return (
-          <div key={i} className="rounded-2xl overflow-hidden" style={isJami ? { border: '1px solid rgba(234,179,8,0.25)', background: 'rgba(15,10,46,0.8)' } : { border: '1px solid rgba(255,255,255,0.07)', background: 'rgba(255,255,255,0.03)' }}>
+  function renderBody(body: string, isJami: boolean) {
+    const accent = isJami ? '#fbbf24' : '#a78bfa';
+    const borderColor = isJami ? 'rgba(234,179,8,0.35)' : 'rgba(139,92,246,0.35)';
+    return body.split('\n').map((line, li) => {
+      if (line.trim() === '') return <div key={li} className="h-3" />;
+      if (line.startsWith('### ')) return (
+        <p key={li} className="text-xs font-bold mt-4 mb-1" style={{ color: accent }}>{line.replace(/^###\s*/, '')}</p>
+      );
+      if (line.startsWith('- ')) return (
+        <p key={li} className="text-sm leading-7 pl-3 mb-1" style={{ color: 'rgba(255,255,255,0.75)', borderLeft: `2px solid ${borderColor}` }}>{line.replace(/^-\s*/, '')}</p>
+      );
+      const html = line.replace(/\*\*(.+?)\*\*/g, `<strong style="color:#e2d9f3;font-weight:500">$1</strong>`);
+      return <p key={li} className="text-sm leading-8" style={{ color: 'rgba(255,255,255,0.75)' }} dangerouslySetInnerHTML={{ __html: html }} />;
+    });
+  }
+
+  if (screen === 'toc') {
+    return (
+      <div className="rounded-2xl overflow-hidden" style={{ background: 'rgba(10,10,20,0.8)', border: '1px solid rgba(255,255,255,0.07)' }}>
+        <div className="px-5 pt-5 pb-4" style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+          <p className="text-xs mb-2" style={{ color: '#a78bfa' }}>目 次 · 목차</p>
+          <p className="text-base font-bold text-white">총 {total}장으로 구성된 분석이에요</p>
+          <p className="text-xs mt-1" style={{ color: 'rgba(255,255,255,0.4)' }}>각 장을 눌러 바로 이동하거나, 처음부터 읽어보세요</p>
+        </div>
+        <div className="px-4 py-3 flex flex-col gap-2">
+          {blocks.map((b, i) => (
             <button
-              onClick={() => setOpenIdx(openIdx === i ? null : i)}
-              className="w-full flex items-start gap-3 px-5 py-4 text-left transition-colors hover:bg-white/5"
+              key={i}
+              onClick={() => { setCur(i); setScreen('chapter'); }}
+              className="flex items-center gap-3 w-full text-left rounded-xl px-4 py-3 transition-colors hover:bg-white/5"
+              style={{ background: 'rgba(255,255,255,0.03)', border: b.isJami ? '1px solid rgba(234,179,8,0.2)' : '1px solid rgba(255,255,255,0.06)' }}
             >
-              <span className="mt-0.5 flex-shrink-0 text-sm" style={{ color: isJami ? '#fbbf24' : '#a78bfa' }}>{isJami ? '⭐' : '✦'}</span>
-              <span className="flex-1 text-sm font-bold leading-snug" style={{ color: isJami ? '#fde68a' : '#ffffff' }}>{block.title}</span>
-              <span className="text-mute text-xs flex-shrink-0 mt-0.5">{openIdx === i ? '∧' : '∨'}</span>
-            </button>
-            {openIdx === i && (
-              <div className="px-5 pb-5 space-y-3 border-t pt-4" style={{ borderColor: isJami ? 'rgba(234,179,8,0.15)' : 'rgba(255,255,255,0.06)' }}>
-                {block.body.split('\n').map((line, li) => {
-                  if (line.trim() === '') return <div key={li} className="h-2" />;
-                  if (line.startsWith('### ')) return <h3 key={li} className="text-xs font-bold mt-3" style={{ color: isJami ? '#fbbf24' : '#a78bfa' }}>{line.replace(/^###\s*/, '')}</h3>;
-                  if (line.startsWith('- ')) return <p key={li} className="text-sm text-white/80 leading-7 pl-3" style={{ borderLeft: `2px solid ${isJami ? 'rgba(234,179,8,0.4)' : 'rgba(139,92,246,0.4)'}` }}>{line.replace(/^-\s*/, '')}</p>;
-                  return <p key={li} className="text-sm text-white/80 leading-8">{line}</p>;
-                })}
+              <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 text-sm"
+                style={{ background: b.isJami ? 'rgba(234,179,8,0.1)' : 'rgba(124,58,237,0.15)', border: b.isJami ? '1px solid rgba(234,179,8,0.25)' : '1px solid rgba(124,58,237,0.3)' }}>
+                {CHAPTER_ICONS[i % CHAPTER_ICONS.length]}
               </div>
-            )}
-          </div>
-        );
-      })}
+              <div className="flex-1 min-w-0">
+                <p className="text-xs mb-0.5" style={{ color: b.isJami ? '#fbbf24' : '#a78bfa' }}>제 {i + 1}장</p>
+                <p className="text-sm font-bold text-white leading-snug truncate">{b.title.replace(/^[^\w가-힣]+/, '')}</p>
+              </div>
+              <span className="text-xs flex-shrink-0" style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
+            </button>
+          ))}
+        </div>
+        <div className="px-4 pb-5 pt-1">
+          <button
+            onClick={() => { setCur(0); setScreen('chapter'); }}
+            className="w-full py-3.5 rounded-xl text-white text-sm font-bold"
+            style={{ background: 'linear-gradient(135deg,#7c3aed,#6d28d9)' }}
+          >
+            처음부터 읽기 →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const block = blocks[cur];
+  const isJami = block.isJami;
+
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ background: isJami ? 'rgba(15,10,46,0.9)' : 'rgba(10,10,20,0.8)', border: isJami ? '1px solid rgba(234,179,8,0.2)' : '1px solid rgba(255,255,255,0.07)' }}>
+      {/* 프로그레스 바 */}
+      <div style={{ height: 3, background: 'rgba(255,255,255,0.06)' }}>
+        <div style={{ height: '100%', width: `${progress}%`, background: isJami ? 'linear-gradient(90deg,#f59e0b,#fbbf24)' : 'linear-gradient(90deg,#7c3aed,#a78bfa)', transition: 'width 0.4s' }} />
+      </div>
+
+      {/* 챕터 헤더 */}
+      <div className="flex items-center gap-3 px-5 py-4" style={{ borderBottom: `1px solid ${isJami ? 'rgba(234,179,8,0.12)' : 'rgba(255,255,255,0.06)'}` }}>
+        <div className="w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold"
+          style={{ background: isJami ? 'rgba(234,179,8,0.15)' : '#7c3aed', color: isJami ? '#fbbf24' : '#fff', border: isJami ? '1px solid rgba(234,179,8,0.4)' : 'none' }}>
+          {cur + 1}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs mb-0.5" style={{ color: isJami ? '#fbbf24' : '#a78bfa' }}>제 {cur + 1}장 · {cur + 1}/{total}</p>
+          <p className="text-sm font-bold leading-snug" style={{ color: isJami ? '#fde68a' : '#fff' }}>{block.title.replace(/^[^\w가-힣]+/, '')}</p>
+        </div>
+      </div>
+
+      {/* 본문 */}
+      <div className="px-5 py-5">
+        {renderBody(block.body, isJami)}
+      </div>
+
+      {/* 도트 네비 */}
+      <div className="flex justify-center gap-1.5 pb-1">
+        {blocks.map((_, i) => (
+          <button key={i} onClick={() => setCur(i)}
+            style={{ width: i === cur ? 18 : 6, height: 6, borderRadius: i === cur ? 3 : '50%', background: i === cur ? (isJami ? '#fbbf24' : '#7c3aed') : 'rgba(255,255,255,0.15)', border: 'none', cursor: 'pointer', transition: 'all 0.3s', padding: 0 }} />
+        ))}
+      </div>
+
+      {/* 이전/다음 버튼 */}
+      <div className="flex gap-2 px-4 py-4">
+        <button
+          onClick={() => cur === 0 ? setScreen('toc') : setCur(cur - 1)}
+          className="rounded-xl px-4 py-3 text-sm"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.5)' }}
+        >
+          {cur === 0 ? '목차' : '← 이전'}
+        </button>
+        <button
+          onClick={() => cur === total - 1 ? setScreen('toc') : setCur(cur + 1)}
+          className="flex-1 rounded-xl py-3 text-sm font-bold text-white"
+          style={{ background: isJami ? 'linear-gradient(135deg,#b45309,#d97706)' : 'linear-gradient(135deg,#7c3aed,#6d28d9)' }}
+        >
+          {cur === total - 1 ? '목차로 돌아가기' : '다음 →'}
+        </button>
+      </div>
     </div>
   );
 }
@@ -1038,7 +1105,7 @@ function ResultScreen({
             </div>
           )}
           {interpretSections ? (
-            <AccordionResult sections={interpretSections} />
+            <ChapterResult sections={interpretSections} />
           ) : !apiError ? (
             <div className="rounded-2xl border border-hairline bg-canvas/40 p-8 text-center">
               <p className="text-sm text-body">분석 중이에요...</p>
