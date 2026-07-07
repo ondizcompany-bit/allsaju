@@ -846,7 +846,10 @@ function ResultScreen({
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ birthInfo }),
     })
-      .then(r => r.json())
+      .then(async r => {
+        const txt = await r.text();
+        try { return JSON.parse(txt); } catch { return { status: 'error' }; }
+      })
       .then(async data => {
         if (data.status !== 'success') { setApiError('만세력 데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); setApiLoading(false); clearInterval(timer); return; }
         setProgress(30);
