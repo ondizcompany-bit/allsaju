@@ -848,7 +848,7 @@ function ResultScreen({
     })
       .then(r => r.json())
       .then(async data => {
-        if (data.status !== 'success') return;
+        if (data.status !== 'success') { setApiError('만세력 데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); setApiLoading(false); clearInterval(timer); return; }
         setProgress(30);
         const res = await fetch('/api/interpret', {
           method: 'POST',
@@ -1028,26 +1028,11 @@ function ResultScreen({
           )}
           {interpretSections ? (
             <AccordionResult sections={interpretSections} />
-          ) : (
-            <>
-              <ResultSection title="전반적 흐름">
-                <p className="text-sm text-white/80 leading-7">{MOCK_SAJU.overview}</p>
-              </ResultSection>
-              <ResultSection title="월별 운의 흐름">
-                <div className="grid grid-cols-2 gap-2">
-                  {MOCK_SAJU.monthly.map(({ m, desc }) => (
-                    <div key={m} className="rounded-xl bg-canvas/60 border border-hairline p-3">
-                      <p className="text-[11px] font-bold text-purple-bright mb-1">{m}</p>
-                      <p className="text-xs text-body leading-relaxed">{desc}</p>
-                    </div>
-                  ))}
-                </div>
-              </ResultSection>
-              <ResultSection title="⚠️ 주의 시기">
-                <p className="text-sm text-white/80 leading-7">{MOCK_SAJU.caution}</p>
-              </ResultSection>
-            </>
-          )}
+          ) : !apiError ? (
+            <div className="rounded-2xl border border-hairline bg-canvas/40 p-8 text-center">
+              <p className="text-sm text-body">분석 중이에요...</p>
+            </div>
+          ) : null}
         </div>
       )}
 
