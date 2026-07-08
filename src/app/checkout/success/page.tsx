@@ -39,16 +39,21 @@ function CheckoutSuccessInner() {
     // 결제 성공 처리 (결제 확인 생략)
     setState("ok");
 
-    // Meta Pixel — Purchase 이벤트
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'Purchase', {
-        value: amount,
-        currency: 'KRW',
-        content_ids: [cat ?? 'unknown'],
-        content_type: 'product',
-        content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
-      });
-    }
+    // Meta Pixel — Purchase 이벤트 (fbq 로드 대기 후 발사)
+    const firePurchase = (retries = 10) => {
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'Purchase', {
+          value: amount,
+          currency: 'KRW',
+          content_ids: [cat ?? 'unknown'],
+          content_type: 'product',
+          content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
+        });
+      } else if (retries > 0) {
+        setTimeout(() => firePurchase(retries - 1), 300);
+      }
+    };
+    firePurchase();
 
     setTimeout(() => {
       if (cat && tier) {

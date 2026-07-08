@@ -34,16 +34,21 @@ function CheckoutInner() {
 
   useEffect(() => {
     document.body.classList.add('checkout-page');
-    // Meta Pixel — InitiateCheckout 이벤트
-    if (typeof window !== 'undefined' && (window as any).fbq) {
-      (window as any).fbq('track', 'InitiateCheckout', {
-        value: amount,
-        currency: 'KRW',
-        content_ids: [cat],
-        content_type: 'product',
-        content_name: `${name} ${tierLabel}`.trim(),
-      });
-    }
+    // Meta Pixel — InitiateCheckout 이벤트 (fbq 로드 대기 후 발사)
+    const fireInitiateCheckout = (retries = 10) => {
+      if (typeof window !== 'undefined' && (window as any).fbq) {
+        (window as any).fbq('track', 'InitiateCheckout', {
+          value: amount,
+          currency: 'KRW',
+          content_ids: [cat],
+          content_type: 'product',
+          content_name: `${name} ${tierLabel}`.trim(),
+        });
+      } else if (retries > 0) {
+        setTimeout(() => fireInitiateCheckout(retries - 1), 300);
+      }
+    };
+    fireInitiateCheckout();
     return () => document.body.classList.remove('checkout-page');
   }, []);
 
