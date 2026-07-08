@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { Toaster } from "sonner";
 import { Noto_Serif_KR } from "next/font/google";
 import { siteConfig, businessInfo } from "@/config/site";
@@ -7,6 +8,8 @@ import { isSupabaseConfigured } from "@/lib/env";
 import { getCurrentUser } from "@/lib/auth";
 import Logo from "@/components/ui/Logo";
 import "./globals.css";
+
+const META_PIXEL_ID = "1922615195096737";
 
 const notoSerifKR = Noto_Serif_KR({
   weight: ["900"],
@@ -34,6 +37,23 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" className={notoSerifKR.variable}>
       <body suppressHydrationWarning>
+        {/* Meta Pixel */}
+        <Script id="meta-pixel" strategy="afterInteractive">{`
+          !function(f,b,e,v,n,t,s)
+          {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+          n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+          if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+          n.queue=[];t=b.createElement(e);t.async=!0;
+          t.src=v;s=b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t,s)}(window, document,'script',
+          'https://connect.facebook.net/en_US/fbevents.js');
+          fbq('init', '${META_PIXEL_ID}');
+          fbq('track', 'PageView');
+        `}</Script>
+        <noscript><img height="1" width="1" style={{display:'none'}}
+          src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
+          alt=""
+        /></noscript>
         <SiteHeader isLoggedIn={isLoggedIn} />
         <main className="min-h-[calc(100vh-7rem)]">{children}</main>
         <SiteFooter />

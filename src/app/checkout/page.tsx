@@ -34,6 +34,16 @@ function CheckoutInner() {
 
   useEffect(() => {
     document.body.classList.add('checkout-page');
+    // Meta Pixel — InitiateCheckout 이벤트
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'InitiateCheckout', {
+        value: amount,
+        currency: 'KRW',
+        content_ids: [cat],
+        content_type: 'product',
+        content_name: `${name} ${tierLabel}`.trim(),
+      });
+    }
     return () => document.body.classList.remove('checkout-page');
   }, []);
 

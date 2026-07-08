@@ -38,6 +38,18 @@ function CheckoutSuccessInner() {
 
     // 결제 성공 처리 (결제 확인 생략)
     setState("ok");
+
+    // Meta Pixel — Purchase 이벤트
+    if (typeof window !== 'undefined' && (window as any).fbq) {
+      (window as any).fbq('track', 'Purchase', {
+        value: amount,
+        currency: 'KRW',
+        content_ids: [cat ?? 'unknown'],
+        content_type: 'product',
+        content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
+      });
+    }
+
     setTimeout(() => {
       if (cat && tier) {
         router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
