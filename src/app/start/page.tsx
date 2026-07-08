@@ -461,7 +461,7 @@ function PackageScreen({
                   tier,
                   amount: String(pkg.price),
                   name:   category.title,
-                  bi:     btoa(unescape(encodeURIComponent(rawBi))),
+                  bi:     btoa(encodeURIComponent(rawBi)),
                 });
                 window.location.href = `/checkout?${params.toString()}`;
               }}
@@ -1209,7 +1209,7 @@ export default function StartPage() {
       const bi = params.get('bi');
       if (bi) {
         try {
-          const decoded = decodeURIComponent(escape(atob(bi)));
+          const decoded = decodeURIComponent(atob(bi));
           if (decoded) localStorage.setItem('saju_birth_me', decoded);
         } catch { /* ignore malformed */ }
       }
