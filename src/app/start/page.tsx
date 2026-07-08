@@ -955,11 +955,29 @@ function ResultScreen({
       .then(async data => {
         if (data.status !== 'success') { setApiError('만세력 데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); setApiLoading(false); clearInterval(timer); return; }
         setProgress(30);
+        // 파트너 정보 (재회/속궁합 카테고리)
+        const needsPartner = category.id === 'reunion' || category.id === 'secret';
+        let partnerText: string | undefined;
+        if (needsPartner) {
+          try {
+            const rawPartner = localStorage.getItem('saju_birth_partner');
+            if (rawPartner) {
+              const p = JSON.parse(rawPartner) as Partial<PersonInfo>;
+              const parts: string[] = [];
+              if (p.name) parts.push(`이름: ${p.name}`);
+              if (p.birthDate) parts.push(`생년월일: ${p.birthDate}${p.birthTime ? ` ${p.birthTime}` : ' (시 미상)'}`);
+              if (p.gender) parts.push(`성별: ${p.gender === 'male' ? '남성' : '여성'}`);
+              partnerText = parts.join('\n');
+            }
+          } catch { /* ignore */ }
+        }
+        const productSlug = `${tier === 'single' ? 'danpum' : tier === 'basic' ? 'basic' : 'premium'}-${category.id}`;
         const res = await fetch('/api/interpret', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            productSlug: tier === 'single' ? 'danpum-new-year' : tier === 'basic' ? 'basic-new-year' : 'premium-new-year',
+            productSlug,
+            catId: category.id,
             name: me.name ?? '',
             birthDate: me.birthDate,
             birthTime: me.birthTime ?? null,
@@ -967,6 +985,7 @@ function ResultScreen({
             gender: me.gender as 'male' | 'female',
             manseryeokText: data.manseryeok,
             tarotCard: tarotCard ? { name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice } : null,
+            partnerText,
           }),
         });
         const rawText = await res.text();

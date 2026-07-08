@@ -37,6 +37,8 @@ const bodySchema = z.object({
   gender: z.enum(["male", "female"]),
   manseryeokText: z.string(),
   tarotCard: z.object({ name: z.string(), keyword: z.string(), advice: z.string() }).nullable().default(null),
+  catId: z.string().optional(),
+  partnerText: z.string().optional(),
 });
 
 function getAge(birthDate: string): number {
@@ -61,12 +63,12 @@ export async function POST(request: NextRequest) {
   const currentYear = new Date().getFullYear();
   const currentAge = getAge(d.birthDate);
 
-  const isBasic = d.productSlug === 'basic-new-year';
-  const isPremium = d.productSlug === 'premium-new-year';
+  const isBasic = d.productSlug.startsWith('basic-');
+  const isPremium = d.productSlug.startsWith('premium-');
 
   const promptInput = {
     productSlug: d.productSlug,
-    productName: isBasic ? "2026 병오년 신년 총운 — 베이직" : isPremium ? "2026 병오년 신년 총운 — 종합" : "2026 병오년 신년 총운 — 단품",
+    productName: d.productSlug,
     manseryeokText: d.manseryeokText,
     name: d.name,
     birthDate: d.birthDate,
@@ -76,6 +78,8 @@ export async function POST(request: NextRequest) {
     currentYear,
     currentAge,
     tarotCard: d.tarotCard,
+    catId: d.catId as import("@/lib/saju/category-configs").CategoryId | undefined,
+    partnerText: d.partnerText,
   };
 
   try {
