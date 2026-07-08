@@ -455,11 +455,13 @@ function PackageScreen({
             <button
               key={tier}
               onClick={() => {
+                const rawBi = localStorage.getItem('saju_birth_me') ?? '';
                 const params = new URLSearchParams({
                   cat:    category.id,
                   tier,
                   amount: String(pkg.price),
                   name:   category.title,
+                  bi:     btoa(unescape(encodeURIComponent(rawBi))),
                 });
                 window.location.href = `/checkout?${params.toString()}`;
               }}
@@ -1203,6 +1205,14 @@ export default function StartPage() {
     setCategory(cat);
 
     if (paid === 'true' && tierParam && (['single', 'basic', 'premium'] as const).includes(tierParam)) {
+      // 결제 흐름에서 생년월일이 URL을 통해 전달된 경우 localStorage에 복원
+      const bi = params.get('bi');
+      if (bi) {
+        try {
+          const decoded = decodeURIComponent(escape(atob(bi)));
+          if (decoded) localStorage.setItem('saju_birth_me', decoded);
+        } catch { /* ignore malformed */ }
+      }
       setTier(tierParam);
       setScreen(tierParam === 'premium' ? 'tarot' : 'result');
     } else {

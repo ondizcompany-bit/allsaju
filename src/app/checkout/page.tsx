@@ -28,6 +28,7 @@ function CheckoutInner() {
   const tier   = search.get('tier') ?? 'basic';
   const amount = Number(search.get('amount') ?? '34900');
   const name   = search.get('name') ?? '명리사주 분석';
+  const bi     = search.get('bi') ?? '';
 
   const tierLabel = TIER_LABEL[tier] ?? tier;
 
@@ -46,7 +47,7 @@ function CheckoutInner() {
   // 고객 키 (비로그인 = ANONYMOUS)
   const customerKey = "ANONYMOUS";
 
-  const successUrl = `${publicEnv.NEXT_PUBLIC_SITE_URL}/checkout/success?cat=${cat}&tier=${tier}`;
+  const successUrl = `${publicEnv.NEXT_PUBLIC_SITE_URL}/checkout/success?cat=${cat}&tier=${tier}&bi=${encodeURIComponent(bi)}`;
   const failUrl    = `${publicEnv.NEXT_PUBLIC_SITE_URL}/checkout/fail`;
 
   return (

@@ -28,6 +28,7 @@ function CheckoutSuccessInner() {
     const amount     = Number(search.get("amount"));
     const cat        = search.get("cat");
     const tier       = search.get("tier");
+    const bi         = search.get("bi") ?? "";
 
     if (!paymentKey || !orderId || !amount) {
       setState("error");
@@ -39,7 +40,7 @@ function CheckoutSuccessInner() {
     setState("ok");
     setTimeout(() => {
       if (cat && tier) {
-        router.replace(`/start?cat=${cat}&tier=${tier}&paid=true`);
+        router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
       } else {
         router.replace("/");
       }
