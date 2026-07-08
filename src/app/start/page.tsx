@@ -782,7 +782,15 @@ function ChapterResult({ sections }: { sections: string[] }) {
                 {CHAPTER_ICONS[i % CHAPTER_ICONS.length]}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs mb-0.5" style={{ color: b.isJami ? '#fbbf24' : '#a78bfa' }}>제 {i + 1}장</p>
+                <div className="flex items-center gap-2 mb-0.5">
+                  <p className="text-xs" style={{ color: b.isJami ? '#fbbf24' : '#a78bfa' }}>제 {i + 1}장</p>
+                  {b.isJami && (
+                    <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full flex-shrink-0"
+                      style={{ background: 'rgba(234,179,8,0.15)', border: '1px solid rgba(234,179,8,0.35)', color: '#fbbf24', letterSpacing: '0.05em' }}>
+                      ✦ 자미두수
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm font-bold text-white leading-snug truncate">{b.title.replace(/^[^\w가-힣]+/, '')}</p>
               </div>
               <span className="text-xs flex-shrink-0" style={{ color: 'rgba(255,255,255,0.25)' }}>›</span>
