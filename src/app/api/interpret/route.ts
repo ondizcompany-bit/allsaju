@@ -20,6 +20,7 @@ import {
   buildBasicSection1,
   buildBasicSection2,
   buildBasicSection3,
+  buildBasicJami,
   buildPremiumSection1,
   buildPremiumSection2,
   buildPremiumSection3,
@@ -75,13 +76,25 @@ export async function POST(request: NextRequest) {
     tarotCard: d.tarotCard,
   };
 
-  const builders = isPremium
-    ? [buildPremiumSection1, buildPremiumSection2, buildPremiumSection3]
-    : isBasic
-    ? [buildBasicSection1, buildBasicSection2, buildBasicSection3]
-    : [buildDanpumSection1, buildDanpumSection2, buildDanpumSection3];
-
   try {
+    if (isBasic) {
+      // 베이직: 사주 3섹션 + 자미두수 전용 심층 섹션 병렬 호출
+      const [r1, r2, r3, r4] = await Promise.all([
+        generateInterpretation(buildBasicSection1(promptInput)),
+        generateInterpretation(buildBasicSection2(promptInput)),
+        generateInterpretation(buildBasicSection3(promptInput)),
+        generateInterpretation(buildBasicJami(promptInput)),
+      ]);
+      return NextResponse.json({
+        status: "success" as const,
+        sections: [r1.text, r2.text, r3.text, r4.text],
+      });
+    }
+
+    const builders = isPremium
+      ? [buildPremiumSection1, buildPremiumSection2, buildPremiumSection3]
+      : [buildDanpumSection1, buildDanpumSection2, buildDanpumSection3];
+
     // 병렬 호출 (Edge 런타임 — gpt-5.4-mini TPM 여유)
     const [r1, r2, r3] = await Promise.all([
       generateInterpretation(builders[0](promptInput)),
