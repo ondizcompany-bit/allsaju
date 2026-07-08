@@ -40,7 +40,7 @@ async function callOpenAI(req: LlmRequest, model: string, key: string | undefine
       { role: "user", content: req.user },
     ],
     temperature: 0.7,
-    max_completion_tokens: 4096,
+    max_completion_tokens: 2000,
   });
   const text = completion.choices[0]?.message?.content ?? "";
   return { text, provider: "openai", model };
@@ -52,7 +52,7 @@ async function callAnthropic(req: LlmRequest, model: string, key: string | undef
   const client = new Anthropic({ apiKey: key });
   const message = await client.messages.create({
     model,
-    max_tokens: 8192,
+    max_tokens: 4000,
     system: req.system,
     messages: [{ role: "user", content: req.user }],
   });
