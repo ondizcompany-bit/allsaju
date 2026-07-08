@@ -108,6 +108,66 @@ const CATEGORIES: Category[] = [
       premium: { price: 49900, original: 99800 },
     },
   },
+  {
+    id: 'pregnancy-timing',
+    symbol: '胎',
+    title: '아가야, 언제 올 거니? — 임신 시기 예측',
+    subtitle: '사주로 보는 임신 가능 시기 · 자녀와의 인연',
+    needsPartner: false,
+    adult: false,
+    accentColor: '#f9a8d4',
+    gradient: 'linear-gradient(145deg,#1a0514 0%,#831843 60%,#500d30 100%)',
+    packages: {
+      single:  { price: 24900, original: 49800 },
+      basic:   { price: 34900, original: 69800, popular: true },
+      premium: { price: 44900, original: 89800 },
+    },
+  },
+  {
+    id: 'pregnancy-date',
+    symbol: '緣',
+    title: '하늘이 맺어준 그날 — 임신 택일',
+    subtitle: '부부 자녀운 궁합 · 임신 최적 시기 · 사주 택일',
+    needsPartner: true,
+    adult: false,
+    accentColor: '#a78bfa',
+    gradient: 'linear-gradient(145deg,#0d0820 0%,#4c1d95 60%,#2e1065 100%)',
+    packages: {
+      single:  { price: 24900, original: 49800 },
+      basic:   { price: 39900, original: 79800, popular: true },
+      premium: { price: 49900, original: 99800 },
+    },
+  },
+  {
+    id: 'baby-dna',
+    symbol: '兒',
+    title: '미리 보는 우리 아이 DNA',
+    subtitle: '부모 사주로 예측하는 아이의 기질·재능·미래',
+    needsPartner: true,
+    adult: false,
+    accentColor: '#34d399',
+    gradient: 'linear-gradient(145deg,#031a12 0%,#065f46 60%,#064e3b 100%)',
+    packages: {
+      single:  { price: 24900, original: 49800 },
+      basic:   { price: 34900, original: 69800, popular: true },
+      premium: { price: 44900, original: 89800 },
+    },
+  },
+  {
+    id: 'baby-name',
+    symbol: '名',
+    title: '태명 사주 학당',
+    subtitle: '사주로 고르는 태명 · 아이에게 주는 첫 번째 선물',
+    needsPartner: false,
+    adult: false,
+    accentColor: '#fbbf24',
+    gradient: 'linear-gradient(145deg,#1a1200 0%,#78350f 60%,#451a03 100%)',
+    packages: {
+      single:  { price: 24900, original: 49800 },
+      basic:   { price: 34900, original: 69800, popular: true },
+      premium: { price: 44900, original: 89800 },
+    },
+  },
 ];
 
 const TIER_META: Record<Tier, { label: string; tags: string[]; desc: string }> = {
@@ -397,15 +457,22 @@ function FormScreen({
       <form onSubmit={handleSubmit} className="space-y-4">
         <PersonFields prefix="me" label="나의 정보" values={me} onChange={updateMe} />
 
-        {/* 파트너 정보: 재회/속궁합만 */}
+        {/* 파트너 정보 */}
         {category.needsPartner && (
           <div className="animate-in fade-in slide-in-from-top-4 duration-500">
             <div className="flex items-center gap-3 my-4">
               <div className="flex-1 h-px bg-hairline" />
-              <span className="text-xs text-mute">+ 상대방 정보</span>
+              <span className="text-xs text-mute">
+                {['pregnancy-date', 'baby-dna'].includes(category.id) ? '+ 배우자 정보' : '+ 상대방 정보'}
+              </span>
               <div className="flex-1 h-px bg-hairline" />
             </div>
-            <PersonFields prefix="partner" label="상대방 정보" values={partner} onChange={updatePartner} />
+            <PersonFields
+              prefix="partner"
+              label={['pregnancy-date', 'baby-dna'].includes(category.id) ? '배우자 정보' : '상대방 정보'}
+              values={partner}
+              onChange={updatePartner}
+            />
           </div>
         )}
 
@@ -955,8 +1022,8 @@ function ResultScreen({
       .then(async data => {
         if (data.status !== 'success') { setApiError('만세력 데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); setApiLoading(false); clearInterval(timer); return; }
         setProgress(30);
-        // 파트너 정보 (재회/속궁합 카테고리)
-        const needsPartner = category.id === 'reunion' || category.id === 'secret';
+        // 파트너 정보 (파트너 정보가 필요한 카테고리)
+        const needsPartner = category.needsPartner;
         let partnerText: string | undefined;
         if (needsPartner) {
           try {
