@@ -5,7 +5,7 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { loadTossPayments, ANONYMOUS } from "@tosspayments/tosspayments-sdk";
 
-const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY ?? "test_ck_DpexMgkW36zEjXK9MZR43GbR5ozO";
+const CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_KEY || "test_ck_DpexMgkW36zEjXK9MZR43GbR5ozO";
 
 type Props = {
   orderId: string;
