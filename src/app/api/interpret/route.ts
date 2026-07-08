@@ -24,6 +24,8 @@ import {
   buildPremiumSection1,
   buildPremiumSection2,
   buildPremiumSection3,
+  buildPremiumJami,
+  buildPremiumTarot,
 } from "@/lib/saju/prompt";
 
 const bodySchema = z.object({
@@ -91,15 +93,26 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const builders = isPremium
-      ? [buildPremiumSection1, buildPremiumSection2, buildPremiumSection3]
-      : [buildDanpumSection1, buildDanpumSection2, buildDanpumSection3];
+    if (isPremium) {
+      // 종합: 사주 3섹션 + 자미두수 심층 + 타로 심층 병렬 호출
+      const [r1, r2, r3, r4, r5] = await Promise.all([
+        generateInterpretation(buildPremiumSection1(promptInput)),
+        generateInterpretation(buildPremiumSection2(promptInput)),
+        generateInterpretation(buildPremiumSection3(promptInput)),
+        generateInterpretation(buildPremiumJami(promptInput)),
+        generateInterpretation(buildPremiumTarot(promptInput)),
+      ]);
+      return NextResponse.json({
+        status: "success" as const,
+        sections: [r1.text, r2.text, r3.text, r4.text, r5.text],
+      });
+    }
 
-    // 병렬 호출 (Edge 런타임 — gpt-5.4-mini TPM 여유)
+    // 단품
     const [r1, r2, r3] = await Promise.all([
-      generateInterpretation(builders[0](promptInput)),
-      generateInterpretation(builders[1](promptInput)),
-      generateInterpretation(builders[2](promptInput)),
+      generateInterpretation(buildDanpumSection1(promptInput)),
+      generateInterpretation(buildDanpumSection2(promptInput)),
+      generateInterpretation(buildDanpumSection3(promptInput)),
     ]);
 
     return NextResponse.json({
