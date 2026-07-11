@@ -130,11 +130,14 @@ const BASIC_INFO = (input: PromptInput) => {
     : input.catId === 'secret'
     ? `- ⭐ [핵심 관점] 이 결과지를 읽는 ${input.name}님은 상대방에 대해 설레는 마음이 있다. 두 사람의 궁합 분석을 ${input.name}님 편에서 따뜻하고 솔직하게 전달하고, ${input.name}님이 이 관계에서 어떻게 행동하면 좋을지 구체적으로 안내한다.`
     : '';
+  const isTarotCentric = input.catId === 'tarot-reunion';
   const tarotBlock = input.tarotCard
     ? `\n[선택한 타로 카드]\n카드명: ${input.tarotCard.name}\n키워드: ${input.tarotCard.keyword}\n카드 메시지: ${input.tarotCard.advice}\n`
     : '';
   const tarotRule = input.tarotCard
-    ? `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주·자미두수 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`
+    ? isTarotCentric
+      ? `- ⭐ 이 상품은 타로 리딩이 핵심이다. 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})의 해석을 모든 분석의 중심에 두고, 사주·자미두수는 그 해석을 뒷받침하는 보조 확인 근거로만 짧게 사용한다. "사주가 확인해준다"가 아니라 "타로가 먼저 말하고, 사주로도 확인된다"는 방식으로 서술한다.`
+      : `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주·자미두수 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`
     : '';
   return `[분석 대상]
 이름: ${input.name}
@@ -331,7 +334,10 @@ const PREMIUM_INFO = (input: PromptInput) => {
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n`
     : '';
-  const integrationRule = isPartner
+  const isTarotCentricPremium = input.catId === 'tarot-reunion';
+  const integrationRule = isTarotCentricPremium
+    ? `- ⭐ 이 상품은 타로 리딩이 핵심이다. 타로 카드의 해석을 모든 분석의 중심에 두고, 사주팔자·자미두수는 그 해석을 뒷받침하는 보조 확인 근거로만 짧게 사용한다.`
+    : isPartner
     ? `- 상대방 정보를 적극 활용해 두 사람을 사주·자미두수·타로로 함께 비교 분석한다.`
     : `- 사주팔자·자미두수·타로 세 가지를 자연스럽게 통합해 서술한다.`;
   const isReunionType = (['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'] as string[]).includes(input.catId ?? '');
@@ -360,7 +366,9 @@ ${input.manseryeokText}
 - 각 문단은 80~120자로 핵심을 담아 쓴다. 간결하되 구체적으로.
 ${integrationRule}
 ${emotionNote}
-- 타로 카드는 억지로 끼워넣지 말고, 사주·자미두수 분석을 "타로가 확인해준다"는 방식으로 자연스럽게 언급한다.
+${isTarotCentricPremium
+    ? `- "타로가 먼저 말하고, 사주·자미두수로도 확인된다"는 방식으로 서술한다. 사주가 타로를 확인해주는 보조 역할이지, 그 반대가 아니다.`
+    : `- 타로 카드는 억지로 끼워넣지 말고, 사주·자미두수 분석을 "타로가 확인해준다"는 방식으로 자연스럽게 언급한다.`}
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
 - 명리학·자미두수 용어는 반드시 쉬운 말로 바로 풀어 설명한다.
 - ⚠️ 모든 섹션을 반드시 완성한다. 절대 중간에 끊기지 않는다.`;
@@ -626,8 +634,11 @@ const DANPUM_INFO = (input: PromptInput) => {
     : input.catId === 'secret'
     ? `\n[작성 관점]\n⭐ 이 결과지를 읽는 ${input.name}님은 상대방에 대해 설레는 마음이 있다. 두 사람의 궁합 분석을 ${input.name}님 편에서 따뜻하고 솔직하게 전달하고, ${input.name}님이 이 관계에서 어떻게 행동하면 좋을지 구체적으로 안내한다.`
     : '';
+  const isTarotCentricDanpum = input.catId === 'tarot-reunion';
   const tarotBlock = input.tarotCard
-    ? `\n[선택한 타로 카드]\n카드명: ${input.tarotCard.name}\n키워드: ${input.tarotCard.keyword}\n카드 메시지: ${input.tarotCard.advice}\n\n[작성 규칙]\n- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`
+    ? `\n[선택한 타로 카드]\n카드명: ${input.tarotCard.name}\n키워드: ${input.tarotCard.keyword}\n카드 메시지: ${input.tarotCard.advice}\n\n[작성 규칙]\n${isTarotCentricDanpum
+        ? `- ⭐ 이 상품은 타로 리딩이 핵심이다. 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})의 해석을 모든 분석의 중심에 두고, 사주는 그 해석을 뒷받침하는 보조 확인 근거로만 짧게 사용한다. "타로가 먼저 말하고, 사주로도 확인된다"는 방식으로 서술한다.`
+        : `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`}`
     : '';
   return `[분석 대상]
 이름: ${input.name}
