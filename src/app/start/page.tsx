@@ -892,6 +892,7 @@ function ResultScreen({
 }) {
   const [activeTab, setActiveTab] = useState<'saju' | 'jami' | 'tarot'>('saju');
   const [interpretSections, setInterpretSections] = useState<string[] | null>(null);
+  const [followupQuestion, setFollowupQuestion] = useState('');
   const [apiLoading, setApiLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
@@ -936,6 +937,10 @@ function ResultScreen({
       .then(async data => {
         if (data.status !== 'success') { setApiError('만세력 데이터를 불러오지 못했어요. 잠시 후 다시 시도해주세요.'); setApiLoading(false); clearInterval(timer); return; }
         setProgress(30);
+        // 추가 질문(1,000원) 기능에서 재사용할 수 있도록 저장
+        localStorage.setItem('saju_manseryeok', data.manseryeok);
+        localStorage.setItem('saju_followup_category', category.title);
+        if (tarotCard) localStorage.setItem('saju_followup_tarot', JSON.stringify({ name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice }));
         // 파트너 정보 (파트너 정보가 필요한 카테고리)
         const needsPartner = category.needsPartner;
         let partnerText: string | undefined;
@@ -1215,6 +1220,41 @@ function ResultScreen({
               우주는 당신의 용기 있는 첫 걸음을 기다리고 있습니다.
             </p>
           </ResultSection>
+        </div>
+      )}
+
+      {/* 추가 질문 (1,000원) */}
+      {interpretSections && (
+        <div
+          className="rounded-2xl p-5 mt-8"
+          style={{ background: 'rgba(139,92,246,0.08)', border: '1px solid rgba(139,92,246,0.25)' }}
+        >
+          <p className="text-sm font-bold text-white mb-1">궁금한 거 하나만 더?</p>
+          <p className="text-xs text-mute mb-4">1,000원에 이 결과를 바탕으로 한 가지 더 답해드려요.</p>
+          <textarea
+            rows={3}
+            className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 focus:ring-1 focus:ring-purple-rich/30 transition placeholder:text-mute resize-none mb-3"
+            placeholder="예: 그럼 먼저 연락할 때 어떤 말로 시작하면 좋을까요?"
+            value={followupQuestion}
+            onChange={e => setFollowupQuestion(e.target.value)}
+          />
+          <button
+            onClick={() => {
+              if (!followupQuestion.trim()) return;
+              localStorage.setItem('saju_followup_question', followupQuestion.trim());
+              const params = new URLSearchParams({
+                cat: 'followup',
+                tier: 'addon',
+                amount: '1000',
+                name: `${category.title} 추가 질문`,
+              });
+              window.location.href = `/checkout?${params.toString()}`;
+            }}
+            disabled={!followupQuestion.trim()}
+            className="w-full h-11 rounded-full bg-purple-gradient text-white font-semibold text-sm shadow-purple-glow hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
+          >
+            1,000원 결제하고 질문하기 →
+          </button>
         </div>
       )}
 

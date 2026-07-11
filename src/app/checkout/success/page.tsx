@@ -69,7 +69,9 @@ function CheckoutSuccessInner() {
         firePurchase();
 
         setTimeout(() => {
-          if (cat && tier) {
+          if (cat === 'followup') {
+            router.replace('/followup?paid=true');
+          } else if (cat && tier) {
             router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
           } else {
             router.replace("/");

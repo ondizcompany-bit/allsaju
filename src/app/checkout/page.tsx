@@ -12,6 +12,7 @@ const TIER_LABEL: Record<string, string> = {
   single: '단품',
   basic: '베이직',
   premium: '종합',
+  addon: '추가 질문',
 };
 
 export default function CheckoutPage() {
