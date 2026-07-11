@@ -124,7 +124,7 @@ const BASIC_INFO = (input: PromptInput) => {
   const integrationRule = isPartner
     ? `- 상대방 정보를 적극 활용해 두 사람을 사주 + 자미두수로 함께 비교 분석한다.`
     : `- 사주팔자와 자미두수를 각 섹션에서 자연스럽게 통합해 서술한다.`;
-  const isReunionType = ['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'].includes(input.catId);
+  const isReunionType = (['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'] as string[]).includes(input.catId ?? '');
   const emotionNote = isReunionType
     ? `- ⭐ [핵심 관점] 이 결과지를 읽는 ${input.name}님은 헤어진 상대방에 대한 마음이 아직 남아있는 상태다. 모든 내용은 ${input.name}님의 감정에 먼저 깊이 공감하고, ${input.name}님 편에서 따뜻하게 서술한다. 상대방의 현재 마음·재회 가능성·구체적인 접근 시기와 방법을 중심으로 풀어 쓰되, ${input.name}님이 읽고 "내 상황을 정확히 이해받는 느낌"을 받을 수 있도록 한다. ${input.name}님이 이 사람에게 가진 감정을 부정하지 않고, 그 감정의 사주적 이유를 설명하며 위로와 방향을 함께 전한다.`
     : input.catId === 'secret'
@@ -225,7 +225,7 @@ ${input.manseryeokText}
 
   // 재회·속궁합·임신택일·아이DNA 전용 자미두수 섹션 (부처궁·인연·자녀궁 중심)
   if (isPartner) {
-    const topicLabel = ['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'].includes(input.catId) ? '재회 인연'
+    const topicLabel = (['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'] as string[]).includes(input.catId ?? '') ? '재회 인연'
       : input.catId === 'pregnancy-date' ? '임신 인연'
       : input.catId === 'baby-dna' ? '자녀 인연'
       : '궁합';
@@ -327,7 +327,7 @@ const PREMIUM_INFO = (input: PromptInput) => {
   const integrationRule = isPartner
     ? `- 상대방 정보를 적극 활용해 두 사람을 사주·자미두수·타로로 함께 비교 분석한다.`
     : `- 사주팔자·자미두수·타로 세 가지를 자연스럽게 통합해 서술한다.`;
-  const isReunionType = ['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'].includes(input.catId);
+  const isReunionType = (['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'] as string[]).includes(input.catId ?? '');
   const emotionNote = isReunionType
     ? `- ⭐ [핵심 관점] 이 결과지를 읽는 ${input.name}님은 헤어진 상대방에 대한 마음이 아직 남아있는 상태다. 모든 내용은 ${input.name}님의 감정에 먼저 깊이 공감하고, ${input.name}님 편에서 따뜻하게 서술한다. 상대방의 현재 마음·재회 가능성·구체적인 접근 시기와 방법을 중심으로 풀어 쓰되, ${input.name}님이 읽고 "내 상황을 정확히 이해받는 느낌"을 받을 수 있도록 한다. ${input.name}님이 이 사람에게 가진 감정을 부정하지 않고, 그 감정의 사주적 이유를 설명하며 위로와 방향을 함께 전한다.`
     : input.catId === 'secret'
@@ -440,7 +440,7 @@ ${input.manseryeokText}
 
   // 재회·속궁합·임신택일·아이DNA 전용 자미두수 6궁 분석 (인연·관계·자녀궁 위주)
   if (isPartner) {
-    const topicLabel = ['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'].includes(input.catId) ? '재회 인연'
+    const topicLabel = (['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'] as string[]).includes(input.catId ?? '') ? '재회 인연'
       : input.catId === 'pregnancy-date' ? '임신 인연'
       : input.catId === 'baby-dna' ? '자녀 인연'
       : '궁합';
@@ -613,7 +613,7 @@ const DANPUM_INFO = (input: PromptInput) => {
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n`
     : '';
-  const isReunionTypeDanpum = ['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'].includes(input.catId);
+  const isReunionTypeDanpum = (['reunion', 'tarot-reunion', 'ex-feelings', 'reunion-timing', 'breakup-reason'] as string[]).includes(input.catId ?? '');
   const emotionNote = isReunionTypeDanpum
     ? `\n[작성 관점]\n⭐ 이 결과지를 읽는 ${input.name}님은 헤어진 상대방에 대한 마음이 아직 남아있는 상태다. 모든 내용은 ${input.name}님의 감정에 먼저 깊이 공감하고, ${input.name}님 편에서 따뜻하게 서술한다. 상대방의 현재 마음·재회 가능성·구체적인 접근 시기와 방법을 중심으로 풀어 쓰되, ${input.name}님이 읽고 "내 상황을 정확히 이해받는 느낌"을 받을 수 있도록 한다. ${input.name}님이 이 사람에게 가진 감정을 부정하지 않고, 그 감정의 사주적 이유를 설명하며 위로와 방향을 함께 전한다.`
     : input.catId === 'secret'
