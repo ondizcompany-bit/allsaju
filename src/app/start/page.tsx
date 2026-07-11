@@ -482,12 +482,14 @@ function FormScreen({
 }) {
   const [me, setMe] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
   const [partner, setPartner] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
+  const [email, setEmail] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // 결제 후 돌아올 때 사용할 수 있도록 저장
     localStorage.setItem('saju_birth_me', JSON.stringify(me));
     if (category.needsPartner) localStorage.setItem('saju_birth_partner', JSON.stringify(partner));
+    localStorage.setItem('saju_result_email', email);
     onSubmit({ me: me as PersonInfo, partner: category.needsPartner ? (partner as PersonInfo) : undefined });
   };
 
@@ -516,6 +518,19 @@ function FormScreen({
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <PersonFields prefix="me" label="나의 정보" values={me} onChange={updateMe} />
+
+        <div className="rounded-2xl border border-hairline bg-surface-soft/50 p-5">
+          <label className="block text-xs text-body mb-1.5">결과지 받을 이메일</label>
+          <input
+            type="email"
+            required
+            className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 focus:ring-1 focus:ring-purple-rich/30 transition placeholder:text-mute"
+            placeholder="example@email.com"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+          />
+          <p className="text-xs text-mute mt-1.5">분석이 완료되면 이 주소로 결과지를 보내드려요.</p>
+        </div>
 
         {/* 파트너 정보 */}
         {category.needsPartner && (
@@ -1045,6 +1060,7 @@ function ResultScreen({
   const [progress, setProgress] = useState(0);
   const [needsInfo, setNeedsInfo] = useState(false);
   const [inlineMe, setInlineMe] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
+  const [inlineEmail, setInlineEmail] = useState('');
   const hasTarot = (tier === 'premium' || category.id === 'tarot-reunion') && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
 
@@ -1128,6 +1144,19 @@ function ResultScreen({
           clearInterval(timer);
           setProgress(100);
           setInterpretSections(interpret.sections as string[]);
+          const resultEmail = localStorage.getItem('saju_result_email');
+          if (resultEmail) {
+            fetch('/api/send-result-email', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                email: resultEmail,
+                productTitle: category.title,
+                tierLabel: TIER_META[tier].label,
+                sections: interpret.sections,
+              }),
+            }).catch(() => { /* 이메일 발송 실패는 결과 화면 표시를 막지 않는다 */ });
+          }
         } else {
           setApiError(interpret.error ?? 'AI 해석 실패');
         }
@@ -1184,9 +1213,13 @@ function ResultScreen({
                 ))}
               </select>
             </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">결과지 받을 이메일</label>
+              <input type="email" required className={inputCls} placeholder="example@email.com" value={inlineEmail} onChange={e => setInlineEmail(e.target.value)} />
+            </div>
             <button
-              onClick={() => { localStorage.setItem('saju_birth_me', JSON.stringify(inlineMe)); runAnalysis(inlineMe); }}
-              disabled={!inlineMe.birthDate || !inlineMe.gender}
+              onClick={() => { localStorage.setItem('saju_birth_me', JSON.stringify(inlineMe)); localStorage.setItem('saju_result_email', inlineEmail); runAnalysis(inlineMe); }}
+              disabled={!inlineMe.birthDate || !inlineMe.gender || !inlineEmail}
               className="w-full h-12 rounded-full bg-purple-gradient text-white font-semibold text-sm shadow-purple-glow hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
             >
               AI 분석 시작하기 →

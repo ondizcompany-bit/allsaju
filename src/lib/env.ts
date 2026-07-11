@@ -13,6 +13,8 @@ const serverSchema = z.object({
   ANTHROPIC_API_KEY: z.string().optional(),
   GOOGLE_GENERATIVE_AI_API_KEY: z.string().optional(),
   ADMIN_PASSWORD: z.string().optional().default(""),
+  RESEND_API_KEY: z.string().optional().default(""),
+  RESEND_FROM_EMAIL: z.string().default("명리공방 <onboarding@resend.dev>"),
 });
 
 const publicSchema = z.object({
@@ -55,6 +57,8 @@ export function serverEnv() {
       ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY,
       GOOGLE_GENERATIVE_AI_API_KEY: process.env.GOOGLE_GENERATIVE_AI_API_KEY,
       ADMIN_PASSWORD: process.env.ADMIN_PASSWORD,
+      RESEND_API_KEY: process.env.RESEND_API_KEY,
+      RESEND_FROM_EMAIL: process.env.RESEND_FROM_EMAIL,
     });
   }
   return _serverEnv;

@@ -108,7 +108,7 @@ function CheckoutInner() {
             amount={amount}
             customerKey={customerKey}
             productName={`${name} - ${tierLabel}`}
-            customerEmail={null}
+            customerEmail={typeof window !== 'undefined' ? localStorage.getItem('saju_result_email') : null}
             successUrl={successUrl}
             failUrl={failUrl}
           />
