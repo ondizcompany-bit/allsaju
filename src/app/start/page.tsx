@@ -484,6 +484,7 @@ function FormScreen({
   const [me, setMe] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
   const [partner, setPartner] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
   const [email, setEmail] = useState('');
+  const [concerns, setConcerns] = useState('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -491,6 +492,7 @@ function FormScreen({
     localStorage.setItem('saju_birth_me', JSON.stringify(me));
     if (category.needsPartner) localStorage.setItem('saju_birth_partner', JSON.stringify(partner));
     localStorage.setItem('saju_result_email', email);
+    localStorage.setItem('saju_concerns', concerns);
     onSubmit({ me: me as PersonInfo, partner: category.needsPartner ? (partner as PersonInfo) : undefined });
   };
 
@@ -551,6 +553,18 @@ function FormScreen({
             />
           </div>
         )}
+
+        <div className="rounded-2xl border border-hairline bg-surface-soft/50 p-5">
+          <label className="block text-xs text-body mb-1.5">궁금한 점 (선택)</label>
+          <textarea
+            rows={3}
+            className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 focus:ring-1 focus:ring-purple-rich/30 transition placeholder:text-mute resize-none"
+            placeholder="예: 헤어진 지 3개월 됐는데 연락해도 될까요? 재회 가능성이 궁금해요."
+            value={concerns}
+            onChange={e => setConcerns(e.target.value)}
+          />
+          <p className="text-xs text-mute mt-1.5">간단히 적어주시면 결과지에 그 내용을 반영해서 분석해드려요.</p>
+        </div>
 
         <button
           type="submit"
@@ -884,6 +898,7 @@ function ResultScreen({
   const [needsInfo, setNeedsInfo] = useState(false);
   const [inlineMe, setInlineMe] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
   const [inlineEmail, setInlineEmail] = useState('');
+  const [inlineConcerns, setInlineConcerns] = useState('');
   const hasTarot = (tier === 'premium' || category.id === 'tarot-reunion') && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
 
@@ -952,6 +967,7 @@ function ResultScreen({
             manseryeokText: data.manseryeok,
             tarotCard: tarotCard ? { name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice } : null,
             partnerText,
+            concerns: localStorage.getItem('saju_concerns') || undefined,
           }),
         });
         const rawText = await res.text();
@@ -1040,8 +1056,12 @@ function ResultScreen({
               <label className="block text-xs text-body mb-1.5">결과지 받을 이메일</label>
               <input type="email" required className={inputCls} placeholder="example@email.com" value={inlineEmail} onChange={e => setInlineEmail(e.target.value)} />
             </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">궁금한 점 (선택)</label>
+              <textarea rows={3} className={cn(inputCls, 'resize-none')} placeholder="예: 재회 가능성이 궁금해요." value={inlineConcerns} onChange={e => setInlineConcerns(e.target.value)} />
+            </div>
             <button
-              onClick={() => { localStorage.setItem('saju_birth_me', JSON.stringify(inlineMe)); localStorage.setItem('saju_result_email', inlineEmail); runAnalysis(inlineMe); }}
+              onClick={() => { localStorage.setItem('saju_birth_me', JSON.stringify(inlineMe)); localStorage.setItem('saju_result_email', inlineEmail); localStorage.setItem('saju_concerns', inlineConcerns); runAnalysis(inlineMe); }}
               disabled={!inlineMe.birthDate || !inlineMe.gender || !inlineEmail}
               className="w-full h-12 rounded-full bg-purple-gradient text-white font-semibold text-sm shadow-purple-glow hover:opacity-90 active:scale-[0.98] transition-all disabled:opacity-40"
             >

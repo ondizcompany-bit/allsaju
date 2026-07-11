@@ -39,6 +39,7 @@ const bodySchema = z.object({
   tarotCard: z.object({ name: z.string(), keyword: z.string(), advice: z.string() }).nullable().default(null),
   catId: z.string().optional(),
   partnerText: z.string().optional(),
+  concerns: z.string().optional(),
 });
 
 function getAge(birthDate: string): number {
@@ -80,6 +81,7 @@ export async function POST(request: NextRequest) {
     tarotCard: d.tarotCard,
     catId: d.catId as import("@/lib/saju/category-configs").CategoryId | undefined,
     partnerText: d.partnerText,
+    concerns: d.concerns,
   };
 
   try {

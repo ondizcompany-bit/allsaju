@@ -65,6 +65,7 @@ export type PromptInput = {
   tarotCard?: { name: string; keyword: string; advice: string } | null;
   catId?: CategoryId;
   partnerText?: string;
+  concerns?: string;
 };
 
 // ── 카테고리 헬퍼 ─────────────────────────────────────────────────────
@@ -139,6 +140,12 @@ const BASIC_INFO = (input: PromptInput) => {
       ? `- ⭐ 이 상품은 타로 리딩이 핵심이다. 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})의 해석을 모든 분석의 중심에 두고, 사주·자미두수는 그 해석을 뒷받침하는 보조 확인 근거로만 짧게 사용한다. "사주가 확인해준다"가 아니라 "타로가 먼저 말하고, 사주로도 확인된다"는 방식으로 서술한다.`
       : `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주·자미두수 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`
     : '';
+  const concernsBlock = input.concerns?.trim()
+    ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
+    : '';
+  const concernsRule = input.concerns?.trim()
+    ? `- ⭐ [최우선] ${input.name}님이 직접 남긴 궁금한 점을 반드시 분석 전반에 반영한다. 이 질문에 대한 답을 각 섹션에서 구체적으로 짚어주고, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    : '';
   return `[분석 대상]
 이름: ${input.name}
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
@@ -148,13 +155,14 @@ const BASIC_INFO = (input: PromptInput) => {
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
-${tarotBlock}
+${tarotBlock}${concernsBlock}
 [작성 규칙]
 - 각 섹션마다 문단 2개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
 - 각 문단은 80~120자로 핵심을 담아 쓴다. 간결하되 구체적으로.
 ${integrationRule}
 ${emotionNote}
 ${tarotRule}
+${concernsRule}
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
 - 명리학·자미두수 용어는 반드시 쉬운 말로 바로 풀어 설명한다.
 - ⚠️ 모든 섹션을 반드시 완성한다. 절대 중간에 끊기지 않는다.`;
@@ -346,6 +354,12 @@ const PREMIUM_INFO = (input: PromptInput) => {
     : input.catId === 'secret'
     ? `- ⭐ [핵심 관점] 이 결과지를 읽는 ${input.name}님은 상대방에 대해 설레는 마음이 있다. 두 사람의 궁합 분석을 ${input.name}님 편에서 따뜻하고 솔직하게 전달하고, ${input.name}님이 이 관계에서 어떻게 행동하면 좋을지 구체적으로 안내한다.`
     : '';
+  const concernsBlock = input.concerns?.trim()
+    ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
+    : '';
+  const concernsRule = input.concerns?.trim()
+    ? `- ⭐ [최우선] ${input.name}님이 직접 남긴 궁금한 점을 반드시 분석 전반에 반영한다. 이 질문에 대한 답을 각 섹션에서 구체적으로 짚어주고, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    : '';
   return `[분석 대상]
 이름: ${input.name}
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
@@ -360,7 +374,7 @@ ${input.manseryeokText}
 카드명: ${input.tarotCard?.name ?? "없음"}
 키워드: ${input.tarotCard?.keyword ?? "없음"}
 카드 메시지: ${input.tarotCard?.advice ?? "없음"}
-
+${concernsBlock}
 [작성 규칙]
 - 각 섹션마다 문단 2개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
 - 각 문단은 80~120자로 핵심을 담아 쓴다. 간결하되 구체적으로.
@@ -369,6 +383,7 @@ ${emotionNote}
 ${isTarotCentricPremium
     ? `- "타로가 먼저 말하고, 사주·자미두수로도 확인된다"는 방식으로 서술한다. 사주가 타로를 확인해주는 보조 역할이지, 그 반대가 아니다.`
     : `- 타로 카드는 억지로 끼워넣지 말고, 사주·자미두수 분석을 "타로가 확인해준다"는 방식으로 자연스럽게 언급한다.`}
+${concernsRule}
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
 - 명리학·자미두수 용어는 반드시 쉬운 말로 바로 풀어 설명한다.
 - ⚠️ 모든 섹션을 반드시 완성한다. 절대 중간에 끊기지 않는다.`;
@@ -640,6 +655,9 @@ const DANPUM_INFO = (input: PromptInput) => {
         ? `- ⭐ 이 상품은 타로 리딩이 핵심이다. 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})의 해석을 모든 분석의 중심에 두고, 사주는 그 해석을 뒷받침하는 보조 확인 근거로만 짧게 사용한다. "타로가 먼저 말하고, 사주로도 확인된다"는 방식으로 서술한다.`
         : `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`}`
     : '';
+  const concernsBlock = input.concerns?.trim()
+    ? `\n\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n\n[작성 규칙]\n- ⭐ [최우선] 위 궁금한 점을 반드시 분석 전반에 반영한다. 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    : '';
   return `[분석 대상]
 이름: ${input.name}
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
@@ -648,7 +666,7 @@ const DANPUM_INFO = (input: PromptInput) => {
 기준 연도: ${input.currentYear}년
 ${partnerBlock}
 [만세력 명식 데이터]
-${input.manseryeokText}${emotionNote}${tarotBlock}`;
+${input.manseryeokText}${emotionNote}${tarotBlock}${concernsBlock}`;
 };
 
 // ── 단품: 섹션 1, 2, 3 — 카테고리별 config 구동 ─────────────────────────
