@@ -62,8 +62,10 @@ function CheckoutInner() {
   // 고객 키 (비로그인 = ANONYMOUS)
   const customerKey = "ANONYMOUS";
 
-  const successUrl = `${publicEnv.NEXT_PUBLIC_SITE_URL}/checkout/success?cat=${cat}&tier=${tier}&bi=${encodeURIComponent(bi)}`;
-  const failUrl    = `${publicEnv.NEXT_PUBLIC_SITE_URL}/checkout/fail`;
+  // 실제 접속 도메인 기준으로 리다이렉트 (NEXT_PUBLIC_SITE_URL 환경변수 미설정 시 다른 도메인으로 튕기는 것 방지)
+  const siteOrigin = typeof window !== 'undefined' ? window.location.origin : publicEnv.NEXT_PUBLIC_SITE_URL;
+  const successUrl = `${siteOrigin}/checkout/success?cat=${cat}&tier=${tier}&bi=${encodeURIComponent(bi)}`;
+  const failUrl    = `${siteOrigin}/checkout/fail`;
 
   return (
     <div className="min-h-screen bg-canvas">
