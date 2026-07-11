@@ -36,32 +36,50 @@ function CheckoutSuccessInner() {
       return;
     }
 
-    // 결제 성공 처리 (결제 확인 생략)
-    setState("ok");
+    // 토스 결제 승인(confirm) — 이 호출이 성공해야 실제로 결제가 확정된다
+    fetch("/api/payments/confirm", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ paymentKey, orderId, amount }),
+    })
+      .then(async (res) => {
+        const data = await res.json().catch(() => null);
+        if (!res.ok || !data?.success) {
+          setState("error");
+          setMessage(data?.error ?? "결제 승인에 실패했어요. 카드사에 문의해주세요.");
+          return;
+        }
 
-    // Meta Pixel — Purchase 이벤트 (fbq 로드 대기 후 발사)
-    const firePurchase = (retries = 10) => {
-      if (typeof window !== 'undefined' && (window as any).fbq) {
-        (window as any).fbq('track', 'Purchase', {
-          value: amount,
-          currency: 'KRW',
-          content_ids: [cat ?? 'unknown'],
-          content_type: 'product',
-          content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
-        });
-      } else if (retries > 0) {
-        setTimeout(() => firePurchase(retries - 1), 300);
-      }
-    };
-    firePurchase();
+        setState("ok");
 
-    setTimeout(() => {
-      if (cat && tier) {
-        router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
-      } else {
-        router.replace("/");
-      }
-    }, 1800);
+        // Meta Pixel — Purchase 이벤트 (fbq 로드 대기 후 발사)
+        const firePurchase = (retries = 10) => {
+          if (typeof window !== 'undefined' && (window as any).fbq) {
+            (window as any).fbq('track', 'Purchase', {
+              value: amount,
+              currency: 'KRW',
+              content_ids: [cat ?? 'unknown'],
+              content_type: 'product',
+              content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
+            });
+          } else if (retries > 0) {
+            setTimeout(() => firePurchase(retries - 1), 300);
+          }
+        };
+        firePurchase();
+
+        setTimeout(() => {
+          if (cat && tier) {
+            router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
+          } else {
+            router.replace("/");
+          }
+        }, 1800);
+      })
+      .catch(() => {
+        setState("error");
+        setMessage("결제 승인 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
+      });
   }, [router, search]);
 
   if (state === "loading") {

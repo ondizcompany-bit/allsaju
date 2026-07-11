@@ -969,35 +969,16 @@ function ResultScreen({
           setInterpretSections(interpret.sections as string[]);
           const resultEmail = localStorage.getItem('saju_result_email');
           if (resultEmail) {
-            fetch('/api/shared-results', {
+            fetch('/api/send-result-email', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                categoryId: category.id,
-                categoryTitle: category.title,
-                tier,
-                name: me.name ?? '',
+                email: resultEmail,
+                productTitle: category.title,
+                tierLabel: TIER_META[tier].label,
                 sections: interpret.sections,
-                tarotCard: tarotCard ? { name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice } : null,
               }),
-            })
-              .then(r => r.json())
-              .then((saved: { status: string; id?: string }) => {
-                if (saved.status !== 'success' || !saved.id) return;
-                const reportUrl = `${window.location.origin}/report/${saved.id}`;
-                return fetch('/api/send-result-email', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({
-                    email: resultEmail,
-                    name: me.name ?? '',
-                    productTitle: category.title,
-                    tierLabel: TIER_META[tier].label,
-                    reportUrl,
-                  }),
-                });
-              })
-              .catch(() => { /* 이메일 발송 실패는 결과 화면 표시를 막지 않는다 */ });
+            }).catch(() => { /* 이메일 발송 실패는 결과 화면 표시를 막지 않는다 */ });
           }
         } else {
           setApiError(interpret.error ?? 'AI 해석 실패');

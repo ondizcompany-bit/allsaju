@@ -69,17 +69,6 @@ type SajuResultRow = {
   created_at: string;
 };
 
-type SharedResultRow = {
-  id: string;
-  category_id: string;
-  category_title: string;
-  tier: string;
-  name: string;
-  sections: Json;
-  tarot_card: Json | null;
-  created_at: string;
-};
-
 type ReviewRow = {
   id: string;
   user_id: string;
@@ -168,21 +157,6 @@ export type Database = {
           created_at?: string;
         };
         Update: Partial<SajuResultRow>;
-        Relationships: [];
-      };
-      shared_results: {
-        Row: SharedResultRow;
-        Insert: {
-          id?: string;
-          category_id: string;
-          category_title: string;
-          tier: string;
-          name: string;
-          sections: Json;
-          tarot_card?: Json | null;
-          created_at?: string;
-        };
-        Update: Partial<SharedResultRow>;
         Relationships: [];
       };
       reviews: {
