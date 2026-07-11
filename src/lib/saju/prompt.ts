@@ -130,6 +130,12 @@ const BASIC_INFO = (input: PromptInput) => {
     : input.catId === 'secret'
     ? `- ⭐ [핵심 관점] 이 결과지를 읽는 ${input.name}님은 상대방에 대해 설레는 마음이 있다. 두 사람의 궁합 분석을 ${input.name}님 편에서 따뜻하고 솔직하게 전달하고, ${input.name}님이 이 관계에서 어떻게 행동하면 좋을지 구체적으로 안내한다.`
     : '';
+  const tarotBlock = input.tarotCard
+    ? `\n[선택한 타로 카드]\n카드명: ${input.tarotCard.name}\n키워드: ${input.tarotCard.keyword}\n카드 메시지: ${input.tarotCard.advice}\n`
+    : '';
+  const tarotRule = input.tarotCard
+    ? `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주·자미두수 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`
+    : '';
   return `[분석 대상]
 이름: ${input.name}
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
@@ -139,12 +145,13 @@ const BASIC_INFO = (input: PromptInput) => {
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
-
+${tarotBlock}
 [작성 규칙]
 - 각 섹션마다 문단 2개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
 - 각 문단은 80~120자로 핵심을 담아 쓴다. 간결하되 구체적으로.
 ${integrationRule}
 ${emotionNote}
+${tarotRule}
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
 - 명리학·자미두수 용어는 반드시 쉬운 말로 바로 풀어 설명한다.
 - ⚠️ 모든 섹션을 반드시 완성한다. 절대 중간에 끊기지 않는다.`;
@@ -619,6 +626,9 @@ const DANPUM_INFO = (input: PromptInput) => {
     : input.catId === 'secret'
     ? `\n[작성 관점]\n⭐ 이 결과지를 읽는 ${input.name}님은 상대방에 대해 설레는 마음이 있다. 두 사람의 궁합 분석을 ${input.name}님 편에서 따뜻하고 솔직하게 전달하고, ${input.name}님이 이 관계에서 어떻게 행동하면 좋을지 구체적으로 안내한다.`
     : '';
+  const tarotBlock = input.tarotCard
+    ? `\n[선택한 타로 카드]\n카드명: ${input.tarotCard.name}\n키워드: ${input.tarotCard.keyword}\n카드 메시지: ${input.tarotCard.advice}\n\n[작성 규칙]\n- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`
+    : '';
   return `[분석 대상]
 이름: ${input.name}
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
@@ -627,7 +637,7 @@ const DANPUM_INFO = (input: PromptInput) => {
 기준 연도: ${input.currentYear}년
 ${partnerBlock}
 [만세력 명식 데이터]
-${input.manseryeokText}${emotionNote}`;
+${input.manseryeokText}${emotionNote}${tarotBlock}`;
 };
 
 // ── 단품: 섹션 1, 2, 3 — 카테고리별 config 구동 ─────────────────────────

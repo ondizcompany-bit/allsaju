@@ -1045,7 +1045,7 @@ function ResultScreen({
   const [progress, setProgress] = useState(0);
   const [needsInfo, setNeedsInfo] = useState(false);
   const [inlineMe, setInlineMe] = useState<Partial<PersonInfo>>({ calendarType: 'solar' });
-  const hasTarot = tier === 'premium' && tarotCard;
+  const hasTarot = (tier === 'premium' || category.id === 'tarot-reunion') && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
 
   const runAnalysis = (me: Partial<PersonInfo>) => {
@@ -1253,7 +1253,9 @@ function ResultScreen({
             <span className="text-xs text-white/50">{category.title}</span>
           </div>
           <h1 className="text-xl font-bold text-white mb-1">종합 분석 결과지</h1>
-          <p className="text-xs text-white/50">사주팔자 + {hasJami ? '자미두수 ' : ''}{hasTarot ? '+ 타로 조언 ' : ''}완전 분석</p>
+          <p className="text-xs text-white/50">
+            {['사주팔자', hasJami && '자미두수', hasTarot && '타로 조언'].filter(Boolean).join(' + ')} 완전 분석
+          </p>
         </div>
       </div>
 
@@ -1393,7 +1395,7 @@ export default function StartPage() {
         } catch { /* ignore malformed */ }
       }
       setTier(tierParam);
-      setScreen(tierParam === 'premium' ? 'tarot' : 'result');
+      setScreen(tierParam === 'premium' || cat.id === 'tarot-reunion' ? 'tarot' : 'result');
     } else {
       setScreen('form');
     }
@@ -1410,7 +1412,7 @@ export default function StartPage() {
 
   const handleSelectTier = (t: Tier) => {
     setTier(t);
-    setScreen(t === 'premium' ? 'tarot' : 'result');
+    setScreen(t === 'premium' || category?.id === 'tarot-reunion' ? 'tarot' : 'result');
   };
 
   const handleSelectTarot = (i: number) => {
