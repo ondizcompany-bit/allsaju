@@ -4,7 +4,7 @@
     {
       "name": "saju-dev",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "C:\\Users\\thebe\\OneDrive\\Desktop\\사주사이트올자동\\.claude\\start-dev.cmd"],
+      "runtimeArgs": ["/c", "C:\\Users\\thebe\\OneDrive\\Desktop\\allsaju\\.claude\\start-dev.cmd"],
       "port": 3000
     }
   ]
