@@ -6,6 +6,7 @@ import { cn } from '@/lib/utils';
 
 const TABS = [
   { label: '전체',     href: null },
+  { label: '매력',     href: '/products/charm' },
   { label: '신년운세', href: '/products/new-year' },
   { label: '연애·재회', href: '/products/reunion' },
   { label: '커리어',   href: '/products/career' },

@@ -169,7 +169,7 @@ const ALL_PRODUCTS = [
   },
 ];
 
-const CATEGORIES = ["전체", "재회·사랑", "신년운세", "연애·재회", "커리어", "재테크", "속궁합", "임신·육아", "매력"];
+const CATEGORIES = ["전체", "매력", "재회·사랑", "신년운세", "연애·재회", "커리어", "재테크", "속궁합", "임신·육아"];
 
 function ProductsContent() {
   const searchParams = useSearchParams();
