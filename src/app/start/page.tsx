@@ -229,6 +229,21 @@ const CATEGORIES: Category[] = [
       premium: { price: 39900, original: 79800 },
     },
   },
+  {
+    id: 'charm',
+    symbol: '魅',
+    title: '나의 타고난 매력 포인트',
+    subtitle: '사주로 알아보는 나만의 매력과 어필 포인트',
+    needsPartner: false,
+    adult: false,
+    accentColor: '#fb7185',
+    gradient: 'linear-gradient(145deg,#1a0508 0%,#9f1239 60%,#4c0519 100%)',
+    packages: {
+      single:  { price: 24900, original: 49800 },
+      basic:   { price: 34900, original: 69800, popular: true },
+      premium: { price: 44900, original: 89800 },
+    },
+  },
 ];
 
 const TIER_META: Record<Tier, { label: string; tags: string[]; desc: string }> = {

@@ -4,7 +4,7 @@
 // 각 카테고리(new-year, reunion, career, investment, secret)별
 // 섹션 1·2·3 의 챕터 구성과 프롬프트 내용을 정의합니다.
 
-export type CategoryId = 'new-year' | 'reunion' | 'career' | 'investment' | 'secret' | 'pregnancy-timing' | 'pregnancy-date' | 'baby-dna' | 'baby-name' | 'tarot-reunion' | 'ex-feelings' | 'reunion-timing' | 'breakup-reason';
+export type CategoryId = 'new-year' | 'reunion' | 'career' | 'investment' | 'secret' | 'pregnancy-timing' | 'pregnancy-date' | 'baby-dna' | 'baby-name' | 'tarot-reunion' | 'ex-feelings' | 'reunion-timing' | 'breakup-reason' | 'charm';
 
 export type ChapterDef = {
   icon: string;
@@ -102,6 +102,33 @@ export const DANPUM_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef
         instruction: `{name}님의 사주 강점을 최대한 활용해 커리어에서 성공하는 구체적인 전략 3가지를 제시한다. 사주가 말하는 {name}님만의 차별화된 경쟁력을 따뜻하게 전달한다.` },
       { icon: '🔭', title: '현실적 조언',
         instruction: `{name}님이 커리어에서 자주 겪는 패턴과 그 해결책을 사주 기반으로 솔직하게 전달한다. 지금 당장 실천할 수 있는 커리어 행동 지침 3가지로 마무리한다.` },
+    ]},
+  },
+
+  'charm': {
+    s1: { chapters: [
+      { icon: '✨', title: '타고난 매력 포인트',
+        instruction: `{name}님의 일간과 십성 배치를 분석해 타고난 매력 포인트를 구체적으로 서술한다. 사주가 말하는 {name}님만의 고유한 매력이 무엇인지, 왜 그런 매력이 생기는지 명리학적 근거와 함께 감성적으로 전달한다.` },
+      { icon: '💫', title: '사람들이 끌리는 이유',
+        instruction: `{name}님의 사주 오행과 신살 배치를 분석해 처음 만난 사람들이 {name}님에게 끌리는 지점을 구체적으로 짚어준다. 실제로 주변 사람들이 {name}님에게서 느끼는 매력 포인트 3가지를 명리학적 근거와 함께 제시한다.` },
+      { icon: '🌙', title: '매력이 드러나는 순간들',
+        instruction: `{name}님의 사주 기질을 분석해 어떤 상황·환경·관계에서 매력이 가장 극대화되는지 서술한다. 반대로 매력이 잘 안 드러나는 상황도 함께 짚어주며 {name}님이 자신을 더 잘 이해할 수 있도록 따뜻하게 전달한다.` },
+    ]},
+    s2: { chapters: [
+      { icon: '⚡', title: '{year}년 매력·인기운 흐름',
+        instruction: `{year}년 세운이 {name}님의 매력운·인기운에 어떤 영향을 주는지 분석한다. 올해 유독 매력이 빛나는 시기와 사람들의 관심을 많이 받는 시기를 구체적으로 짚어준다.` },
+      { icon: '💌', title: '매력을 가장 잘 어필하는 상황',
+        instruction: `{name}님의 사주와 올해 세운을 조합해 연애·소개팅·사회생활에서 매력을 가장 잘 어필할 수 있는 상황과 방식을 구체적으로 제시한다. 어떤 자리, 어떤 태도에서 {name}님의 매력이 가장 잘 통하는지 서술한다.` },
+      { icon: '⚠️', title: '매력을 갉아먹는 습관',
+        instruction: `{name}님의 사주에서 드러나는, 스스로 매력을 깎아먹는 습관이나 패턴을 솔직하게 분석한다. 이 패턴이 왜 생기는지 명리학적으로 설명하고, 이를 극복할 수 있는 구체적인 방법을 함께 전달한다.` },
+    ]},
+    s3: { chapters: [
+      { icon: '🏆', title: '매력을 200% 발휘하는 법',
+        instruction: `{name}님의 사주 강점을 최대한 활용해 매력을 극대화하는 구체적인 전략 3가지를 제시한다. 사주가 말하는 {name}님만의 차별화된 매력 포인트를 어떻게 강화하면 좋을지 따뜻하게 전달한다.` },
+      { icon: '🔮', title: '장기적으로 관리하면 좋은 이미지',
+        instruction: `{name}님의 대운 흐름을 분석해 앞으로 3~5년간 어떤 이미지·인상을 가꾸어가면 좋은지 구체적으로 서술한다. 이 시기에 {name}님이 자연스럽게 성장시킬 수 있는 매력의 방향을 제시한다.` },
+      { icon: '💡', title: '핵심 조언',
+        instruction: `{name}님의 매력 전체를 종합해 지금 당장 실천할 수 있는 행동 지침 3가지로 마무리한다. 사주가 말하는 {name}님만의 매력 공식을 감성적이고 강렬하게 전달한다.` },
     ]},
   },
 
@@ -437,6 +464,31 @@ export const BASIC_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef;
         instruction: `사주 대운과 자미두수 대한 흐름을 분석해 앞으로 3~5년간의 커리어 큰 방향을 그려준다. 이 시기에 어떤 역할을 맡고 어떤 방향으로 성장하면 좋은지 구체적으로 서술한다.` },
       { icon: '💡', title: '건강 관리 & 에너지',
         instruction: `커리어 집중 시기에 {name}님이 관리해야 할 건강 부위와 에너지 관리 방법을 사주 오행으로 분석한다. 직업적 성공을 위해 {name}님의 몸과 마음을 어떻게 관리하면 좋은지 따뜻하게 전달한다.` },
+    ]},
+  },
+
+  'charm': {
+    s1: { chapters: [
+      { icon: '✨', title: '타고난 매력 포인트',
+        instruction: `{name}님의 일간과 십성 배치로 타고난 매력 포인트를 분석한다. 자미두수 명궁·천이궁 성계를 추가 분석해 두 시스템이 공통으로 가리키는 {name}님만의 고유한 매력을 구체적으로 서술한다.` },
+      { icon: '💫', title: '사람들이 끌리는 이유',
+        instruction: `사주 오행·신살과 자미두수 명궁 분석을 통해 처음 만난 사람들이 {name}님에게 끌리는 지점을 짚어준다. 실제로 주변 사람들이 느끼는 매력 포인트 3가지를 두 시스템의 근거와 함께 제시한다.` },
+      { icon: '🌙', title: '매력이 드러나는 순간들',
+        instruction: `사주와 자미두수에서 보이는 {name}님의 기질을 분석해 어떤 상황·환경에서 매력이 가장 극대화되는지 서술한다. 두 시스템의 관점을 통합해 {name}님이 자신을 더 잘 이해할 수 있도록 따뜻하게 전달한다.` },
+    ]},
+    s2: { chapters: [
+      { icon: '⚡', title: '{year}년 매력·인기운 흐름',
+        instruction: `{year}년 세운과 자미두수 소한이 {name}님의 매력운·인기운에 어떤 영향을 주는지 분석한다. 올해 유독 매력이 빛나는 시기와 사람들의 관심을 많이 받는 시기를 구체적으로 짚어준다.` },
+      { icon: '💌', title: '매력을 가장 잘 어필하는 상황',
+        instruction: `사주 세운과 자미두수 소한을 조합해 연애·소개팅·사회생활에서 {name}님의 매력을 가장 잘 어필할 수 있는 상황과 방식을 구체적으로 제시한다.` },
+      { icon: '⚠️', title: '매력을 갉아먹는 습관과 극복법',
+        instruction: `올해 {name}님이 스스로 매력을 깎아먹기 쉬운 습관과 이를 극복할 구체적 방법을 사주와 자미두수를 통합해 단정하고 실질적으로 전달한다.` },
+    ]},
+    s3: { chapters: [
+      { icon: '🏆', title: '매력을 200% 발휘하는 법',
+        instruction: `사주 대운과 자미두수 대한 흐름을 분석해 앞으로 3~5년간 {name}님의 매력을 극대화하는 전략을 구체적으로 제시한다. 이 시기에 어떤 이미지로 성장하면 좋은지 서술한다.` },
+      { icon: '💡', title: '핵심 조언',
+        instruction: `{name}님의 매력 전체를 종합해 지금 당장 실천할 수 있는 행동 지침 3가지로 마무리한다. 사주와 자미두수가 공통으로 말하는 {name}님만의 매력 공식을 감성적이고 강렬하게 전달한다.` },
     ]},
   },
 
