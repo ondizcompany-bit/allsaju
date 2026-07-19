@@ -246,6 +246,24 @@ const CATEGORIES: Category[] = [
   },
 ];
 
+const CONCERNS_PLACEHOLDER: Record<string, string> = {
+  'new-year': '예: 올해 하반기에 이직이나 큰 지출을 해도 괜찮을지 궁금해요.',
+  'reunion': '예: 헤어진 지 3개월 됐는데 연락해도 될까요? 재회 가능성이 궁금해요.',
+  'career': '예: 지금 이직 준비 중인데 타이밍이 맞을까요? 어떤 직종이 저한테 맞을지도 궁금해요.',
+  'investment': '예: 모아둔 돈으로 지금 투자를 시작해도 될까요? 어떤 방식이 저한테 맞을지 궁금해요.',
+  'secret': '예: 이 사람과 스킨십·애정 표현 궁합이 잘 맞는지 솔직하게 알고 싶어요.',
+  'pregnancy-timing': '예: 언제쯤 아이가 생길 수 있을지, 지금 시도해도 괜찮을지 궁금해요.',
+  'pregnancy-date': '예: 임신하기 좋은 날짜를 언제로 잡으면 좋을지 궁금해요.',
+  'baby-dna': '예: 우리 아이가 어떤 성격·재능을 타고날지 궁금해요.',
+  'baby-name': '예: 아이 이름에 어떤 한자나 발음을 쓰면 좋을지 궁금해요.',
+  'tarot-reunion': '예: 지금 상황에서 타로로 봤을 때 재회 가능성이 있을지 궁금해요.',
+  'ex-feelings': '예: 그 사람이 요즘 저를 어떻게 생각하고 있을지 궁금해요.',
+  'reunion-timing': '예: 먼저 연락해야 할지, 기다려야 할지 타이밍이 궁금해요.',
+  'breakup-reason': '예: 우리가 왜 헤어지게 됐는지 진짜 이유가 궁금해요.',
+  'charm': '예: 소개팅에서 제 매력을 어떻게 어필하면 좋을지 궁금해요.',
+};
+const DEFAULT_CONCERNS_PLACEHOLDER = '예: 지금 제 상황에서 가장 궁금한 점을 자유롭게 적어주세요.';
+
 const TIER_META: Record<Tier, { label: string; tags: string[]; desc: string }> = {
   single: {
     label: '단품',
@@ -574,7 +592,7 @@ function FormScreen({
           <textarea
             rows={3}
             className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 focus:ring-1 focus:ring-purple-rich/30 transition placeholder:text-mute resize-none"
-            placeholder="예: 헤어진 지 3개월 됐는데 연락해도 될까요? 재회 가능성이 궁금해요."
+            placeholder={CONCERNS_PLACEHOLDER[category.id] ?? DEFAULT_CONCERNS_PLACEHOLDER}
             value={concerns}
             onChange={e => setConcerns(e.target.value)}
           />
@@ -1078,7 +1096,7 @@ function ResultScreen({
             </div>
             <div>
               <label className="block text-xs text-body mb-1.5">궁금한 점 (선택)</label>
-              <textarea rows={3} className={cn(inputCls, 'resize-none')} placeholder="예: 재회 가능성이 궁금해요." value={inlineConcerns} onChange={e => setInlineConcerns(e.target.value)} />
+              <textarea rows={3} className={cn(inputCls, 'resize-none')} placeholder={CONCERNS_PLACEHOLDER[category.id] ?? DEFAULT_CONCERNS_PLACEHOLDER} value={inlineConcerns} onChange={e => setInlineConcerns(e.target.value)} />
             </div>
             <button
               onClick={() => { localStorage.setItem('saju_birth_me', JSON.stringify(inlineMe)); localStorage.setItem('saju_result_email', inlineEmail); localStorage.setItem('saju_concerns', inlineConcerns); runAnalysis(inlineMe); }}
