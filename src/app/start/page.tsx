@@ -235,7 +235,7 @@ const CATEGORIES: Category[] = [
     title: '나의 타고난 매력 포인트',
     subtitle: '사주로 알아보는 나만의 매력과 어필 포인트',
     needsPartner: false,
-    adult: false,
+    adult: true,
     accentColor: '#fb7185',
     gradient: 'linear-gradient(145deg,#1a0508 0%,#9f1239 60%,#4c0519 100%)',
     packages: {

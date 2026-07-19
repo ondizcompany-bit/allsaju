@@ -182,6 +182,7 @@ export default function CharmPage() {
         <div className="absolute bottom-0 left-0 w-full px-5 pb-7">
           <div className="flex items-center gap-2 mb-2.5">
             <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: 'linear-gradient(90deg,#9f1239,#e11d48)' }}>✦ 타고난 매력 분석</span>
+            <span className="inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-bold" style={{ background: 'rgba(251,113,133,0.15)', border: '1px solid rgba(251,113,133,0.35)', color: '#fda4af' }}>19+</span>
           </div>
           <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">사주로 읽는<br />나만의 매력 포인트</h1>
           <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>매력의 근원 · 어필 포인트 · 200% 발휘하는 법</p>
@@ -209,11 +210,12 @@ export default function CharmPage() {
       {/* 인트로 */}
       <section className="px-6 py-14 max-w-md mx-auto text-center">
         <FadeIn>
-          <p className="font-black leading-[1.1]" style={{ fontSize: 'clamp(1.8rem,7vw,2.8rem)', letterSpacing: '-0.01em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.18)' }}>내 매력이</span>{' '}
-            <span style={{ color: 'rgba(255,255,255,0.85)' }}>뭔지 모르겠나요,</span>
+          <p className="font-black leading-[1.15]" style={{ fontSize: 'clamp(1.8rem,7vw,2.8rem)', letterSpacing: '-0.01em' }}>
+            <span style={{ color: 'rgba(255,255,255,0.18)' }}>내 매력이 뭔지</span>
             <br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>이미 갖고 있나요?</span>
+            <span style={{ color: 'rgba(255,255,255,0.85)' }}>모르겠나요?</span>
+            <br />
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>사실은, 이미 있어요</span>
           </p>
         </FadeIn>
       </section>
@@ -247,9 +249,8 @@ export default function CharmPage() {
       <section className="px-6 py-16 max-w-md mx-auto text-center">
         <FadeIn>
           <p className="font-black leading-[1.08]" style={{ fontSize: 'clamp(1.9rem,8vw,3rem)', letterSpacing: '-0.02em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>매력은 없는 게 아니라</span><br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>몰랐던 것</span><br />
-            <span style={{ color: 'rgba(255,255,255,0.75)' }}>일 수 있어요.</span>
+            <span style={{ color: 'rgba(255,255,255,0.2)' }}>모르고 있었을 뿐,</span><br />
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>매력은 이미 있어요</span>
           </p>
           <p className="text-sm mt-5" style={{ color: 'rgba(255,255,255,0.3)' }}>알고 쓰면, 같은 나도 다르게 보입니다.</p>
         </FadeIn>
@@ -259,7 +260,7 @@ export default function CharmPage() {
       <section className="px-5 pb-16 max-w-md mx-auto">
         <FadeIn className="mb-7"><p className="text-[10px] font-bold tracking-[0.35em] uppercase mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>분석 항목</p><h2 className="text-2xl font-black" style={{ color: 'rgba(255,255,255,0.85)' }}>이런 걸 알 수 있어요</h2></FadeIn>
         <div className="space-y-2">
-          {[['✨', '타고난 매력 포인트'], ['💫', '사람들이 끌리는 이유'], ['🌙', '매력이 드러나는 순간들'], ['💌', '매력을 가장 잘 어필하는 상황'], ['🏆', '매력을 200% 발휘하는 법']].map(([icon, text], i) => (
+          {[['✨', '타고난 매력 포인트'], ['💫', '사람들이 끌리는 이유'], ['🌙', '매력이 드러나는 순간들'], ['💘', '이성에게 어필하는 법 (남/여 맞춤)'], ['💋', '스킨십과 애정 표현 스타일'], ['🏆', '매력을 200% 발휘하는 법']].map(([icon, text], i) => (
             <FadeIn key={i} delay={i * 55}>
               <div className="flex items-center gap-4 rounded-2xl px-5 py-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <span className="text-lg flex-shrink-0">{icon}</span>

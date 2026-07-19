@@ -159,13 +159,13 @@ const ALL_PRODUCTS = [
     slug: "charm",
     name: "나의 타고난 매력 포인트",
     subtitle: "사주로 알아보는 나만의 매력",
-    description: "사주로 알아보는 나만의 매력과 어필 포인트, 200% 발휘하는 법까지",
+    description: "이성에게 어필하는 법, 스킨십 스타일까지 은근하고 솔직하게",
     price: 24900,
     emoji: "✨",
     color: "#fb7185",
     category: "매력",
     image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=85&fit=crop",
-    badge: "NEW",
+    badge: "19+",
   },
 ];
 
