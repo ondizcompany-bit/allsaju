@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { cn } from '@/lib/utils';
-import { ChapterResult } from '@/components/saju/ChapterResult';
+import { ChapterResult, parseResultBlocks, ResultBodyText } from '@/components/saju/ChapterResult';
 
 // ════════════════════════════════════════
 //  TYPES
@@ -882,26 +882,6 @@ function TarotScreen({
 // ════════════════════════════════════════
 //  SCREEN 5 — RESULT
 // ════════════════════════════════════════
-const MOCK_SAJU = {
-  overview: '2026년 병오년은 당신에게 전환점이 되는 해입니다. 상반기(1~6월)는 내실을 다지는 시기로, 조급하게 움직이기보다 기반을 탄탄히 하는 데 집중하세요. 7월부터는 그동안 쌓아온 것들이 빛을 발하며 기회의 문이 열립니다.',
-  monthly: [
-    { m: '1–2월', desc: '새로운 인연이 스며드는 시기. 섣불리 결정하지 말고 관찰하세요.' },
-    { m: '3–4월', desc: '재물운이 상승합니다. 투자보다 저축이 유리한 시기.' },
-    { m: '5–6월', desc: '건강에 주의가 필요합니다. 과로를 피하고 휴식을 챙기세요.' },
-    { m: '7–8월', desc: '커리어의 전환점. 큰 기회가 찾아오니 망설이지 마세요.' },
-    { m: '9–10월', desc: '인간관계가 풍성해지는 시기. 신뢰할 수 있는 사람과 연대하세요.' },
-    { m: '11–12월', desc: '한 해를 마무리하며 내년을 위한 씨앗을 뿌리는 시기.' },
-  ],
-  caution: '5월과 9월은 충(沖)의 기운이 강합니다. 중요한 계약이나 결정은 이 시기를 피하는 것이 좋습니다.',
-};
-
-const MOCK_JAMI = {
-  core: '당신의 명반에서 자미성(紫微星)이 재백궁(財帛宮)에 위치합니다. 이는 재물과 관련된 능력이 탁월하며, 타고난 경영 감각이 있음을 뜻합니다.',
-  decade: '현재의 대운(2024~2033)은 문창성(文昌星)과 천량성(天梁星)의 조합입니다. 학문·연구·전문직 분야에서 두각을 나타내기 좋은 10년입니다.',
-  strength: '판단력이 뛰어나고 위기 상황에서도 냉철하게 대처합니다. 주변 사람들로부터 신뢰를 얻는 자질이 있습니다.',
-  weakness: '완벽주의 성향으로 인해 시작을 너무 늦추는 경향이 있습니다. 80%의 준비가 되었을 때 행동하는 연습이 필요합니다.',
-};
-
 
 function ResultSection({ title, children }: { title: string; children: React.ReactNode }) {
   return (
@@ -935,6 +915,10 @@ function ResultScreen({
   const [inlineConcerns, setInlineConcerns] = useState('');
   const hasTarot = (tier === 'premium' || category.id === 'tarot-reunion') && tarotCard;
   const hasJami  = tier === 'basic' || tier === 'premium';
+
+  const resultBlocks = interpretSections ? parseResultBlocks(interpretSections) : [];
+  const jamiBlocks  = resultBlocks.filter(b => b.isJami);
+  const tarotBlocks = resultBlocks.filter(b => b.isTarot);
 
   const runAnalysis = (me: Partial<PersonInfo>) => {
     if (!me.birthDate || !me.gender) return;
@@ -1214,20 +1198,17 @@ function ResultScreen({
       {/* ── 자미두수 탭 ── */}
       {activeTab === 'jami' && hasJami && (
         <div className="animate-in fade-in duration-300">
-          <ResultSection title="명반 핵심 분석">
-            <p className="text-sm text-white/80 leading-7">{MOCK_JAMI.core}</p>
-          </ResultSection>
-          <ResultSection title="현재 10년 대운">
-            <p className="text-sm text-white/80 leading-7">{MOCK_JAMI.decade}</p>
-          </ResultSection>
-          <div className="grid grid-cols-2 gap-4">
-            <ResultSection title="강점">
-              <p className="text-sm text-white/80 leading-7">{MOCK_JAMI.strength}</p>
-            </ResultSection>
-            <ResultSection title="보완점">
-              <p className="text-sm text-white/80 leading-7">{MOCK_JAMI.weakness}</p>
-            </ResultSection>
-          </div>
+          {jamiBlocks.length > 0 ? (
+            jamiBlocks.map((b, i) => (
+              <ResultSection key={i} title={b.title.replace(/^[^\w가-힣]+/, '')}>
+                <ResultBodyText body={b.body} isJami isTarot={false} />
+              </ResultSection>
+            ))
+          ) : (
+            <div className="rounded-2xl border border-hairline bg-canvas/40 p-8 text-center">
+              <p className="text-sm text-body">분석 중이에요...</p>
+            </div>
+          )}
         </div>
       )}
 
@@ -1245,14 +1226,17 @@ function ResultScreen({
           <ResultSection title="카드의 메시지">
             <p className="text-sm text-white/80 leading-7">{tarotCard.advice}</p>
           </ResultSection>
-          <ResultSection title="종합 조언">
-            <p className="text-sm text-white/80 leading-7">
-              당신의 사주와 자미두수, 그리고 타로 카드가 모두 같은 방향을 가리키고 있습니다.
-              지금 이 순간이 인생의 중요한 전환점임을 잊지 마세요.
-              내면의 목소리에 귀를 기울이고, 두려움 대신 가능성에 집중하세요.
-              우주는 당신의 용기 있는 첫 걸음을 기다리고 있습니다.
-            </p>
-          </ResultSection>
+          {tarotBlocks.length > 0 ? (
+            tarotBlocks.map((b, i) => (
+              <ResultSection key={i} title={b.title.replace(/^[^\w가-힣]+/, '')}>
+                <ResultBodyText body={b.body} isJami={false} isTarot />
+              </ResultSection>
+            ))
+          ) : (
+            <div className="rounded-2xl border border-hairline bg-canvas/40 p-8 text-center">
+              <p className="text-sm text-body">분석 중이에요...</p>
+            </div>
+          )}
         </div>
       )}
 

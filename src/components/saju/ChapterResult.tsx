@@ -4,12 +4,12 @@ import { useState } from 'react';
 
 const CHAPTER_ICONS = ['✨','💎','🌟','💼','💰','💕','🌿','🔭','🌌','🃏','🔮'];
 
-export function ChapterResult({ sections }: { sections: string[] }) {
-  const [screen, setScreen] = useState<'toc' | 'chapter'>('toc');
-  const [cur, setCur] = useState(0);
+export type ResultBlock = { title: string; body: string; isJami: boolean; isTarot: boolean };
 
-  type Block = { title: string; body: string; isJami: boolean; isTarot: boolean };
-  const blocks: Block[] = [];
+// AI가 생성한 결과지 원문(## 챕터, ### 소제목 등)을 챕터 블록으로 파싱한다.
+// 자미두수/타로 심층 분석 배너("## 자미두수 심층 분석" 등) 이후 챕터는 각각 isJami/isTarot로 표시된다.
+export function parseResultBlocks(sections: string[]): ResultBlock[] {
+  const blocks: ResultBlock[] = [];
   let afterJami = false;
   let afterTarot = false;
   sections.forEach(section => {
@@ -35,25 +35,37 @@ export function ChapterResult({ sections }: { sections: string[] }) {
       blocks.push({ title: curTitle, body: curBody.join('\n').trim(), isJami: afterJami, isTarot: afterTarot });
     }
   });
+  return blocks;
+}
 
+// 챕터 본문(마크다운 유사 문법: ### 소제목, - 리스트, **강조**)을 렌더링한다.
+export function ResultBodyText({ body, isJami, isTarot }: { body: string; isJami: boolean; isTarot: boolean }) {
+  const accent = isTarot ? '#c084fc' : isJami ? '#fbbf24' : '#a78bfa';
+  const borderColor = isTarot ? 'rgba(192,132,252,0.35)' : isJami ? 'rgba(234,179,8,0.35)' : 'rgba(139,92,246,0.35)';
+  return (
+    <>
+      {body.split('\n').map((line, li) => {
+        if (line.trim() === '') return <div key={li} className="h-3" />;
+        if (line.startsWith('### ')) return (
+          <p key={li} className="text-xs font-bold mt-4 mb-1" style={{ color: accent }}>{line.replace(/^###\s*/, '')}</p>
+        );
+        if (line.startsWith('- ')) return (
+          <p key={li} className="text-sm leading-7 pl-3 mb-1" style={{ color: 'rgba(255,255,255,0.75)', borderLeft: `2px solid ${borderColor}` }}>{line.replace(/^-\s*/, '')}</p>
+        );
+        const html = line.replace(/\*\*(.+?)\*\*/g, `<strong style="color:#e2d9f3;font-weight:500">$1</strong>`);
+        return <p key={li} className="text-sm leading-8" style={{ color: 'rgba(255,255,255,0.75)' }} dangerouslySetInnerHTML={{ __html: html }} />;
+      })}
+    </>
+  );
+}
+
+export function ChapterResult({ sections }: { sections: string[] }) {
+  const [screen, setScreen] = useState<'toc' | 'chapter'>('toc');
+  const [cur, setCur] = useState(0);
+
+  const blocks = parseResultBlocks(sections);
   const total = blocks.length;
   const progress = screen === 'toc' ? 0 : Math.round(((cur + 1) / total) * 100);
-
-  function renderBody(body: string, isJami: boolean, isTarot: boolean) {
-    const accent = isTarot ? '#c084fc' : isJami ? '#fbbf24' : '#a78bfa';
-    const borderColor = isTarot ? 'rgba(192,132,252,0.35)' : isJami ? 'rgba(234,179,8,0.35)' : 'rgba(139,92,246,0.35)';
-    return body.split('\n').map((line, li) => {
-      if (line.trim() === '') return <div key={li} className="h-3" />;
-      if (line.startsWith('### ')) return (
-        <p key={li} className="text-xs font-bold mt-4 mb-1" style={{ color: accent }}>{line.replace(/^###\s*/, '')}</p>
-      );
-      if (line.startsWith('- ')) return (
-        <p key={li} className="text-sm leading-7 pl-3 mb-1" style={{ color: 'rgba(255,255,255,0.75)', borderLeft: `2px solid ${borderColor}` }}>{line.replace(/^-\s*/, '')}</p>
-      );
-      const html = line.replace(/\*\*(.+?)\*\*/g, `<strong style="color:#e2d9f3;font-weight:500">$1</strong>`);
-      return <p key={li} className="text-sm leading-8" style={{ color: 'rgba(255,255,255,0.75)' }} dangerouslySetInnerHTML={{ __html: html }} />;
-    });
-  }
 
   if (screen === 'toc') {
     return (
@@ -149,7 +161,7 @@ export function ChapterResult({ sections }: { sections: string[] }) {
 
       {/* 본문 */}
       <div className="px-5 py-5">
-        {renderBody(block.body, isJami, isTarot)}
+        <ResultBodyText body={block.body} isJami={isJami} isTarot={isTarot} />
       </div>
 
       {/* 도트 네비 */}
