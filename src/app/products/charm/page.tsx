@@ -250,7 +250,8 @@ export default function CharmPage() {
         <FadeIn>
           <p className="font-black leading-[1.08]" style={{ fontSize: 'clamp(1.9rem,8vw,3rem)', letterSpacing: '-0.02em' }}>
             <span style={{ color: 'rgba(255,255,255,0.2)' }}>모르고 있었을 뿐,</span><br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>매력은 이미 있어요</span>
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>매력은 이미</span><br />
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>있어요</span>
           </p>
           <p className="text-sm mt-5" style={{ color: 'rgba(255,255,255,0.3)' }}>알고 쓰면, 같은 나도 다르게 보입니다.</p>
         </FadeIn>
