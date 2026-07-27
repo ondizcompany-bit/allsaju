@@ -57,9 +57,9 @@ const PRODUCTS = [
       { name: '최○○', age: '30대 남성', rating: 4, text: '처음엔 반신반의했는데 상반기 운세가 너무 맞아서 하반기가 더 기대돼요. 종합 리포트 퀄리티가 높습니다.' },
     ],
     packages: {
-      single:  { price: 24900, original: 49800, popular: false },
-      basic:   { price: 34900, original: 69800, popular: true  },
-      premium: { price: 44900, original: 89800, popular: false },
+      single:  { price: 27900, original: 49800, popular: false },
+      basic:   { price: 39900, original: 69800, popular: true  },
+      premium: { price: 49900, original: 89800, popular: false },
     },
   },
   {
@@ -103,7 +103,7 @@ const PRODUCTS = [
       { name: '한○○', age: '30대 여성', rating: 4, text: '결과지가 정말 자세해요. 단순히 될지 안될지가 아니라 어떻게 접근해야 하는지까지 알려줘서 실용적이에요.' },
     ],
     packages: {
-      single:  { price: 24900, original: 49800, popular: false },
+      single:  { price: 27900, original: 49800, popular: false },
       basic:   { price: 39900, original: 79800, popular: true  },
       premium: { price: 49900, original: 99800, popular: false },
     },
@@ -149,9 +149,9 @@ const PRODUCTS = [
       { name: '오○○', age: '30대 여성', rating: 4, text: '승진 타이밍이 내년 상반기라고 했는데 실제로 그쯤 기회가 왔어요. 미리 준비하고 있어서 잡을 수 있었습니다.' },
     ],
     packages: {
-      single:  { price: 24900, original: 49800, popular: false },
-      basic:   { price: 34900, original: 69800, popular: true  },
-      premium: { price: 44900, original: 89800, popular: false },
+      single:  { price: 27900, original: 49800, popular: false },
+      basic:   { price: 39900, original: 69800, popular: true  },
+      premium: { price: 49900, original: 89800, popular: false },
     },
   },
   {
@@ -195,7 +195,7 @@ const PRODUCTS = [
       { name: '신○○', age: '20대 여성', rating: 4, text: '돈 관리 습관을 바꿨더니 실제로 조금씩 모이기 시작했어요. 사주에서 알려준 방향대로 하니까 스트레스도 덜해요.' },
     ],
     packages: {
-      single:  { price: 24900, original: 49800, popular: false },
+      single:  { price: 27900, original: 49800, popular: false },
       basic:   { price: 39900, original: 79800, popular: true  },
       premium: { price: 49900, original: 99800, popular: false },
     },
@@ -241,7 +241,7 @@ const PRODUCTS = [
       { name: '익명○○', age: '30대 여성', rating: 4, text: '솔직히 반신반의했는데 파트너 성향 묘사가 너무 정확해서 소름 돋았어요. 둘이 같이 읽으면서 엄청 웃었어요 ㅋㅋ' },
     ],
     packages: {
-      single:  { price: 29900, original: 59800, popular: false },
+      single:  { price: 27900, original: 59800, popular: false },
       basic:   { price: 39900, original: 79800, popular: true  },
       premium: { price: 49900, original: 99800, popular: false },
     },

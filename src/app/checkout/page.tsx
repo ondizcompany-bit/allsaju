@@ -27,7 +27,7 @@ function CheckoutInner() {
   const search = useSearchParams();
   const cat    = search.get('cat') ?? 'unknown';
   const tier   = search.get('tier') ?? 'basic';
-  const amount = Number(search.get('amount') ?? '34900');
+  const amount = Number(search.get('amount') ?? '39900');
   const name   = search.get('name') ?? '명리사주 분석';
   const bi     = search.get('bi') ?? '';
 

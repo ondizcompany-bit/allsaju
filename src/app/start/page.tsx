@@ -44,9 +44,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#a78bfa',
     gradient: 'linear-gradient(145deg,#120826 0%,#3b0764 60%,#1e1040 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
-      basic:   { price: 34900, original: 69800, popular: true },
-      premium: { price: 44900, original: 89800 },
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 69800, popular: true },
+      premium: { price: 49900, original: 89800 },
     },
   },
   {
@@ -59,7 +59,7 @@ const CATEGORIES: Category[] = [
     accentColor: '#c084fc',
     gradient: 'linear-gradient(145deg,#100720 0%,#581c87 60%,#2e1065 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
+      single:  { price: 27900, original: 49800 },
       basic:   { price: 39900, original: 79800, popular: true },
       premium: { price: 49900, original: 99800 },
     },
@@ -74,9 +74,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#818cf8',
     gradient: 'linear-gradient(145deg,#070b1e 0%,#1e1b4b 60%,#312e81 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
-      basic:   { price: 34900, original: 69800, popular: true },
-      premium: { price: 44900, original: 89800 },
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 69800, popular: true },
+      premium: { price: 49900, original: 89800 },
     },
   },
   {
@@ -89,7 +89,7 @@ const CATEGORIES: Category[] = [
     accentColor: '#93c5fd',
     gradient: 'linear-gradient(145deg,#050e1e 0%,#1e3a5f 60%,#1e1b4b 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
+      single:  { price: 27900, original: 49800 },
       basic:   { price: 39900, original: 79800, popular: true },
       premium: { price: 49900, original: 99800 },
     },
@@ -104,7 +104,7 @@ const CATEGORIES: Category[] = [
     accentColor: '#f9a8d4',
     gradient: 'linear-gradient(145deg,#180710 0%,#831843 60%,#4a0d2a 100%)',
     packages: {
-      single:  { price: 29900, original: 59800 },
+      single:  { price: 27900, original: 59800 },
       basic:   { price: 39900, original: 79800, popular: true },
       premium: { price: 49900, original: 99800 },
     },
@@ -119,9 +119,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#f9a8d4',
     gradient: 'linear-gradient(145deg,#1a0514 0%,#831843 60%,#500d30 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
-      basic:   { price: 34900, original: 69800, popular: true },
-      premium: { price: 44900, original: 89800 },
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 69800, popular: true },
+      premium: { price: 49900, original: 89800 },
     },
   },
   {
@@ -134,7 +134,7 @@ const CATEGORIES: Category[] = [
     accentColor: '#a78bfa',
     gradient: 'linear-gradient(145deg,#0d0820 0%,#4c1d95 60%,#2e1065 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
+      single:  { price: 27900, original: 49800 },
       basic:   { price: 39900, original: 79800, popular: true },
       premium: { price: 49900, original: 99800 },
     },
@@ -149,9 +149,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#34d399',
     gradient: 'linear-gradient(145deg,#031a12 0%,#065f46 60%,#064e3b 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
-      basic:   { price: 34900, original: 69800, popular: true },
-      premium: { price: 44900, original: 89800 },
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 69800, popular: true },
+      premium: { price: 49900, original: 89800 },
     },
   },
   {
@@ -164,9 +164,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#fbbf24',
     gradient: 'linear-gradient(145deg,#1a1200 0%,#78350f 60%,#451a03 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
-      basic:   { price: 34900, original: 69800, popular: true },
-      premium: { price: 44900, original: 89800 },
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 69800, popular: true },
+      premium: { price: 49900, original: 89800 },
     },
   },
   {
@@ -179,9 +179,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#a78bfa',
     gradient: 'linear-gradient(145deg,#0d0020 0%,#4c1d95 60%,#2e1065 100%)',
     packages: {
-      single:  { price: 19900, original: 39800 },
-      basic:   { price: 29900, original: 59800, popular: true },
-      premium: { price: 39900, original: 79800 },
+      single:  { price: 27900, original: 39800 },
+      basic:   { price: 39900, original: 59800, popular: true },
+      premium: { price: 49900, original: 79800 },
     },
   },
   {
@@ -194,9 +194,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#f472b6',
     gradient: 'linear-gradient(145deg,#1a0010 0%,#831843 60%,#500724 100%)',
     packages: {
-      single:  { price: 19900, original: 39800 },
-      basic:   { price: 29900, original: 59800, popular: true },
-      premium: { price: 39900, original: 79800 },
+      single:  { price: 27900, original: 39800 },
+      basic:   { price: 39900, original: 59800, popular: true },
+      premium: { price: 49900, original: 79800 },
     },
   },
   {
@@ -209,9 +209,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#34d399',
     gradient: 'linear-gradient(145deg,#001a0d 0%,#065f46 60%,#022c22 100%)',
     packages: {
-      single:  { price: 19900, original: 39800 },
-      basic:   { price: 29900, original: 59800, popular: true },
-      premium: { price: 39900, original: 79800 },
+      single:  { price: 27900, original: 39800 },
+      basic:   { price: 39900, original: 59800, popular: true },
+      premium: { price: 49900, original: 79800 },
     },
   },
   {
@@ -224,9 +224,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#fb923c',
     gradient: 'linear-gradient(145deg,#1a0800 0%,#7c2d12 60%,#431407 100%)',
     packages: {
-      single:  { price: 19900, original: 39800 },
-      basic:   { price: 29900, original: 59800, popular: true },
-      premium: { price: 39900, original: 79800 },
+      single:  { price: 27900, original: 39800 },
+      basic:   { price: 39900, original: 59800, popular: true },
+      premium: { price: 49900, original: 79800 },
     },
   },
   {
@@ -239,9 +239,9 @@ const CATEGORIES: Category[] = [
     accentColor: '#fb7185',
     gradient: 'linear-gradient(145deg,#1a0508 0%,#9f1239 60%,#4c0519 100%)',
     packages: {
-      single:  { price: 24900, original: 49800 },
-      basic:   { price: 34900, original: 69800, popular: true },
-      premium: { price: 44900, original: 89800 },
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 69800, popular: true },
+      premium: { price: 49900, original: 89800 },
     },
   },
 ];
