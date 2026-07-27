@@ -29,6 +29,21 @@ export async function generateInterpretation(req: LlmRequest): Promise<LlmRespon
   }
 }
 
+// 타임아웃·일시적 오류 등 낱개 LLM 호출 실패가 전체 결과지를 날려버리지 않도록
+// 짧은 대기 후 한 번 재시도한다.
+export async function generateInterpretationWithRetry(
+  req: LlmRequest,
+  retries = 1,
+): Promise<LlmResponse> {
+  try {
+    return await generateInterpretation(req);
+  } catch (err) {
+    if (retries <= 0) throw err;
+    await new Promise((r) => setTimeout(r, 500));
+    return generateInterpretationWithRetry(req, retries - 1);
+  }
+}
+
 async function callOpenAI(req: LlmRequest, model: string, key: string | undefined): Promise<LlmResponse> {
   if (!key) throw new Error("OPENAI_API_KEY is required when LLM_PROVIDER=openai");
   const { default: OpenAI } = await import("openai");
@@ -40,7 +55,7 @@ async function callOpenAI(req: LlmRequest, model: string, key: string | undefine
       { role: "user", content: req.user },
     ],
     temperature: 0.7,
-    max_completion_tokens: 2000,
+    max_completion_tokens: 3000,
   });
   const text = completion.choices[0]?.message?.content ?? "";
   return { text, provider: "openai", model };

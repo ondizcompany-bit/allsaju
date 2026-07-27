@@ -4,15 +4,22 @@
 // 만세력 텍스트 + 상품 정보를 받아 LLM 해석 결과를 반환합니다.
 // 단품 신년운세: 3번의 LLM 호출로 ~3만자 결과 생성
 //
-// Body: { productSlug, name, birthDate, birthTime, timeUnknown, gender, manseryeokText }
+// Body: { productSlug, name, birthDate, birthTime, timeUnknown, gender, manseryeokText,
+//         email?, productTitle?, tierLabel? }
 // Response: { status: "success", sections: string[] }
+//
+// - 병렬 LLM 호출 중 일부가 실패해도(타임아웃 등) 전체를 날리지 않고,
+//   실패한 섹션만 재시도 후 안내 문구로 대체해 나머지는 그대로 보여준다.
+// - email이 함께 오면, 클라이언트가 탭을 닫아도 발송이 끝나 있도록
+//   여기서 서버가 직접 이메일을 보내고 응답한다.
 
 import { NextResponse, type NextRequest } from "next/server";
 
 export const runtime = 'edge';
 export const maxDuration = 60;
 import { z } from "zod";
-import { generateInterpretation } from "@/lib/saju/llm";
+import { generateInterpretationWithRetry } from "@/lib/saju/llm";
+import { sendResultEmail } from "@/lib/email/send-result-email";
 import {
   buildDanpumSection1,
   buildDanpumSection2,
@@ -40,6 +47,9 @@ const bodySchema = z.object({
   catId: z.string().optional(),
   partnerText: z.string().optional(),
   concerns: z.string().optional(),
+  email: z.string().email().optional(),
+  productTitle: z.string().optional(),
+  tierLabel: z.string().optional(),
 });
 
 function getAge(birthDate: string): number {
@@ -49,6 +59,22 @@ function getAge(birthDate: string): number {
   const m = today.getMonth() - birth.getMonth();
   if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
   return age;
+}
+
+// LLM이 소제목 placeholder("[OO님만의 감성적 한 줄 소제목]" 등)를 채우지 못하고
+// 대괄호를 그대로 남기는 경우가 있어, 눈에 띄는 잔여 대괄호 구문을 제거한다.
+function stripUnfilledPlaceholders(text: string): string {
+  return text.replace(/\s*\[[^\[\]]{0,40}(소제목|placeholder)[^\[\]]{0,10}\]/g, "");
+}
+
+// 실패한 섹션은 전체를 날리는 대신, 안내 문구로 대체해 나머지 섹션은 그대로 보여준다.
+async function generateSectionSafely(req: { system: string; user: string }, fallbackTitle: string): Promise<string> {
+  try {
+    const result = await generateInterpretationWithRetry(req, 1);
+    return stripUnfilledPlaceholders(result.text);
+  } catch {
+    return `## ⚠️ ${fallbackTitle}\n\n일시적인 오류로 이 부분 생성에 실패했어요. 새로고침 후 다시 시도하시면 정상적으로 나올 수 있어요. 계속 안 나오면 고객센터로 문의해주세요.`;
+  }
 }
 
 export async function POST(request: NextRequest) {
@@ -84,51 +110,47 @@ export async function POST(request: NextRequest) {
     concerns: d.concerns,
   };
 
+  let sections: string[];
+
   try {
     if (isBasic) {
-      // 베이직: 사주 3섹션 + 자미두수 전용 심층 섹션 병렬 호출
-      const [r1, r2, r3, r4] = await Promise.all([
-        generateInterpretation(buildBasicSection1(promptInput)),
-        generateInterpretation(buildBasicSection2(promptInput)),
-        generateInterpretation(buildBasicSection3(promptInput)),
-        generateInterpretation(buildBasicJami(promptInput)),
+      sections = await Promise.all([
+        generateSectionSafely(buildBasicSection1(promptInput), "사주 분석 (1부)"),
+        generateSectionSafely(buildBasicSection2(promptInput), "사주 분석 (2부)"),
+        generateSectionSafely(buildBasicSection3(promptInput), "사주 분석 (3부)"),
+        generateSectionSafely(buildBasicJami(promptInput), "자미두수 심층 분석"),
       ]);
-      return NextResponse.json({
-        status: "success" as const,
-        sections: [r1.text, r2.text, r3.text, r4.text],
-      });
-    }
-
-    if (isPremium) {
-      // 종합: 사주 3섹션 + 자미두수 심층 + 타로 심층 병렬 호출
-      const [r1, r2, r3, r4, r5] = await Promise.all([
-        generateInterpretation(buildPremiumSection1(promptInput)),
-        generateInterpretation(buildPremiumSection2(promptInput)),
-        generateInterpretation(buildPremiumSection3(promptInput)),
-        generateInterpretation(buildPremiumJami(promptInput)),
-        generateInterpretation(buildPremiumTarot(promptInput)),
+    } else if (isPremium) {
+      sections = await Promise.all([
+        generateSectionSafely(buildPremiumSection1(promptInput), "사주 분석 (1부)"),
+        generateSectionSafely(buildPremiumSection2(promptInput), "사주 분석 (2부)"),
+        generateSectionSafely(buildPremiumSection3(promptInput), "사주 분석 (3부)"),
+        generateSectionSafely(buildPremiumJami(promptInput), "자미두수 심층 분석"),
+        generateSectionSafely(buildPremiumTarot(promptInput), "타로 심층 분석"),
       ]);
-      return NextResponse.json({
-        status: "success" as const,
-        sections: [r1.text, r2.text, r3.text, r4.text, r5.text],
-      });
+    } else {
+      sections = await Promise.all([
+        generateSectionSafely(buildDanpumSection1(promptInput), "사주 분석 (1부)"),
+        generateSectionSafely(buildDanpumSection2(promptInput), "사주 분석 (2부)"),
+        generateSectionSafely(buildDanpumSection3(promptInput), "사주 분석 (3부)"),
+      ]);
     }
-
-    // 단품
-    const [r1, r2, r3] = await Promise.all([
-      generateInterpretation(buildDanpumSection1(promptInput)),
-      generateInterpretation(buildDanpumSection2(promptInput)),
-      generateInterpretation(buildDanpumSection3(promptInput)),
-    ]);
-
-    return NextResponse.json({
-      status: "success" as const,
-      sections: [r1.text, r2.text, r3.text],
-    });
   } catch (err) {
     return NextResponse.json(
       { status: "error" as const, error: err instanceof Error ? err.message : "해석 생성 실패" },
       { status: 502 },
     );
   }
+
+  // 이메일은 클라이언트가 페이지를 닫아도 발송이 완료되도록 서버에서 직접 처리한다.
+  if (d.email) {
+    await sendResultEmail({
+      email: d.email,
+      productTitle: d.productTitle ?? d.catId ?? "사주",
+      tierLabel: d.tierLabel ?? (isPremium ? "종합" : isBasic ? "베이직" : "단품"),
+      sections,
+    }).catch(() => { /* 이메일 실패가 결과지 응답을 막지 않는다 */ });
+  }
+
+  return NextResponse.json({ status: "success" as const, sections });
 }

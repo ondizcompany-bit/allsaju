@@ -975,6 +975,7 @@ function ResultScreen({
           } catch { /* ignore */ }
         }
         const productSlug = `${tier === 'single' ? 'danpum' : tier === 'basic' ? 'basic' : 'premium'}-${category.id}`;
+        const resultEmail = localStorage.getItem('saju_result_email');
         const res = await fetch('/api/interpret', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -990,6 +991,11 @@ function ResultScreen({
             tarotCard: tarotCard ? { name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice } : null,
             partnerText,
             concerns: localStorage.getItem('saju_concerns') || undefined,
+            // 이메일 발송은 서버(이 API)가 응답 전에 직접 처리한다 —
+            // 브라우저 탭을 닫아도 발송이 이미 끝나 있도록 하기 위함
+            email: resultEmail || undefined,
+            productTitle: category.title,
+            tierLabel: TIER_META[tier].label,
           }),
         });
         const rawText = await res.text();
@@ -1005,19 +1011,6 @@ function ResultScreen({
           clearInterval(timer);
           setProgress(100);
           setInterpretSections(interpret.sections as string[]);
-          const resultEmail = localStorage.getItem('saju_result_email');
-          if (resultEmail) {
-            fetch('/api/send-result-email', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                email: resultEmail,
-                productTitle: category.title,
-                tierLabel: TIER_META[tier].label,
-                sections: interpret.sections,
-              }),
-            }).catch(() => { /* 이메일 발송 실패는 결과 화면 표시를 막지 않는다 */ });
-          }
         } else {
           setApiError(interpret.error ?? 'AI 해석 실패');
         }
