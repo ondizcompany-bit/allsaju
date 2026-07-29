@@ -572,7 +572,7 @@ function FormScreen({
         <PersonFields prefix="me" label="나의 정보" values={me} onChange={updateMe} />
 
         <div className="rounded-2xl border border-hairline bg-surface-soft/50 p-5">
-          <label className="block text-xs text-body mb-1.5">결과지 받을 이메일</label>
+          <label className="block text-xs text-body mb-1.5">결과지 받을 이메일 (간단하게만 발송됩니다)</label>
           <input
             type="email"
             required
@@ -1084,7 +1084,7 @@ function ResultScreen({
               </select>
             </div>
             <div>
-              <label className="block text-xs text-body mb-1.5">결과지 받을 이메일</label>
+              <label className="block text-xs text-body mb-1.5">결과지 받을 이메일 (간단하게만 발송됩니다)</label>
               <input type="email" required className={inputCls} placeholder="example@email.com" value={inlineEmail} onChange={e => setInlineEmail(e.target.value)} />
             </div>
             <div>
