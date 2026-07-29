@@ -4,8 +4,6 @@ import Script from "next/script";
 import { Toaster } from "sonner";
 import { Noto_Serif_KR } from "next/font/google";
 import { siteConfig, businessInfo } from "@/config/site";
-import { isSupabaseConfigured } from "@/lib/env";
-import { getCurrentUser } from "@/lib/auth";
 import Logo from "@/components/ui/Logo";
 import "./globals.css";
 
@@ -31,9 +29,6 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  // 로그인 여부에 따라 헤더 메뉴 분기. Supabase 미설정(데모) 모드면 무조건 비로그인 취급.
-  const isLoggedIn = isSupabaseConfigured() ? !!(await getCurrentUser()) : false;
-
   return (
     <html lang="ko" className={notoSerifKR.variable}>
       <body suppressHydrationWarning>
@@ -54,7 +49,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           src={`https://www.facebook.com/tr?id=${META_PIXEL_ID}&ev=PageView&noscript=1`}
           alt=""
         /></noscript>
-        <SiteHeader isLoggedIn={isLoggedIn} />
+        <SiteHeader />
         <main className="min-h-[calc(100vh-7rem)]">{children}</main>
         <SiteFooter />
         <Toaster position="top-center" />
@@ -63,7 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   );
 }
 
-function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
+function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-hairline bg-canvas/80 backdrop-blur-md">
       <div className="container flex h-14 items-center justify-between">
@@ -76,16 +71,6 @@ function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
         </Link>
         <nav className="flex items-center gap-6 text-[13px] font-medium">
           <Link href="/products" className="text-ink/70 hover:text-purple-light transition-colors">상품</Link>
-          {isLoggedIn ? (
-            <>
-              <Link href="/mypage" className="text-ink/70 hover:text-purple-light transition-colors">마이페이지</Link>
-              <form action="/api/auth/signout" method="post">
-                <button type="submit" className="text-ink/70 hover:text-purple-light transition-colors">로그아웃</button>
-              </form>
-            </>
-          ) : (
-            <Link href="/login" className="text-ink/70 hover:text-purple-light transition-colors">로그인</Link>
-          )}
         </nav>
       </div>
     </header>
