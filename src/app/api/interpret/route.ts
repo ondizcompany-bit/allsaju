@@ -70,7 +70,7 @@ function stripUnfilledPlaceholders(text: string): string {
 // 실패한 섹션은 전체를 날리는 대신, 안내 문구로 대체해 나머지 섹션은 그대로 보여준다.
 async function generateSectionSafely(req: { system: string; user: string }, fallbackTitle: string): Promise<string> {
   try {
-    const result = await generateInterpretationWithRetry(req, 1);
+    const result = await generateInterpretationWithRetry(req, 2);
     return stripUnfilledPlaceholders(result.text);
   } catch {
     return `## ⚠️ ${fallbackTitle}\n\n일시적인 오류로 이 부분 생성에 실패했어요. 새로고침 후 다시 시도하시면 정상적으로 나올 수 있어요. 계속 안 나오면 고객센터로 문의해주세요.`;

@@ -55,9 +55,16 @@ async function callOpenAI(req: LlmRequest, model: string, key: string | undefine
       { role: "user", content: req.user },
     ],
     temperature: 0.7,
-    max_completion_tokens: 3000,
+    max_completion_tokens: 8000,
   });
-  const text = completion.choices[0]?.message?.content ?? "";
+  const choice = completion.choices[0];
+  const text = choice?.message?.content ?? "";
+  // 토큰 한도에 걸려 문장이 중간에 끊기면, 짤린 결과를 그대로 내보내는 대신
+  // 에러로 처리해 재시도 로직(generateInterpretationWithRetry)이 다시 시도하게 한다.
+  if (choice?.finish_reason === "length") {
+    throw new Error("OpenAI 응답이 토큰 한도에 걸려 중간에 끊겼습니다 (finish_reason=length)");
+  }
+  if (!text.trim()) throw new Error("OpenAI 응답이 비어 있습니다");
   return { text, provider: "openai", model };
 }
 
@@ -67,13 +74,17 @@ async function callAnthropic(req: LlmRequest, model: string, key: string | undef
   const client = new Anthropic({ apiKey: key });
   const message = await client.messages.create({
     model,
-    max_tokens: 4000,
+    max_tokens: 8000,
     system: req.system,
     messages: [{ role: "user", content: req.user }],
   });
   const text = message.content
     .map((b) => (b.type === "text" ? b.text : ""))
     .join("\n");
+  if (message.stop_reason === "max_tokens") {
+    throw new Error("Anthropic 응답이 토큰 한도에 걸려 중간에 끊겼습니다 (stop_reason=max_tokens)");
+  }
+  if (!text.trim()) throw new Error("Anthropic 응답이 비어 있습니다");
   return { text, provider: "anthropic", model };
 }
 
@@ -81,8 +92,17 @@ async function callGemini(req: LlmRequest, model: string, key: string | undefine
   if (!key) throw new Error("GOOGLE_GENERATIVE_AI_API_KEY is required when LLM_PROVIDER=gemini");
   const { GoogleGenerativeAI } = await import("@google/generative-ai");
   const client = new GoogleGenerativeAI(key);
-  const m = client.getGenerativeModel({ model, systemInstruction: req.system });
+  const m = client.getGenerativeModel({
+    model,
+    systemInstruction: req.system,
+    generationConfig: { maxOutputTokens: 8000 },
+  });
   const result = await m.generateContent(req.user);
   const text = result.response.text();
+  const finishReason = result.response.candidates?.[0]?.finishReason;
+  if (finishReason === "MAX_TOKENS") {
+    throw new Error("Gemini 응답이 토큰 한도에 걸려 중간에 끊겼습니다 (finishReason=MAX_TOKENS)");
+  }
+  if (!text.trim()) throw new Error("Gemini 응답이 비어 있습니다");
   return { text, provider: "gemini", model };
 }
