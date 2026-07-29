@@ -144,7 +144,7 @@ const BASIC_INFO = (input: PromptInput) => {
     ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
     : '';
   const concernsRule = input.concerns?.trim()
-    ? `- ⭐ [최우선] ${input.name}님이 직접 남긴 궁금한 점을 반드시 분석 전반에 반영한다. 이 질문에 대한 답을 각 섹션에서 구체적으로 짚어주고, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    ? `- ⭐ [최우선] ${input.name}님이 직접 남긴 궁금한 점을 반드시 분석 전반에 반영한다. 사주 원국의 구체적인 일간·십성·합충 요소를 이 궁금한 점과 직접 연결지어 설명하고, 이 질문에 대한 답을 각 섹션에서 구체적으로 짚어주며, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
     : '';
   return `[분석 대상]
 이름: ${input.name}
@@ -222,6 +222,12 @@ export function buildBasicJami(input: PromptInput): { system: string; user: stri
   const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n` : '';
+  const concernsBlock = input.concerns?.trim()
+    ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
+    : '';
+  const concernsRule = input.concerns?.trim()
+    ? `\n- ⭐ [최우선] ${input.name}님이 남긴 궁금한 점을 이 섹션에서도 반드시 반영한다. 각 궁(宮)의 성계 분석을 위 궁금한 점과 구체적으로 연결지어 설명하고, 최소 한 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    : '';
 
   const infoBlock = `[분석 대상]
 이름: ${input.name}
@@ -232,14 +238,14 @@ export function buildBasicJami(input: PromptInput): { system: string; user: stri
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
-
+${concernsBlock}
 [작성 규칙]
 - 이 섹션은 자미두수(紫微斗數) 명반 전용 심층 분석이다. 사주팔자 언급은 최소화한다.
 - 각 섹션마다 문단 2개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
 - 각 문단은 100~140자로 충실하게 쓴다. 단순 나열 금지, 반드시 해석과 의미를 함께 서술한다.
 - 자미두수 용어(궁, 성계 이름 등)는 반드시 쉬운 말로 바로 풀어 설명한다.
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
-- ⚠️ 5개 섹션 모두 반드시 완성한다. 절대 중간에 끊기지 않는다.`;
+- ⚠️ 5개 섹션 모두 반드시 완성한다. 절대 중간에 끊기지 않는다.${concernsRule}`;
 
   // 재회·속궁합·임신택일·아이DNA 전용 자미두수 섹션 (부처궁·인연·자녀궁 중심)
   if (isPartner) {
@@ -406,7 +412,7 @@ const PREMIUM_INFO = (input: PromptInput) => {
     ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
     : '';
   const concernsRule = input.concerns?.trim()
-    ? `- ⭐ [최우선] ${input.name}님이 직접 남긴 궁금한 점을 반드시 분석 전반에 반영한다. 이 질문에 대한 답을 각 섹션에서 구체적으로 짚어주고, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    ? `- ⭐ [최우선] ${input.name}님이 직접 남긴 궁금한 점을 반드시 분석 전반에 반영한다. 사주 원국의 구체적인 일간·십성·합충 요소를 이 궁금한 점과 직접 연결지어 설명하고, 이 질문에 대한 답을 각 섹션에서 구체적으로 짚어주며, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
     : '';
   return `[분석 대상]
 이름: ${input.name}
@@ -497,6 +503,12 @@ export function buildPremiumJami(input: PromptInput): { system: string; user: st
   const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n` : '';
+  const concernsBlock = input.concerns?.trim()
+    ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
+    : '';
+  const concernsRule = input.concerns?.trim()
+    ? `\n- ⭐ [최우선] ${input.name}님이 남긴 궁금한 점을 이 섹션에서도 반드시 반영한다. 각 궁(宮)의 성계 분석을 위 궁금한 점과 구체적으로 연결지어 설명하고, 최소 한 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    : '';
 
   const infoBlock = `[분석 대상]
 이름: ${input.name}
@@ -507,14 +519,14 @@ export function buildPremiumJami(input: PromptInput): { system: string; user: st
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
-
+${concernsBlock}
 [작성 규칙]
 - 이 섹션은 자미두수(紫微斗數) 명반 전용 심층 분석이다. 사주팔자 언급은 최소화한다.
 - 각 섹션마다 문단 2개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
 - 각 문단은 110~150자로 충실하고 구체적으로 쓴다. 단순 나열 금지.
 - 자미두수 용어(궁, 성계 이름 등)는 반드시 쉬운 말로 바로 풀어 설명한다.
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
-- ⚠️ 6개 섹션 모두 반드시 완성한다. 절대 중간에 끊기지 않는다.`;
+- ⚠️ 6개 섹션 모두 반드시 완성한다. 절대 중간에 끊기지 않는다.${concernsRule}`;
 
   // 재회·속궁합·임신택일·아이DNA 전용 자미두수 6궁 분석 (인연·관계·자녀궁 위주)
   if (isPartner) {
@@ -680,6 +692,12 @@ ${input.name}님에게 잘 맞는 파트너의 유형, 관계에서 반복되는
 // ── 프리미엄: 섹션 5 — 타로 심층 분석 (전용, 4챕터) ───────────────────────
 export function buildPremiumTarot(input: PromptInput): { system: string; user: string } {
   const card = input.tarotCard;
+  const concernsBlock = input.concerns?.trim()
+    ? `\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n`
+    : '';
+  const concernsRule = input.concerns?.trim()
+    ? `\n- ⭐ [최우선] ${input.name}님이 남긴 궁금한 점을 이 섹션에서도 반드시 반영한다. 타로 카드의 상징을 위 궁금한 점과 구체적으로 연결지어 해석하고, 최소 한 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    : '';
   return {
     system: SYSTEM_BASE,
     user: `[분석 대상]
@@ -696,14 +714,14 @@ ${input.manseryeokText}
 카드명: ${card?.name ?? "없음"}
 키워드: ${card?.keyword ?? "없음"}
 카드 메시지: ${card?.advice ?? "없음"}
-
+${concernsBlock}
 [작성 규칙]
 - 이 섹션은 타로 카드 전용 심층 분석이다. 타로를 중심에 놓고 사주·자미두수를 보조로 연결한다.
 - 각 섹션마다 문단 2개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
 - 각 문단은 110~150자로 충실하고 감성적으로 쓴다. 신비롭고 따뜻한 톤을 유지한다.
 - 타로 해석은 전통적 상징과 ${input.name}님의 실제 상황을 연결해 구체적으로 서술한다.
 - ${input.name}님을 자주 불러주고 친근한 말투("~이에요", "~랍니다", "~거든요")로 쓴다.
-- ⚠️ 4개 섹션 모두 반드시 완성한다. 절대 중간에 끊기지 않는다.
+- ⚠️ 4개 섹션 모두 반드시 완성한다. 절대 중간에 끊기지 않는다.${concernsRule}
 
 ---
 
@@ -758,7 +776,7 @@ const DANPUM_INFO = (input: PromptInput) => {
         : `- 타로 카드 "${input.tarotCard.name}"(키워드: ${input.tarotCard.keyword})를 사주 분석과 자연스럽게 연결해 언급한다. 억지로 끼워넣지 말고 "타로가 확인해준다"는 방식으로.`}`
     : '';
   const concernsBlock = input.concerns?.trim()
-    ? `\n\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n\n[작성 규칙]\n- ⭐ [최우선] 위 궁금한 점을 반드시 분석 전반에 반영한다. 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
+    ? `\n\n[${input.name}님이 궁금해하는 점]\n${input.concerns.trim()}\n\n[작성 규칙]\n- ⭐ [최우선] 위 궁금한 점을 반드시 분석 전반에 반영한다. 사주 원국의 구체적인 일간·십성·합충 요소를 이 궁금한 점과 직접 연결지어 설명하고, 가장 관련 깊은 섹션에서는 이 질문에 직접 답하는 문장으로 시작한다.`
     : '';
   return `[분석 대상]
 이름: ${input.name}

@@ -397,7 +397,7 @@ export const DANPUM_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef
       { icon: '💡', title: '사주가 주는 첫 번째 답',
         instruction: `{name}님의 사주 전체 구조를 바탕으로 이 고민에 대한 직접적이고 단정적인 첫 답을 제시한다. 애매하게 돌려 말하지 않고, "사주로 보면 이렇게 하는 게 맞아요"라는 방식으로 명확한 방향을 먼저 제시한 뒤 근거를 설명한다.` },
     ]},
-    s2: { chapters: [
+    s2: { note: '{name}님이 남긴 궁금한 점(고민)을 이 섹션에서도 반드시 최우선으로 반영하고, 사주 원국의 구체적 요소와 직접 연결지어 설명한다.', chapters: [
       { icon: '⏳', title: '{year}년 이 고민의 흐름',
         instruction: `{year}년 세운이 {name}님의 이 고민과 관련된 기운(관성·재성·식상 등 고민 주제에 맞는 오행)에 어떤 영향을 주는지 분석한다. 이 고민이 풀리기 시작하는 시기와 오히려 더 무거워질 수 있는 시기를 구체적인 달로 짚어준다.` },
       { icon: '🚧', title: '고민을 키우는 생각의 습관',
@@ -405,7 +405,7 @@ export const DANPUM_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef
       { icon: '🧭', title: '갈림길에서 — 사주가 보는 선택',
         instruction: `{name}님이 지금 갈림길에 서 있다면, 사주 구조상 어떤 선택이 {name}님에게 더 맞는 방향인지 분석한다. 각 선택지를 택했을 때 사주적으로 예상되는 흐름을 솔직하게 비교하고, 어느 쪽이 더 유리한지 단정문으로 전달한다.` },
     ]},
-    s3: { chapters: [
+    s3: { note: '{name}님이 남긴 궁금한 점(고민)을 이 섹션에서도 반드시 최우선으로 반영하고, 사주 원국의 구체적 요소와 직접 연결지어 설명한다.', chapters: [
       { icon: '🛠️', title: '지금 당장 할 수 있는 것',
         instruction: `{name}님의 사주를 바탕으로 이 고민을 풀어가기 위해 지금 이번 주 안에 실천할 수 있는 구체적인 행동 3가지를 제시한다. 막연한 조언이 아니라 사주 근거와 연결된, 실질적이고 단정적인 행동 지침으로 전달한다.` },
       { icon: '🌱', title: '이 고민 너머의 {name}님',
@@ -782,7 +782,7 @@ export const BASIC_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef;
       { icon: '🔄', title: '반복되는 고민의 패턴',
         instruction: `사주 합충형해 요소와 자미두수 천이궁·복덕궁 분석으로 {name}님이 이런 종류의 고민을 반복적으로 겪게 되는 인생 패턴을 설명한다. 이 패턴을 알면 어떻게 더 지혜롭게 다룰 수 있는지 따뜻한 조언으로 마무리한다.` },
     ]},
-    s2: { chapters: [
+    s2: { note: '{name}님이 남긴 궁금한 점(고민)을 이 섹션에서도 반드시 최우선으로 반영하고, 사주·자미두수의 구체적 요소와 직접 연결지어 설명한다.', chapters: [
       { icon: '⏳', title: '{year}년 이 고민의 흐름',
         instruction: `{year}년 세운과 자미두수 소한이 {name}님의 이 고민과 관련된 기운에 어떤 영향을 주는지 분석한다. 이 고민이 풀리기 시작하는 시기와 오히려 더 무거워질 수 있는 시기를 구체적인 달로 짚어준다.` },
       { icon: '🚧', title: '고민을 키우는 습관과 극복법',
@@ -790,7 +790,7 @@ export const BASIC_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef;
       { icon: '🧭', title: '갈림길에서 — 사주와 자미두수가 보는 선택',
         instruction: `{name}님이 지금 갈림길에 서 있다면, 사주·자미두수 구조상 어떤 선택이 더 맞는 방향인지 분석한다. 각 선택지를 택했을 때 예상되는 흐름을 두 시스템으로 비교하고, 어느 쪽이 더 유리한지 단정문으로 전달한다.` },
     ]},
-    s3: { chapters: [
+    s3: { note: '{name}님이 남긴 궁금한 점(고민)을 이 섹션에서도 반드시 최우선으로 반영하고, 사주·자미두수의 구체적 요소와 직접 연결지어 설명한다.', chapters: [
       { icon: '🛠️', title: '지금 당장 할 수 있는 것',
         instruction: `{name}님의 사주·자미두수를 바탕으로 이 고민을 풀어가기 위해 지금 이번 주 안에 실천할 수 있는 구체적인 행동 3가지를 제시한다. 막연한 조언이 아니라 근거와 연결된, 실질적이고 단정적인 행동 지침으로 전달한다.` },
       { icon: '🌱', title: '고민 너머의 {name}님 — 대운의 방향',
