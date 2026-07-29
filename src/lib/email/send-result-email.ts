@@ -80,3 +80,14 @@ export async function sendResultEmail(input: SendResultEmailInput): Promise<Send
     return { status: "error", error: String(e) };
   }
 }
+
+// 발송 실패(일시적 오류 포함)가 조용히 묻히지 않도록, 실패 시 짧은 대기 후 최대 2회 더 재시도한다.
+export async function sendResultEmailWithRetry(
+  input: SendResultEmailInput,
+  retries = 2,
+): Promise<SendResultEmailResult> {
+  const result = await sendResultEmail(input);
+  if (result.status !== "error" || retries <= 0) return result;
+  await new Promise((r) => setTimeout(r, 800));
+  return sendResultEmailWithRetry(input, retries - 1);
+}

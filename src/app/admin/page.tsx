@@ -30,6 +30,15 @@ export default async function AdminHome() {
             <span className="text-mute">→</span>
           </Link>
         </li>
+        <li>
+          <Link
+            href="/admin/resend"
+            className="flex items-center justify-between py-4 text-[15px] font-medium text-ink hover:text-body"
+          >
+            <span>결과지 재발송</span>
+            <span className="text-mute">→</span>
+          </Link>
+        </li>
       </ul>
 
       <p className="mt-8 text-xs text-body leading-relaxed">

@@ -19,7 +19,7 @@ export const runtime = 'edge';
 export const maxDuration = 60;
 import { z } from "zod";
 import { generateInterpretationWithRetry } from "@/lib/saju/llm";
-import { sendResultEmail } from "@/lib/email/send-result-email";
+import { sendResultEmailWithRetry, type SendResultEmailResult } from "@/lib/email/send-result-email";
 import {
   buildDanpumSection1,
   buildDanpumSection2,
@@ -143,14 +143,17 @@ export async function POST(request: NextRequest) {
   }
 
   // 이메일은 클라이언트가 페이지를 닫아도 발송이 완료되도록 서버에서 직접 처리한다.
+  // 실패해도 결과지 응답 자체는 막지 않되, 실제 발송 결과는 응답에 그대로 실어
+  // 호출자(관리자 재발송 도구 등)가 성공 여부를 확인할 수 있게 한다.
+  let emailResult: SendResultEmailResult | null = null;
   if (d.email) {
-    await sendResultEmail({
+    emailResult = await sendResultEmailWithRetry({
       email: d.email,
       productTitle: d.productTitle ?? d.catId ?? "사주",
       tierLabel: d.tierLabel ?? (isPremium ? "종합" : isBasic ? "베이직" : "단품"),
       sections,
-    }).catch(() => { /* 이메일 실패가 결과지 응답을 막지 않는다 */ });
+    }).catch((e): SendResultEmailResult => ({ status: "error", error: String(e) }));
   }
 
-  return NextResponse.json({ status: "success" as const, sections });
+  return NextResponse.json({ status: "success" as const, sections, emailResult });
 }
