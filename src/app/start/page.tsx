@@ -244,6 +244,21 @@ const CATEGORIES: Category[] = [
       premium: { price: 49900, original: 89800 },
     },
   },
+  {
+    id: 'worry',
+    symbol: '解',
+    title: '말 못한 고민, 사주로 풀어드립니다',
+    subtitle: '어떤 고민이든, 사주로 명확한 답을 찾아드려요',
+    needsPartner: false,
+    adult: false,
+    accentColor: '#7dd3fc',
+    gradient: 'linear-gradient(145deg,#020c14 0%,#0c4a6e 60%,#082f49 100%)',
+    packages: {
+      single:  { price: 27900, original: 49800 },
+      basic:   { price: 39900, original: 79800, popular: true },
+      premium: { price: 49900, original: 99800 },
+    },
+  },
 ];
 
 const CONCERNS_PLACEHOLDER: Record<string, string> = {
@@ -261,6 +276,7 @@ const CONCERNS_PLACEHOLDER: Record<string, string> = {
   'reunion-timing': '예: 먼저 연락해야 할지, 기다려야 할지 타이밍이 궁금해요.',
   'breakup-reason': '예: 우리가 왜 헤어지게 됐는지 진짜 이유가 궁금해요.',
   'charm': '예: 소개팅에서 제 매력을 어떻게 어필하면 좋을지 궁금해요.',
+  'worry': '예: 요즘 이직할지 그냥 다닐지 계속 고민돼요. 사주로 보면 어떤 게 맞을까요?',
 };
 const DEFAULT_CONCERNS_PLACEHOLDER = '예: 지금 제 상황에서 가장 궁금한 점을 자유롭게 적어주세요.';
 

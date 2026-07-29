@@ -167,9 +167,21 @@ const ALL_PRODUCTS = [
     image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=800&q=85&fit=crop",
     badge: "19+",
   },
+  {
+    slug: "worry",
+    name: "말 못한 고민, 사주로 풀어드립니다",
+    subtitle: "어떤 고민이든 사주로",
+    description: "고민의 뿌리부터 지금 상황 진단, 명확한 답까지 사주로 풀어드려요",
+    price: 27900,
+    emoji: "🌀",
+    color: "#38bdf8",
+    category: "고민상담",
+    image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?w=800&q=85&fit=crop",
+    badge: "NEW",
+  },
 ];
 
-const CATEGORIES = ["전체", "매력", "재회·사랑", "신년운세", "연애·재회", "커리어", "재테크", "속궁합", "임신·육아"];
+const CATEGORIES = ["전체", "매력", "고민상담", "재회·사랑", "신년운세", "연애·재회", "커리어", "재테크", "속궁합", "임신·육아"];
 
 function ProductsContent() {
   const searchParams = useSearchParams();
