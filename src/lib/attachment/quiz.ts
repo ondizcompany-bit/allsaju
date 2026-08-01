@@ -21,6 +21,10 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   { id: 'a6', axis: 'anxiety', text: '혼자 있는 시간보다 연인과 함께 있는 시간이 늘 더 안전하게 느껴진다.' },
   { id: 'a7', axis: 'anxiety', text: '다투고 나면 먼저 연락하지 않으면 견디기 힘들다.' },
   { id: 'a8', axis: 'anxiety', text: '상대가 나 없이도 즐거워 보이면 서운한 마음이 크게 든다.' },
+  { id: 'a9', axis: 'anxiety', text: '연인에게 서운한 일이 생기면 마음속으로 계속 곱씹게 된다.' },
+  { id: 'a10', axis: 'anxiety', text: '관계가 조금이라도 불안정해 보이면 하루 종일 그 생각만 하게 된다.' },
+  { id: 'a11', axis: 'anxiety', text: '연인이 다른 사람과 친하게 지내면 신경이 많이 쓰인다.' },
+  { id: 'a12', axis: 'anxiety', text: '내가 먼저 사랑을 표현하지 않으면 관계가 식을까봐 걱정된다.' },
   { id: 'v1', axis: 'avoidance', text: '너무 가까워지는 관계는 부담스럽게 느껴진다.' },
   { id: 'v2', axis: 'avoidance', text: '힘든 일이 있어도 연인에게 기대기보다 혼자 해결하는 게 편하다.' },
   { id: 'v3', axis: 'avoidance', text: '누군가 내게 의지하려 하면 살짝 거리를 두고 싶어진다.' },
@@ -29,6 +33,10 @@ export const QUIZ_QUESTIONS: QuizQuestion[] = [
   { id: 'v6', axis: 'avoidance', text: '혼자만의 시간과 공간이 연애보다 더 중요하게 느껴질 때가 많다.' },
   { id: 'v7', axis: 'avoidance', text: '관계에서 문제가 생기면 대화보다 그냥 거리를 두는 편이다.' },
   { id: 'v8', axis: 'avoidance', text: '누군가와 깊이 얽히는 것보다 적당한 거리를 유지하는 게 편하다.' },
+  { id: 'v9', axis: 'avoidance', text: '연애를 할 때도 마음을 완전히 다 주지는 않는 편이다.' },
+  { id: 'v10', axis: 'avoidance', text: '상대방이 결혼 같은 미래 계획을 얘기하면 부담스러워 화제를 돌리고 싶어진다.' },
+  { id: 'v11', axis: 'avoidance', text: '누군가와 상의하기보다 혼자 결정하고 나중에 통보하는 게 편하다.' },
+  { id: 'v12', axis: 'avoidance', text: '연인이 내 감정을 자꾸 물어보면 귀찮게 느껴질 때가 있다.' },
 ];
 
 export const SCALE_LABELS = ['전혀 아니다', '아니다', '보통이다', '그렇다', '매우 그렇다'];

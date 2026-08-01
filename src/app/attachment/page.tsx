@@ -188,7 +188,7 @@ function AttachmentInner() {
         <p className="text-xs font-semibold tracking-widest text-purple-bright uppercase mb-3">애착유형검사</p>
         <h1 className="text-2xl font-bold text-white mb-3">나의 연애 애착 유형,<br />제대로 알아본 적 있나요?</h1>
         <p className="text-sm text-body mb-10 max-w-xs">
-          16개 문항으로 나의 애착 유형(안정형·불안형·회피형·혼란형)을 진단하고,
+          24개 문항으로 나의 애착 유형(안정형·불안형·회피형·혼란형)을 진단하고,
           연애에서 나타나는 패턴과 더 건강한 관계를 위한 조언까지 받아보세요.
         </p>
         <button
@@ -198,7 +198,7 @@ function AttachmentInner() {
         >
           검사 시작하기 →
         </button>
-        <p className="text-xs text-mute mt-4">약 3분 소요 · 참고용 검사이며 전문 심리 진단이 아니에요</p>
+        <p className="text-xs text-mute mt-4">약 4~5분 소요 · 참고용 검사이며 전문 심리 진단이 아니에요</p>
       </div>
     );
   }
