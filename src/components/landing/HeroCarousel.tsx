@@ -14,6 +14,7 @@ const TABS = [
   { label: '재테크',   href: '/products/investment' },
   { label: '속궁합', href: '/products/secret' },
   { label: '임신·육아', href: '/products?category=임신·육아' },
+  { label: '애착유형검사 (HOT)', href: '/attachment' },
 ];
 
 const SLIDES = [
