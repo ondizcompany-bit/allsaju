@@ -19,10 +19,11 @@ const PACKAGES: Record<Tier, { price: number; original: number; label: string; d
 const fmt = (n: number) => n.toLocaleString('ko-KR') + '원';
 const disc = (orig: number, sale: number) => Math.round((1 - sale / orig) * 100);
 
+// sections[] 인덱스: 0=core 1=patterns 2=strengths 3=advice 4=trust 5=growth 6=compat
 const TAB_META = [
-  { key: 0, label: '유형 분석', minTier: 'single' as Tier },
-  { key: 1, label: '관계 개선 조언', minTier: 'basic' as Tier },
-  { key: 2, label: '유형별 궁합', minTier: 'premium' as Tier },
+  { key: 0, label: '유형 분석', minTier: 'single' as Tier, range: [0, 3] as [number, number] },
+  { key: 1, label: '관계 개선 조언', minTier: 'basic' as Tier, range: [3, 5] as [number, number] },
+  { key: 2, label: '궁합 & 성장', minTier: 'premium' as Tier, range: [5, 7] as [number, number] },
 ];
 const TIER_ORDER: Record<Tier, number> = { single: 0, basic: 1, premium: 2 };
 
@@ -169,7 +170,12 @@ function AttachmentInner() {
             ))}
           </div>
 
-          {sections[activeTab] ? <ChapterResult sections={[sections[activeTab]]} /> : null}
+          {(() => {
+            const tab = TAB_META.find(t => t.key === activeTab);
+            if (!tab) return null;
+            const tabSections = sections.slice(tab.range[0], tab.range[1]);
+            return tabSections.length ? <ChapterResult sections={tabSections} /> : null;
+          })()}
 
           <p className="text-center text-xs text-mute mt-6">
             결과지는 이메일로도 발송됩니다 · 본 검사는 참고용이며 전문 심리 진단이 아닙니다

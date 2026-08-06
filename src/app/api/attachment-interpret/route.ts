@@ -1,8 +1,8 @@
 // =====================================================
 // POST /api/attachment-interpret
 // =====================================================
-// 애착유형검사 결과 해석. 단품 1콜(핵심 3섹션) / 베이직 2콜(+조언) /
-// 종합 3콜(+궁합). /api/interpret 과 동일한 안전장치를 재사용한다.
+// 애착유형검사 결과 해석. 단품 3콜(9섹션) / 베이직 5콜(+6섹션) /
+// 종합 7콜(+7섹션). /api/interpret 과 동일한 안전장치를 재사용한다.
 
 import { NextResponse, type NextRequest } from "next/server";
 export const runtime = 'edge';
@@ -10,7 +10,15 @@ export const maxDuration = 60;
 import { z } from "zod";
 import { generateInterpretationWithRetry } from "@/lib/saju/llm";
 import { sendResultEmailWithRetry, type SendResultEmailResult } from "@/lib/email/send-result-email";
-import { buildAttachmentCore, buildAttachmentAdvice, buildAttachmentCompat } from "@/lib/attachment/prompt";
+import {
+  buildAttachmentCore,
+  buildAttachmentPatterns,
+  buildAttachmentStrengths,
+  buildAttachmentAdvice,
+  buildAttachmentTrust,
+  buildAttachmentGrowth,
+  buildAttachmentCompat,
+} from "@/lib/attachment/prompt";
 
 const bodySchema = z.object({
   tier: z.enum(["single", "basic", "premium"]),
@@ -62,16 +70,25 @@ export async function POST(request: NextRequest) {
     if (d.tier === "single") {
       sections = await Promise.all([
         generateSectionSafely(buildAttachmentCore(promptInput), "애착 유형 분석"),
+        generateSectionSafely(buildAttachmentPatterns(promptInput), "연애 속 패턴"),
+        generateSectionSafely(buildAttachmentStrengths(promptInput), "숨겨진 강점과 신호"),
       ]);
     } else if (d.tier === "basic") {
       sections = await Promise.all([
         generateSectionSafely(buildAttachmentCore(promptInput), "애착 유형 분석"),
+        generateSectionSafely(buildAttachmentPatterns(promptInput), "연애 속 패턴"),
+        generateSectionSafely(buildAttachmentStrengths(promptInput), "숨겨진 강점과 신호"),
         generateSectionSafely(buildAttachmentAdvice(promptInput), "관계 개선 조언"),
+        generateSectionSafely(buildAttachmentTrust(promptInput), "신뢰와 회복"),
       ]);
     } else {
       sections = await Promise.all([
         generateSectionSafely(buildAttachmentCore(promptInput), "애착 유형 분석"),
+        generateSectionSafely(buildAttachmentPatterns(promptInput), "연애 속 패턴"),
+        generateSectionSafely(buildAttachmentStrengths(promptInput), "숨겨진 강점과 신호"),
         generateSectionSafely(buildAttachmentAdvice(promptInput), "관계 개선 조언"),
+        generateSectionSafely(buildAttachmentTrust(promptInput), "신뢰와 회복"),
+        generateSectionSafely(buildAttachmentGrowth(promptInput), "장기 성장 로드맵"),
         generateSectionSafely(buildAttachmentCompat(promptInput), "애착유형 궁합"),
       ]);
     }

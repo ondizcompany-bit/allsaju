@@ -81,6 +81,62 @@ ${input.name}님의 애착 유형이 실제 연애 상황(썸, 초반 연애, �
   };
 }
 
+export function buildAttachmentPatterns(input: AttachmentPromptInput): { system: string; user: string } {
+  return {
+    system: SYSTEM_BASE,
+    user: `${infoBlock(input)}
+
+[작성 규칙]
+- 각 섹션마다 문단 2~3개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
+- 각 문단은 90~130자로 핵심을 담아 쓴다.
+- ${input.name}님을 자주 불러주고 친근한 말투로 쓴다.
+
+---
+
+아래 3개 섹션을 정확히 이 순서대로 작성한다.
+
+## 💌 썸·초반 연애에서의 패턴
+
+${ATTACHMENT_TYPE_LABEL[input.type]}인 ${input.name}님이 썸을 타거나 연애 초반일 때 실제로 어떻게 행동하는지 구체적인 장면으로 서술한다. 상대의 어떤 행동에 특히 민감하게 반응하는지, 어떤 순간에 마음이 편해지거나 불편해지는지 짚어준다.
+
+## ⚡ 갈등 상황에서의 반응
+
+${input.name}님이 연인과 다툴 때 실제로 보이는 반응 패턴을 솔직하게 서술한다. 갈등이 격해질 때 회피하는지, 매달리는지, 어떤 말이 특히 아프게 다가오는지 구체적으로 짚어준다.
+
+## 💔 이별을 대하는 방식
+
+${input.name}님의 애착 유형이 이별 상황에서 어떻게 드러나는지 서술한다. 이별 직후 감정을 처리하는 방식, 미련이 남는 정도, 다시 마음을 여는 데 걸리는 시간의 경향을 구체적으로 짚어준다.`,
+  };
+}
+
+export function buildAttachmentStrengths(input: AttachmentPromptInput): { system: string; user: string } {
+  return {
+    system: SYSTEM_BASE,
+    user: `${infoBlock(input)}
+
+[작성 규칙]
+- 각 섹션마다 문단 2~3개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
+- 각 문단은 90~130자로 핵심을 담아 쓴다.
+- ${input.name}님을 자주 불러주고 친근한 말투로 쓴다.
+
+---
+
+아래 3개 섹션을 정확히 이 순서대로 작성한다.
+
+## ✨ 이 유형의 숨겨진 강점
+
+${ATTACHMENT_TYPE_LABEL[input.type]}은 약점만 있는 게 아니라 분명한 강점도 있다는 것을 전제로, ${input.name}님의 유형이 관계에서 발휘하는 강점 2~3가지를 구체적으로 짚어준다. 이 강점이 실제로 어떤 상황에서 빛나는지 예를 든다.
+
+## 🔎 스스로도 몰랐던 신호
+
+${input.name}님의 응답 패턴(불안 ${input.anxietyScore}, 회피 ${input.avoidanceScore})을 근거로, 본인은 눈치채지 못했을 수 있는 관계 속 신호나 습관을 짚어준다. "어? 이건 진짜 몰랐는데" 싶을 만한 통찰을 담는다.
+
+## 👣 첫 걸음 조언
+
+${input.name}님이 지금 당장 관계에서 시도해볼 수 있는 작은 첫 걸음 하나를 구체적으로 제시하고, 왜 이 작은 변화가 ${ATTACHMENT_TYPE_LABEL[input.type]} 유형에게 의미 있는 시작이 되는지 설명하며 마무리한다.`,
+  };
+}
+
 export function buildAttachmentAdvice(input: AttachmentPromptInput): { system: string; user: string } {
   return {
     system: SYSTEM_BASE,
@@ -106,6 +162,62 @@ ${input.name}님의 유형에 맞춰 관계를 더 안정적으로 만들 수 �
 ## 💌 지금 이 순간 실천할 수 있는 것
 
 ${input.name}님이 이번 주 안에 시도해볼 수 있는 작은 행동 2가지를 제시하고, 이 작은 변화가 왜 ${ATTACHMENT_TYPE_LABEL[input.type]} 유형에게 특히 효과적인지 설명하며 따뜻하게 마무리한다.`,
+  };
+}
+
+export function buildAttachmentTrust(input: AttachmentPromptInput): { system: string; user: string } {
+  return {
+    system: SYSTEM_BASE,
+    user: `${infoBlock(input)}
+
+[작성 규칙]
+- 각 섹션마다 문단 2~3개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
+- 각 문단은 90~130자로 핵심을 담아 쓴다.
+- ${input.name}님을 자주 불러주고 친근한 말투로 쓴다.
+
+---
+
+아래 3개 섹션을 정확히 이 순서대로 작성한다.
+
+## 🤝 신뢰를 쌓아가는 방식
+
+${ATTACHMENT_TYPE_LABEL[input.type]}인 ${input.name}님이 상대를 신뢰하기까지 어떤 과정을 거치는지, 무엇을 확인해야 마음을 여는지 구체적으로 서술한다.
+
+## 🩹 상처받았을 때 회복하는 패턴
+
+${input.name}님이 관계에서 상처받았을 때 실제로 회복하는 방식(혼자 삭이는지, 대화로 푸는지, 시간이 얼마나 걸리는지)을 솔직하게 짚어준다.
+
+## 🕊️ 나에게 편안한 관계의 속도
+
+${input.name}님의 유형에 맞는 이상적인 관계 진행 속도(빨리 가까워지는 것과 천천히 쌓아가는 것 중 어느 쪽이 맞는지)를 구체적으로 제시하며 마무리한다.`,
+  };
+}
+
+export function buildAttachmentGrowth(input: AttachmentPromptInput): { system: string; user: string } {
+  return {
+    system: SYSTEM_BASE,
+    user: `${infoBlock(input)}
+
+[작성 규칙]
+- 각 섹션마다 문단 2~3개로 나눠 작성한다. 문단 사이 빈 줄을 넣는다.
+- 각 문단은 90~130자로 핵심을 담아 쓴다.
+- ${input.name}님을 자주 불러주고 친근한 말투로 쓴다.
+
+---
+
+아래 3개 섹션을 정확히 이 순서대로 작성한다.
+
+## 🗓️ 3개월 변화 계획
+
+${input.name}님이 앞으로 3개월 동안 시도해볼 수 있는 구체적인 관계 습관 변화 계획을 단계적으로 제시한다.
+
+## 🌤️ 6개월~1년 장기 목표
+
+${input.name}님이 더 긴 호흡으로 어떤 관계 패턴을 만들어가면 좋을지, 6개월에서 1년 사이에 기대할 수 있는 변화를 구체적으로 서술한다.
+
+## 💫 안정형에 가까워지는 마지막 조언
+
+${input.name}님의 애착 유형 분석 전체를 종합해, 더 안정적인 관계를 만들어가기 위한 핵심 메시지를 감성적이고 희망적으로 전달하며 마무리한다.`,
   };
 }
 
