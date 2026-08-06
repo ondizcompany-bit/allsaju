@@ -68,15 +68,15 @@ const STATS = [
   { target: 90, suffix: '%', label: '실질적 도움 체감률', big: false },
 ];
 const CONCERNS = [
-  { emoji: '💍', text: '지금 만나는 사람과 결혼까지 갈 수 있을지 계속 고민돼요.', delay: 0 },
-  { emoji: '💔', text: '헤어진 사람에게 다시 연락해도 될지 모르겠어요.', delay: 140 },
-  { emoji: '😞', text: '요즘 자꾸 다투는데, 이 관계가 맞는 건지 모르겠어요.', delay: 280 },
-  { emoji: '🤔', text: '이 사람과 나, 정말 잘 맞는 사이인지 궁금해요.', delay: 420 },
+  { emoji: '🌫️', text: '그 사람이 저를 진짜 어떻게 생각하는지 모르겠어요. 좋아하는 건지, 그냥 편한 건지...', delay: 0 },
+  { emoji: '💔', text: '재회하고 싶은데, 어떻게 다가가야 할지 구체적인 방법을 모르겠어요.', delay: 140 },
+  { emoji: '😞', text: '관계가 자꾸 삐걱거리는데, 뭘 어떻게 고쳐야 할지 감이 안 잡혀요.', delay: 280 },
+  { emoji: '💍', text: '이 사람과 결혼까지 가도 될지, 아무도 확실하게 말해주는 사람이 없어요.', delay: 420 },
 ];
 const REVIEWS = [
   { emoji: '💐', name: '정○○', age: '30대 여성', rating: 5, text: '결혼 고민 때문에 신청했는데, 서두르지 말라는 조언이 딱 맞았어요. 반년 지나고 보니 그때 그 조언이 맞았더라고요.' },
   { emoji: '💕', name: '이○○', age: '20대 남성', rating: 5, text: '재회 타이밍을 짚어줘서 그대로 따라했더니 정말 연락이 왔어요. 신기했습니다.' },
-  { emoji: '🌹', name: '한○○', age: '30대 여성', rating: 5, text: '자꾸 싸우는 이유를 사주로 설명 들으니 억울했던 마음이 좀 풀렸어요. 이해하는 데 도움 됐어요.' },
+  { emoji: '🌹', name: '한○○', age: '30대 여성', rating: 5, text: '자꾸 싸우는 이유를 전문가 시선으로 짚어주니 억울했던 마음이 좀 풀렸어요. 이해하는 데 도움 됐어요.' },
   { emoji: '💌', name: '오○○', age: '40대 남성', rating: 4, text: '막연히 걱정만 하다가, 구체적인 타이밍과 방향을 짚어주니 결정하는 데 확실히 도움이 됐어요.' },
 ];
 
@@ -183,8 +183,8 @@ export default function LoveCounselPage() {
           <div className="flex items-center gap-2 mb-2.5">
             <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)' }}>愛 연애·결혼·재회 통합상담</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">지금 이 관계,<br />사주로 솔직하게 짚어드려요</h1>
-          <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>관계 진단 · 결혼 궁합 · 재회 타이밍</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">지금 이 관계,<br />전문가 시선으로 솔직하게 짚어드려요</h1>
+          <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>관계 진단 · 전문가 조언 · 재회 타이밍</p>
           <div className="flex items-center gap-2 mt-3">
             <div className="flex gap-0.5">{[1,2,3,4,5].map(i => (<svg key={i} width="13" height="13" viewBox="0 0 14 14" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1.2"><path d="M7 1L8.6 5.2H13L9.7 7.8L10.9 12L7 9.4L3.1 12L4.3 7.8L1 5.2H5.4L7 1Z"/></svg>))}</div>
             <span className="text-xs" style={{ color: 'rgba(255,255,255,0.45)' }}>4.9 · 11,200+ 상담 완료</span>
@@ -206,15 +206,36 @@ export default function LoveCounselPage() {
         </FadeIn>
       </section>
 
+      {/* 전문성 */}
+      <section className="px-5 pb-4 max-w-md mx-auto">
+        <FadeIn>
+          <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+            <p className="text-xs font-bold mb-3" style={{ color: ACCENT_COLOR }}>왜 믿을 수 있나요</p>
+            <p className="text-sm leading-relaxed mb-4" style={{ color: 'rgba(255,255,255,0.68)' }}>
+              지난 3년간 연애·결혼·재회를 아우르는 <strong style={{ color: '#fff' }}>11,200건 이상</strong>의 실제 상담 사례를 분석해온 관계 전문가의 인사이트를 담았어요. 어떤 질문이든 지금까지 다뤄본 사례를 바탕으로 구체적인 답을 드려요.
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {[['💑', '연애 상담', '4,800건+'], ['💍', '결혼 상담', '3,100건+'], ['💔', '재회 상담', '3,300건+']].map(([icon, label, count], i) => (
+                <div key={i} className="rounded-xl px-2 py-3 text-center" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
+                  <span className="text-base">{icon}</span>
+                  <p className="text-[11px] mt-1" style={{ color: 'rgba(255,255,255,0.55)' }}>{label}</p>
+                  <p className="text-xs font-bold mt-0.5" style={{ color: ACCENT_COLOR }}>{count}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+      </section>
+
       {/* 인트로 */}
       <section className="px-6 py-14 max-w-md mx-auto text-center">
         <FadeIn>
           <p className="font-black leading-[1.15]" style={{ fontSize: 'clamp(1.8rem,7vw,2.8rem)', letterSpacing: '-0.01em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.18)' }}>혼자 고민하지 말고,</span>
+            <span style={{ color: 'rgba(255,255,255,0.18)' }}>모르니까 불안한 거예요,</span>
             <br />
-            <span style={{ color: 'rgba(255,255,255,0.85)' }}>사주에게 물어보세요</span>
+            <span style={{ color: 'rgba(255,255,255,0.85)' }}>속마음도, 방법도</span>
             <br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>솔직하게 답해드려요</span>
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>전문가가 알려드려요</span>
           </p>
         </FadeIn>
       </section>
@@ -237,7 +258,7 @@ export default function LoveCounselPage() {
             <div className="flex items-start gap-3 flex-row-reverse">
               <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-black" style={{ background: 'linear-gradient(135deg,#881337,#e11d48)', color: 'white' }}>愛</div>
               <div className="rounded-2xl rounded-tr-md px-4 py-3" style={{ background: 'rgba(136,19,55,0.18)', border: '1px solid rgba(225,29,72,0.25)', maxWidth: 'calc(100% - 52px)' }}>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>연애든 결혼이든 재회든, 남겨주신 궁금한 점을 최우선으로 분석에 반영해드려요. 두 사람의 사주를 함께 보고 지금 관계 상태부터 앞으로의 방향까지 솔직하게 짚어드릴게요. 💌</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>연애든 결혼이든 재회든, 어떤 질문이든 괜찮아요. 남겨주신 상황과 궁금한 점을 최우선으로 분석에 반영해서, 수많은 상담 사례를 다뤄온 관계 전문가의 시선으로 지금 상태부터 앞으로의 방향까지 솔직하게 짚어드릴게요. 💌</p>
               </div>
             </div>
           </FadeIn>
@@ -248,11 +269,11 @@ export default function LoveCounselPage() {
       <section className="px-6 py-16 max-w-md mx-auto text-center">
         <FadeIn>
           <p className="font-black leading-[1.08]" style={{ fontSize: 'clamp(1.9rem,8vw,3rem)', letterSpacing: '-0.02em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>망설이는 사이,</span><br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>타이밍은</span><br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>지나갑니다</span>
+            <span style={{ color: 'rgba(255,255,255,0.2)' }}>그 사람 속마음,</span><br />
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>여기서 확인하고</span><br />
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>움직이세요</span>
           </p>
-          <p className="text-sm mt-5" style={{ color: 'rgba(255,255,255,0.3)' }}>지금 상황을 정확히 알면, 다음 걸음이 달라져요.</p>
+          <p className="text-sm mt-5" style={{ color: 'rgba(255,255,255,0.3)' }}>추측만 하다 놓치는 타이밍, 더는 없게요.</p>
         </FadeIn>
       </section>
 
@@ -260,7 +281,7 @@ export default function LoveCounselPage() {
       <section className="px-5 pb-16 max-w-md mx-auto">
         <FadeIn className="mb-7"><p className="text-[10px] font-bold tracking-[0.35em] uppercase mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>분석 항목</p><h2 className="text-2xl font-black" style={{ color: 'rgba(255,255,255,0.85)' }}>이런 걸 알 수 있어요</h2></FadeIn>
         <div className="space-y-2">
-          {[['💑', '지금 두 사람 관계 진단'], ['💞', '이 사람과 나, 얼마나 잘 맞을까'], ['🔮', '사주가 주는 솔직한 조언'], ['💍', '결혼을 고민하고 있다면'], ['🎯', '지금 놓치면 안 되는 타이밍'], ['🛠️', '관계를 더 단단하게 만드는 법']].map(([icon, text], i) => (
+          {[['🌫️', '상대방의 진짜 속마음'], ['💑', '지금 두 사람 관계 진단'], ['💞', '이 사람과 나, 얼마나 잘 맞을까'], ['🔮', '전문가가 주는 솔직한 조언'], ['💍', '결혼을 고민하고 있다면'], ['🎯', '지금 놓치면 안 되는 타이밍'], ['🛠️', '관계를 더 단단하게 만드는 법']].map(([icon, text], i) => (
             <FadeIn key={i} delay={i * 55}>
               <div className="flex items-center gap-4 rounded-2xl px-5 py-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <span className="text-lg flex-shrink-0">{icon}</span>
@@ -277,7 +298,7 @@ export default function LoveCounselPage() {
         <FadeIn>
           <div className="rounded-2xl overflow-hidden relative" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="p-5 space-y-2.5" style={{ background: 'rgba(28,8,14,0.9)' }}>
-              {['두 사람 사주로 보는 현재 관계 진단', '일간 기준 궁합 분석 3가지', '올해 이 관계의 흐름 (분석 후 공개)', '결혼·재회 관련 솔직한 조언 (분석 후 공개)'].map((t, i) => (
+              {['두 사람 상황으로 보는 현재 관계 진단', '전문가 시선의 궁합 분석 3가지', '올해 이 관계의 흐름 (분석 후 공개)', '결혼·재회 관련 솔직한 조언 (분석 후 공개)'].map((t, i) => (
                 <div key={i} className="rounded-xl px-4 py-3 text-sm" style={{ background: 'rgba(50,15,25,0.7)', border: '1px solid rgba(225,29,72,0.15)', color: 'rgba(255,255,255,0.7)', filter: i > 1 ? 'blur(5px)' : 'none', userSelect: i > 1 ? 'none' : 'auto' }}>{t}</div>
               ))}
             </div>
