@@ -179,9 +179,21 @@ const ALL_PRODUCTS = [
     image: "https://images.unsplash.com/photo-1501139083538-0139583c060f?w=800&q=85&fit=crop",
     badge: "NEW",
   },
+  {
+    slug: "love-counsel",
+    name: "연애·결혼·재회 통합상담",
+    subtitle: "지금 이 관계, 사주로 솔직하게",
+    description: "관계 진단부터 결혼 궁합, 재회 타이밍까지 두 사람의 사주로 풀어드려요",
+    price: 27900,
+    emoji: "💌",
+    color: "#fda4af",
+    category: "연애상담",
+    image: "https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=800&q=85&fit=crop",
+    badge: "NEW",
+  },
 ];
 
-const CATEGORIES = ["전체", "매력", "고민상담", "재회·사랑", "신년운세", "연애·재회", "커리어", "재테크", "속궁합", "임신·육아"];
+const CATEGORIES = ["전체", "매력", "고민상담", "연애상담", "재회·사랑", "신년운세", "연애·재회", "커리어", "재테크", "속궁합", "임신·육아"];
 
 function ProductsContent() {
   const searchParams = useSearchParams();
