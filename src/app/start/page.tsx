@@ -259,21 +259,6 @@ const CATEGORIES: Category[] = [
       premium: { price: 49900, original: 99800 },
     },
   },
-  {
-    id: 'love-counsel',
-    symbol: '愛',
-    title: '연애·결혼·재회 통합상담',
-    subtitle: '지금 만나는 사람, 이 관계 이대로 괜찮을까요',
-    needsPartner: true,
-    adult: false,
-    accentColor: '#fda4af',
-    gradient: 'linear-gradient(145deg,#1a0508 0%,#881337 60%,#4c0519 100%)',
-    packages: {
-      single:  { price: 27900, original: 49800 },
-      basic:   { price: 39900, original: 79800, popular: true },
-      premium: { price: 49900, original: 99800 },
-    },
-  },
 ];
 
 const CONCERNS_PLACEHOLDER: Record<string, string> = {
@@ -292,7 +277,6 @@ const CONCERNS_PLACEHOLDER: Record<string, string> = {
   'breakup-reason': '예: 우리가 왜 헤어지게 됐는지 진짜 이유가 궁금해요.',
   'charm': '예: 소개팅에서 제 매력을 어떻게 어필하면 좋을지 궁금해요.',
   'worry': '예: 요즘 이직할지 그냥 다닐지 계속 고민돼요. 사주로 보면 어떤 게 맞을까요?',
-  'love-counsel': '예: 지금 만나는 사람과 결혼까지 갈 수 있을지 궁금해요. / 재회하고 싶은데 먼저 연락해도 될까요?',
 };
 const DEFAULT_CONCERNS_PLACEHOLDER = '예: 지금 제 상황에서 가장 궁금한 점을 자유롭게 적어주세요.';
 

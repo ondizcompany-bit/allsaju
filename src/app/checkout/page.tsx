@@ -74,7 +74,7 @@ function CheckoutInner() {
 
         {/* 뒤로 */}
         <Link
-          href={cat === 'attachment' ? '/attachment' : `/start?cat=${cat}`}
+          href={cat === 'attachment' ? '/attachment' : cat === 'love-counsel' ? '/love-counsel' : `/start?cat=${cat}`}
           className="inline-flex items-center gap-1.5 text-sm text-mute hover:text-purple-light transition-colors mb-8"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">

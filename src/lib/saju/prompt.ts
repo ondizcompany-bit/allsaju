@@ -118,7 +118,7 @@ const SYSTEM_BASE = `당신은 정통 명리학 기반의 사주 분석 전문�
 - ⚠️ 절대 중간에 끊기지 않는다. 요청한 모든 섹션(##)을 반드시 마지막 문장까지 완전히 작성한다. 공간이 부족하면 문단을 줄이더라도 모든 섹션을 완성한다`;
 
 const BASIC_INFO = (input: PromptInput) => {
-  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason' || input.catId === 'love-counsel';
+  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n`
     : '';
@@ -219,7 +219,7 @@ ${fmtChapters(cfg.chapters, input)}`,
 
 // ── 베이직: 섹션 4 — 자미두수 심층 분석 (카테고리별 분기) ──────────────────
 export function buildBasicJami(input: PromptInput): { system: string; user: string } {
-  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason' || input.catId === 'love-counsel';
+  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n` : '';
   const concernsBlock = input.concerns?.trim()
@@ -392,7 +392,7 @@ ${input.name}님에게 잘 맞는 파트너의 유형과 올해 인연 흐름을
 
 // ── 프리미엄: 공통 정보 블록 ────────────────────────────────────────────
 const PREMIUM_INFO = (input: PromptInput) => {
-  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason' || input.catId === 'love-counsel';
+  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n`
     : '';
@@ -500,7 +500,7 @@ ${fmtChapters(cfg.chapters, input)}`,
 
 // ── 프리미엄: 섹션 4 — 자미두수 심층 분석 (전용, 6궁 / 재회·속궁합 인연 특화) ──
 export function buildPremiumJami(input: PromptInput): { system: string; user: string } {
-  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason' || input.catId === 'love-counsel';
+  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n` : '';
   const concernsBlock = input.concerns?.trim()
@@ -759,7 +759,7 @@ ${input.name}님이 선택한 "${card?.name}" 카드가 담고 있는 아르카�
 
 // ── 단품: 공통 정보 블록 ────────────────────────────────────────────────
 const DANPUM_INFO = (input: PromptInput) => {
-  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason' || input.catId === 'love-counsel';
+  const isPartner = input.catId === 'reunion' || input.catId === 'secret' || input.catId === 'pregnancy-date' || input.catId === 'baby-dna' || input.catId === 'tarot-reunion' || input.catId === 'ex-feelings' || input.catId === 'reunion-timing' || input.catId === 'breakup-reason';
   const partnerBlock = isPartner && input.partnerText
     ? `\n[상대방 정보]\n${input.partnerText}\n`
     : '';
