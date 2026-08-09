@@ -43,7 +43,7 @@ export type BirthInfo = {
 export type SajuAnalysisResponse = Partial<Record<AnalysisField, unknown>>;
 
 const DEFAULT_TIMEOUT_MS = 8_000;
-const MAX_RETRIES = 1;
+const MAX_RETRIES = 2;
 const RETRY_DELAYS_MS = [500, 1500, 3500];
 
 export class SajuApiError extends Error {

@@ -8,7 +8,11 @@
 //
 // 내부 동작:
 //   fetchSajuAnalysis(birthInfo, []) → formatSajuToManseryeok(...) → 텍스트 반환
+//   (fetchSajuAnalysis 자체도 5xx/네트워크 오류 시 최대 2회 재시도)
 // SAJU_API_URL / SAJU_API_KEY 가 미설정이면 503 을 돌려줍니다.
+// ⚠️ 실제 API 호출이 재시도 후에도 계속 실패하면, 근사치로 대충 채운
+//   사주를 성공으로 위장해서 내보내지 않는다 — 502 에러를 그대로
+//   반환해 클라이언트가 재시도 안내를 보여주도록 한다.
 
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
@@ -57,78 +61,25 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // 실제 API 호출 실패 시, 근사치로 대충 채워서 "성공"으로 속이지 않는다.
+  // (근사 계산으로 만든 사주를 실제 결과인 것처럼 내보내면 일주가 틀리는 등
+  // 고객이 그대로 돈을 내고 잘못된 사주를 받게 되는 사고로 이어진다 — 실제 신고 사례로 확인됨.)
+  // 대신 한 번 더 재시도한 뒤에도 실패하면 명확한 오류를 반환해, 클라이언트가
+  // "잠시 후 다시 시도해주세요" 안내와 함께 재시도하도록 한다.
   try {
     const manseryeok = await generateManseryeok(parsed.data.birthInfo);
     return NextResponse.json({ status: "success" as const, manseryeok });
   } catch {
-    // 외부 API 실패 시 기본 출생 정보로 폴백 — 결과지는 항상 나와야 함
-    const bi = parsed.data.birthInfo;
-    const fallback = buildFallbackManseryeok(bi);
-    return NextResponse.json({ status: "success" as const, manseryeok: fallback });
+    try {
+      await new Promise((r) => setTimeout(r, 800));
+      const manseryeok = await generateManseryeok(parsed.data.birthInfo);
+      return NextResponse.json({ status: "success" as const, manseryeok });
+    } catch (err) {
+      const message = err instanceof SajuApiError ? err.message : "사주 API 호출에 실패했습니다.";
+      return NextResponse.json(
+        { status: "error" as const, error: `만세력 계산에 실패했어요: ${message}` },
+        { status: 502 },
+      );
+    }
   }
-}
-
-function buildFallbackManseryeok(bi: {
-  birthYear: string; birthMonth: string; birthDay: string;
-  birthHour?: string; calendarType: string; gender: string;
-}): string {
-  const CHEONGAN = ["갑","을","병","정","무","기","경","신","임","계"];
-  const JIJI = ["자","축","인","묘","진","사","오","미","신","유","술","해"];
-  const JIJI_OE = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
-  const CHEONGAN_OE = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
-
-  const y = parseInt(bi.birthYear);
-  const m = parseInt(bi.birthMonth);
-  const d = parseInt(bi.birthDay);
-  const h = bi.birthHour != null ? parseInt(bi.birthHour) : null;
-
-  const yearIdx = (y - 4) % 60;
-  const yearCG = CHEONGAN[yearIdx % 10];
-  const yearJJ = JIJI[yearIdx % 12];
-  const yearCGOe = CHEONGAN_OE[yearIdx % 10];
-  const yearJJOe = JIJI_OE[yearIdx % 12];
-
-  // 월주: 절입 기준 간략 계산 (오차 있을 수 있음 — LLM이 보정)
-  const monthBase = (y - 4) * 12 + (m - 1);
-  const monthCG = CHEONGAN[monthBase % 10];
-  const monthJJ = JIJI[((m + 1) % 12)];
-  const monthCGOe = CHEONGAN_OE[monthBase % 10];
-  const monthJJOe = JIJI_OE[((m + 1) % 12)];
-
-  // 일주: 간략 줄리안일 기반 계산
-  const a = Math.floor((14 - m) / 12);
-  const yy = y + 4800 - a;
-  const mm = m + 12 * a - 3;
-  const jd = d + Math.floor((153 * mm + 2) / 5) + 365 * yy + Math.floor(yy / 4) - Math.floor(yy / 100) + Math.floor(yy / 400) - 32045;
-  const dayIdx = (jd + 49) % 60;
-  const dayCG = CHEONGAN[dayIdx % 10];
-  const dayJJ = JIJI[dayIdx % 12];
-  const dayCGOe = CHEONGAN_OE[dayIdx % 10];
-  const dayJJOe = JIJI_OE[dayIdx % 12];
-
-  // 시주
-  let hourCG = "모름", hourJJ = "모름";
-  if (h !== null) {
-    const hourBranch = Math.floor((h + 1) / 2) % 12;
-    const hourStem = (dayIdx % 5) * 2 + hourBranch % 10;
-    hourCG = CHEONGAN[hourStem % 10];
-    hourJJ = JIJI[hourBranch];
-  }
-
-  const timeStr = h !== null ? `${String(h).padStart(2,"0")}:00` : "모름";
-
-  return `[명식 기본 정보]
-생년월일: ${bi.birthYear}-${bi.birthMonth.padStart(2,"0")}-${bi.birthDay.padStart(2,"0")} (${bi.calendarType})
-출생시각: ${timeStr}
-성별: ${bi.gender === "male" ? "남성" : "여성"}
-
-[천간지지 (사주 원국)]
-년주: ${yearCG}${yearJJ} (${yearCGOe}${yearJJOe})
-월주: ${monthCG}${monthJJ} (${monthCGOe}${monthJJOe})
-일주: ${dayCG}${dayJJ} (${dayCGOe}${dayJJOe})
-시주: ${h !== null ? `${hourCG}${hourJJ}` : "모름 (시 미상)"}
-
-[참고]
-위 사주 원국을 기반으로 십성·합충·대운·세운 등을 명리학 원칙에 따라 직접 분석하여 해석하라.
-현재 연도 기준 세운: 2026년 병오년 (丙午年)`;
 }
