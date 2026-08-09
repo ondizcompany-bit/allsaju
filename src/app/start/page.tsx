@@ -991,6 +991,10 @@ function ResultScreen({
         localStorage.setItem('saju_followup_category', category.title);
         if (tarotCard) localStorage.setItem('saju_followup_tarot', JSON.stringify({ name: tarotCard.name, keyword: tarotCard.keyword, advice: tarotCard.advice }));
         // 파트너 정보 (파트너 정보가 필요한 카테고리)
+        // ⚠️ 상대방 사주도 반드시 만세력 API로 직접 계산해서 넘긴다.
+        // LLM에게 생년월일 텍스트만 주고 사주(특히 일주)를 스스로 계산하게 하면
+        // 틀린 간지를 만들어내는 경우가 있어(고객 신고로 확인됨), 본인과 동일하게
+        // 실제 계산된 만세력 데이터를 프롬프트에 넣어준다.
         const needsPartner = category.needsPartner;
         let partnerText: string | undefined;
         if (needsPartner) {
@@ -1002,6 +1006,29 @@ function ResultScreen({
               if (p.name) parts.push(`이름: ${p.name}`);
               if (p.birthDate) parts.push(`생년월일: ${p.birthDate}${p.birthTime ? ` ${p.birthTime}` : ' (시 미상)'}`);
               if (p.gender) parts.push(`성별: ${p.gender === 'male' ? '남성' : '여성'}`);
+
+              if (p.birthDate) {
+                try {
+                  const [py, pm, pd] = p.birthDate.split('-');
+                  const partnerBirthInfo = {
+                    birthYear: py, birthMonth: String(Number(pm)), birthDay: String(Number(pd)),
+                    birthHour: p.birthTime ? HOUR_MAP[p.birthTime] : undefined,
+                    calendarType: p.calendarType === 'lunar' ? '음력' : '양력' as '양력' | '음력',
+                    gender: (p.gender ?? 'female') as 'male' | 'female',
+                  };
+                  const pRes = await fetch('/api/generate-manseryeok', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ birthInfo: partnerBirthInfo }),
+                  });
+                  const pTxt = await pRes.text();
+                  const pData = JSON.parse(pTxt);
+                  if (pData.status === 'success' && pData.manseryeok) {
+                    parts.push(`\n[상대방 만세력 원국 — 아래 계산된 간지를 그대로 사용한다. 절대 다른 간지로 다시 계산하거나 착각하지 않는다]\n${pData.manseryeok}`);
+                  }
+                } catch { /* 상대방 만세력 계산 실패 시 아래 raw 텍스트로 대체 */ }
+              }
+
               partnerText = parts.join('\n');
             }
           } catch { /* ignore */ }

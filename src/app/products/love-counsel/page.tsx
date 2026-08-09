@@ -111,28 +111,6 @@ function BottomCTA() {
             <p className="font-black leading-[0.95]" style={{ fontSize: 'clamp(3.6rem,16vw,6rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,#fff 10%,rgba(255,255,255,0.5) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>연애</p>
             <p className="font-black leading-[0.95]" style={{ fontSize: 'clamp(3.6rem,16vw,6rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,rgba(255,255,255,0.55) 0%,rgba(255,255,255,0.18) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>상담</p>
           </div>
-          <div className="mb-10 space-y-3 max-w-xs mx-auto">
-            {[
-              { text: '지금 두 사람 관계 진단', dim: false },
-              { text: '이 사람과 나, 얼마나 잘 맞을까', dim: false },
-              { text: '결혼을 고민하고 있다면', dim: false },
-              { text: '지금 놓치면 안 되는 타이밍', dim: false },
-              { text: '관계를 더 단단하게 만드는 법까지..', dim: true },
-            ].map((f, i) => (
-              <div key={i} className="flex items-center gap-3 text-sm" style={{ color: f.dim ? 'rgba(255,255,255,0.28)' : 'rgba(255,255,255,0.68)' }}>
-                <span style={{ color: f.dim ? 'rgba(255,255,255,0.2)' : ACCENT_COLOR, flexShrink: 0, fontSize: 13 }}>{f.dim ? '··' : '✓'}</span>{f.text}
-              </div>
-            ))}
-          </div>
-          <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', marginBottom: 32 }} />
-          <div className="text-center mb-8">
-            <p className="text-sm line-through mb-2" style={{ color: 'rgba(255,255,255,0.28)' }}>정가 49,800원</p>
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>27,900원</span>
-              <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(253,164,175,0.15)', color: '#fda4af', border: '1px solid rgba(253,164,175,0.4)' }}>한정 할인</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-black" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)', color: 'white', boxShadow: '0 6px 28px rgba(225,29,72,0.4)' }}>지금 결제 시 44% 할인!</div>
-          </div>
           <div className="text-center mb-8">
             <p className="text-[11px] font-bold tracking-[0.25em] uppercase mb-5" style={{ color: 'rgba(255,255,255,0.3)' }}>할인 혜택 종료까지</p>
             <div className="inline-flex items-center rounded-2xl px-10 py-4" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.07)' }}>
@@ -142,9 +120,46 @@ function BottomCTA() {
             </div>
             <p className="text-[10px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>할인 종료 후 자동 갱신</p>
           </div>
-          <Link href="/start?cat=love-counsel" className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]" style={{ background: ACCENT_GRAD, boxShadow: '0 0 70px rgba(225,29,72,0.45), 0 10px 40px rgba(0,0,0,0.5)' }}>
-            우리 관계 상담받기 →
+
+          {/* 심층 상담 — 메인/추천 카드 */}
+          <div className="rounded-3xl p-6 mb-4 relative" style={{ background: 'linear-gradient(160deg,rgba(136,19,55,0.35),rgba(30,5,15,0.6))', border: '1.5px solid rgba(253,164,175,0.5)', boxShadow: '0 0 50px rgba(225,29,72,0.25)' }}>
+            <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full px-4 py-1 text-xs font-black text-white" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)' }}>가장 많이 선택하는 상담</span>
+            <p className="text-center text-sm font-bold mt-2 mb-1" style={{ color: '#fda4af' }}>심층 상담</p>
+            <div className="space-y-2 mb-5 mt-4">
+              {[
+                '상대방의 진짜 속마음',
+                '지금 두 사람 관계 진단 + 궁합',
+                '결혼을 고민하고 있다면 (적합성 분석)',
+                '지금 놓치면 안 되는 타이밍',
+                '관계를 더 단단하게 만드는 법',
+                '앞으로 이 관계가 흘러갈 방향까지 전부',
+              ].map((t, i) => (
+                <div key={i} className="flex items-center gap-2.5 text-sm" style={{ color: 'rgba(255,255,255,0.8)' }}>
+                  <span style={{ color: ACCENT_COLOR, flexShrink: 0, fontSize: 13 }}>✓</span>{t}
+                </div>
+              ))}
+            </div>
+            <div className="text-center mb-5">
+              <p className="text-sm line-through mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>정가 169,800원</p>
+              <div className="flex items-center justify-center gap-3">
+                <span className="font-black text-white" style={{ fontSize: 'clamp(2.6rem,11vw,3.8rem)', letterSpacing: '-0.02em' }}>89,900원</span>
+                <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(253,164,175,0.15)', color: '#fda4af', border: '1px solid rgba(253,164,175,0.4)' }}>47% 할인</span>
+              </div>
+            </div>
+            <Link href="/start?cat=love-counsel&tier=premium" className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]" style={{ background: ACCENT_GRAD, boxShadow: '0 0 70px rgba(225,29,72,0.45), 0 10px 40px rgba(0,0,0,0.5)' }}>
+              심층 상담 받기 →
+            </Link>
+          </div>
+
+          {/* 상담 리포트 — 서브 옵션 */}
+          <Link href="/start?cat=love-counsel&tier=basic" className="flex items-center justify-between rounded-2xl px-5 py-4 mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div>
+              <p className="text-sm font-semibold text-white">상담 리포트 <span style={{ color: 'rgba(255,255,255,0.35)' }}>· 핵심만 간단하게</span></p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>정가 109,800원 → <span style={{ color: '#fda4af' }}>59,900원</span></p>
+            </div>
+            <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>선택 →</span>
           </Link>
+
           <p className="text-center text-[11px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>결과 확인 전 전액 환불 · 회원가입 불필요 · 24시간 이용 가능</p>
           <div className="h-20" />
         </div>
@@ -157,8 +172,8 @@ function BottomCTA() {
               {m}<span style={{ color: 'rgba(255,255,255,0.22)', fontSize: '1.1rem', margin: '0 1px' }}>:</span>{s}
             </p>
           </div>
-          <Link href="/start?cat=love-counsel" className="flex-1 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all active:scale-[0.97]" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)', boxShadow: '0 0 24px rgba(225,29,72,0.45)' }}>
-            연애상담 신청하기 →
+          <Link href="/start?cat=love-counsel&tier=premium" className="flex-1 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all active:scale-[0.97]" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)', boxShadow: '0 0 24px rgba(225,29,72,0.45)' }}>
+            심층 상담 89,900원 →
           </Link>
         </div>
       </div>
@@ -303,7 +318,7 @@ export default function LoveCounselPage() {
               ))}
             </div>
             <div className="absolute bottom-0 left-0 right-0 h-28 flex items-end justify-center pb-5" style={{ background: `linear-gradient(to top,${BG_COLOR} 55%,transparent)` }}>
-              <Link href="/start?cat=love-counsel" className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-white" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)', boxShadow: '0 0 24px rgba(225,29,72,0.4)' }}>🔒 전체 결과 확인하기</Link>
+              <Link href="/start?cat=love-counsel&tier=premium" className="inline-flex items-center gap-2 rounded-full px-6 py-2.5 text-sm font-bold text-white" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)', boxShadow: '0 0 24px rgba(225,29,72,0.4)' }}>🔒 전체 결과 확인하기</Link>
             </div>
           </div>
         </FadeIn>
