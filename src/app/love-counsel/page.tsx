@@ -82,11 +82,13 @@ function LoveCounselInner() {
   // 건너뛰고 폼 작성 후 바로 그 가격으로 결제하러 간다.
   const [preselectedTier, setPreselectedTier] = useState<Tier | null>(null);
 
+  // 랜딩페이지에서 특정 가격 CTA(?tier=...)로 들어와도, 상담사 인트로(채팅 버블 →
+  // 예/아니오 → 관계 유형 선택)는 그대로 다 보여준다. 가격만 기억해뒀다가
+  // 폼 작성 후 패키지 선택 화면을 건너뛰고 바로 그 가격으로 결제하러 간다.
   useEffect(() => {
     const t = search.get('tier');
     if ((t === 'basic' || t === 'premium') && search.get('paid') !== 'true') {
       setPreselectedTier(t);
-      setScreen('form');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
