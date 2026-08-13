@@ -8,6 +8,36 @@ import { ChapterResult } from '@/components/saju/ChapterResult';
 type Screen = 'intro' | 'form' | 'package' | 'loading' | 'result' | 'error';
 type Tier = 'basic' | 'premium';
 type Gender = 'male' | 'female';
+type RelationshipType = 'couple' | 'married' | 'some' | 'other';
+
+const RELATIONSHIP_TYPES: { key: RelationshipType; label: string; emoji: string }[] = [
+  { key: 'couple',  label: '연인 사이',    emoji: '💑' },
+  { key: 'married', label: '부부 사이',    emoji: '💍' },
+  { key: 'some',    label: '썸 타는 사이', emoji: '🌱' },
+  { key: 'other',   label: '그 외 인간관계', emoji: '👥' },
+];
+
+const SITUATION_PLACEHOLDER: Record<RelationshipType, string> = {
+  couple: '예: 3개월 전 헤어진 사람이 있는데, 최근에 SNS로 제 게시물에 자주 좋아요를 눌러요. 만난 지는 1년 정도 됐고, 헤어진 이유는 서로 바빠서 연락이 뜸해졌기 때문이에요.',
+  married: '예: 결혼 5년 차인데, 요즘 대화가 눈에 띄게 줄었어요. 큰 다툼은 없지만 서로 각자 할 일만 하는 느낌이에요.',
+  some: '예: 소개로 만나서 3번 정도 데이트했어요. 연락은 매일 하는데 먼저 만나자는 말은 안 해요.',
+  other: '예: 친한 친구인데 최근에 사소한 일로 연락이 뜸해졌어요. 제가 뭘 잘못했는지 모르겠어요.',
+};
+
+const COUNSELOR_NAME = '다연';
+const INTRO_BUBBLES = [
+  `안녕하세요, 저는 관계 상담사 ${COUNSELOR_NAME}이에요 🙂`,
+  '지금까지 11,000건이 넘는 연애·결혼·재회 상담을 진행해왔어요.',
+  '관계는 사실 감정보다 \'패턴\'에 가까워요. 지금 무슨 일이 있었는지 알면, 앞으로 어떻게 하면 좋을지도 꽤 정확하게 보이거든요.',
+];
+const QUALIFY_QUESTION = '그런데… 지금 이 페이지를 보고 계신 건, 마음이 편하지만은 않아서겠죠?';
+
+const QUESTION_PLACEHOLDER: Record<RelationshipType, string> = {
+  couple: '예: 제가 먼저 연락해도 될까요? 상대방도 저를 다시 생각하고 있는 걸까요?',
+  married: '예: 이 상태로 계속 지내도 괜찮을까요? 대화를 늘리려면 어떻게 시작해야 할까요?',
+  some: '예: 저한테 관심이 있는 게 맞을까요? 제가 먼저 만나자고 해도 될까요?',
+  other: '예: 제가 먼저 연락해서 괜찮은지 물어봐도 될까요?',
+};
 
 const PACKAGES: Record<Tier, { price: number; original: number; label: string; desc: string; popular?: boolean }> = {
   basic:   { price: 59900, original: 109800, label: '상담 리포트', desc: '핵심 진단 + 전문가 조언 (4개 섹션)' },
@@ -40,6 +70,10 @@ function LoveCounselInner() {
   const [email, setEmail] = useState('');
   const [situation, setSituation] = useState('');
   const [question, setQuestion] = useState('');
+  const [relationshipType, setRelationshipType] = useState<RelationshipType | null>(null);
+  const [introStep, setIntroStep] = useState(0);
+  // bubbles: 소개 문구 순차 노출 → qualify: 예/아니오 질문 → typeSelect: 고민 유형 선택
+  const [introPhase, setIntroPhase] = useState<'bubbles' | 'qualify' | 'typeSelect'>('bubbles');
   const [errorMsg, setErrorMsg] = useState('');
   const [sections, setSections] = useState<string[]>([]);
   const [tier, setTier] = useState<Tier>('basic');
@@ -57,6 +91,17 @@ function LoveCounselInner() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // 인트로 채팅 버블을 순차적으로 하나씩 보여준 뒤, 예/아니오 질문 단계로 넘어간다
+  useEffect(() => {
+    if (screen !== 'intro' || introPhase !== 'bubbles') return;
+    if (introStep >= INTRO_BUBBLES.length) {
+      const t = setTimeout(() => setIntroPhase('qualify'), 700);
+      return () => clearTimeout(t);
+    }
+    const t = setTimeout(() => setIntroStep(s => s + 1), introStep === 0 ? 500 : 1000);
+    return () => clearTimeout(t);
+  }, [screen, introPhase, introStep]);
+
   // 결제 완료 후 돌아온 경우 — localStorage에서 입력 내용을 읽어 바로 결과 생성
   useEffect(() => {
     if (search.get('paid') !== 'true') return;
@@ -70,6 +115,7 @@ function LoveCounselInner() {
       const savedEmail = localStorage.getItem('love_counsel_email') ?? '';
       const savedSituation = localStorage.getItem('love_counsel_situation') ?? '';
       const savedQuestion = localStorage.getItem('love_counsel_question') ?? '';
+      const savedRelType = localStorage.getItem('love_counsel_relationship_type') || undefined;
 
       if (!savedName || !savedSituation || !savedQuestion) {
         setScreen('error');
@@ -86,6 +132,7 @@ function LoveCounselInner() {
           gender: savedGender,
           situation: savedSituation,
           question: savedQuestion,
+          relationshipType: savedRelType,
           email: savedEmail || undefined,
         }),
       })
@@ -116,6 +163,7 @@ function LoveCounselInner() {
     localStorage.setItem('love_counsel_email', email);
     localStorage.setItem('love_counsel_situation', situation);
     localStorage.setItem('love_counsel_question', question);
+    if (relationshipType) localStorage.setItem('love_counsel_relationship_type', relationshipType);
     localStorage.setItem('saju_result_email', email); // 체크아웃 위젯이 재사용하는 키
 
     const pkg = PACKAGES[selectedTier];
@@ -192,22 +240,98 @@ function LoveCounselInner() {
   }
 
   if (screen === 'intro') {
+    const allBubblesShown = introStep >= INTRO_BUBBLES.length;
     return (
-      <div className="min-h-screen bg-canvas flex flex-col items-center justify-center px-6 text-center">
-        <p className="text-xs font-semibold tracking-widest text-purple-bright uppercase mb-3">연애·결혼·재회 통합상담</p>
-        <h1 className="text-2xl font-bold text-white mb-3">지금 이 관계,<br />전문가 시선으로 짚어드려요</h1>
-        <p className="text-sm text-body mb-10 max-w-xs">
-          연애든 결혼이든 재회든, 어떤 질문이든 괜찮아요. 지금 상황을 남겨주시면
-          다양한 상담 사례를 다뤄온 관계 전문가의 통찰로 솔직하게 답해드려요.
-        </p>
-        <button
-          onClick={() => setScreen('form')}
-          className="w-full max-w-xs h-14 rounded-full text-white font-bold text-base"
-          style={{ background: 'linear-gradient(135deg,#881337,#e11d48)', boxShadow: '0 8px 30px rgba(225,29,72,0.4)' }}
-        >
-          상담 시작하기 →
-        </button>
-        <p className="text-xs text-mute mt-4">약 2분 소요 · 참고용 상담 콘텐츠예요</p>
+      <div className="min-h-screen bg-canvas flex flex-col px-5 py-8">
+        <div className="max-w-sm mx-auto w-full flex flex-col flex-1">
+
+          {/* 상담사 프로필 헤더 */}
+          <div className="flex items-center gap-3 rounded-2xl px-4 py-3 mb-6" style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}>
+            <div className="relative flex-shrink-0">
+              <div className="w-11 h-11 rounded-full flex items-center justify-center text-xl" style={{ background: 'linear-gradient(135deg,#881337,#e11d48)' }}>💬</div>
+              <span className="absolute bottom-0 right-0 w-2.5 h-2.5 rounded-full border-2" style={{ background: '#34d399', borderColor: '#0e0508' }} />
+            </div>
+            <div className="min-w-0">
+              <div className="flex items-center gap-1.5">
+                <p className="text-sm font-bold text-white">{COUNSELOR_NAME}</p>
+                <span className="text-[10px]" style={{ color: '#34d399' }}>● 상담중</span>
+              </div>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>관계 상담 경력 15년 · 누적 상담 11,000+</p>
+            </div>
+          </div>
+
+          {introPhase !== 'typeSelect' ? (
+            <div className="flex flex-col gap-3 mb-8">
+              {INTRO_BUBBLES.slice(0, introStep).map((line, i) => (
+                <div key={i} className="flex items-start gap-2.5" style={{ animation: 'love-bubble-in 0.4s ease' }}>
+                  <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm" style={{ background: 'rgba(225,29,72,0.15)', border: '1px solid rgba(225,29,72,0.3)' }}>💌</div>
+                  <div className="rounded-2xl rounded-tl-md px-4 py-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', maxWidth: 'calc(100% - 44px)' }}>
+                    <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.85)' }}>{line}</p>
+                  </div>
+                </div>
+              ))}
+              {!allBubblesShown ? (
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm" style={{ background: 'rgba(225,29,72,0.15)', border: '1px solid rgba(225,29,72,0.3)' }}>💌</div>
+                  <div className="rounded-2xl rounded-tl-md px-4 py-3 flex gap-1" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                    {[0, 1, 2].map(i => (
+                      <span key={i} style={{ width: 5, height: 5, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', animation: `love-dot-bounce 1s ease-in-out ${i * 0.15}s infinite` }} />
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {introPhase === 'qualify' ? (
+                <>
+                  <div className="flex items-start gap-2.5" style={{ animation: 'love-bubble-in 0.4s ease' }}>
+                    <div className="w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center text-sm" style={{ background: 'rgba(225,29,72,0.15)', border: '1px solid rgba(225,29,72,0.3)' }}>💌</div>
+                    <div className="rounded-2xl rounded-tl-md px-4 py-3" style={{ background: 'rgba(225,29,72,0.12)', border: '1px solid rgba(225,29,72,0.3)', maxWidth: 'calc(100% - 44px)' }}>
+                      <p className="text-sm leading-relaxed font-medium" style={{ color: 'rgba(255,255,255,0.9)' }}>{QUALIFY_QUESTION}</p>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-2 mt-1" style={{ animation: 'love-bubble-in 0.4s ease 0.15s both' }}>
+                    <button
+                      onClick={() => setIntroPhase('typeSelect')}
+                      className="w-full h-12 rounded-full text-white font-bold text-sm"
+                      style={{ background: 'linear-gradient(135deg,#881337,#e11d48)' }}
+                    >
+                      네, 맞아요
+                    </button>
+                    <button
+                      onClick={() => setIntroPhase('typeSelect')}
+                      className="text-xs text-mute hover:text-body transition-colors py-1"
+                    >
+                      그냥 살펴보는 중이에요
+                    </button>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          ) : (
+            <div style={{ animation: 'love-bubble-in 0.4s ease' }}>
+              <p className="text-sm text-body mb-5 text-center">지금 어떤 관계 때문에 오셨어요?</p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {RELATIONSHIP_TYPES.map(rt => (
+                  <button
+                    key={rt.key}
+                    onClick={() => { setRelationshipType(rt.key); setScreen('form'); }}
+                    className="rounded-2xl px-4 py-4 text-left transition-transform hover:scale-[1.02]"
+                    style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.1)' }}
+                  >
+                    <span className="text-lg">{rt.emoji}</span>
+                    <p className="text-sm font-semibold text-white mt-1.5">{rt.label}</p>
+                  </button>
+                ))}
+              </div>
+              <p className="text-xs text-mute text-center mt-6">약 2분 소요 · 참고용 상담 콘텐츠예요</p>
+            </div>
+          )}
+        </div>
+
+        <style>{`
+          @keyframes love-bubble-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+          @keyframes love-dot-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: 0.4; } 30% { transform: translateY(-4px); opacity: 1; } }
+        `}</style>
       </div>
     );
   }
@@ -254,13 +378,13 @@ function LoveCounselInner() {
               <label className="block text-xs text-body mb-1.5">지금 상황을 편하게 설명해주세요</label>
               <textarea value={situation} onChange={e => setSituation(e.target.value)} rows={5}
                 className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
-                placeholder="예: 3개월 전 헤어진 사람이 있는데, 최근에 SNS로 제 게시물에 자주 좋아요를 눌러요. 만난 지는 1년 정도 됐고, 헤어진 이유는 서로 바빠서 연락이 뜸해졌기 때문이에요." />
+                placeholder={SITUATION_PLACEHOLDER[relationshipType ?? 'couple']} />
             </div>
             <div>
               <label className="block text-xs text-body mb-1.5">궁금한 점 — 어떤 질문이든 괜찮아요</label>
               <textarea value={question} onChange={e => setQuestion(e.target.value)} rows={3}
                 className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
-                placeholder="예: 제가 먼저 연락해도 될까요? 상대방도 저를 다시 생각하고 있는 걸까요?" />
+                placeholder={QUESTION_PLACEHOLDER[relationshipType ?? 'couple']} />
             </div>
           </div>
 

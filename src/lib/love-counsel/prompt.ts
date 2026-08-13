@@ -4,14 +4,24 @@
 // 사주/명리학이 아닌, "다양한 상담 사례를 다뤄온 관계 전문가"의
 // 통찰과 심리 분석을 바탕으로 조언한다. 사주 용어는 절대 쓰지 않는다.
 
+export type RelationshipType = "couple" | "married" | "some" | "other";
+
+const RELATIONSHIP_TYPE_LABEL: Record<RelationshipType, string> = {
+  couple: "연인 사이",
+  married: "부부 사이",
+  some: "썸 타는 사이",
+  other: "그 외 인간관계 (가족·친구·직장동료 등)",
+};
+
 export type LoveCounselPromptInput = {
   name: string;
   gender: "male" | "female";
   situation: string;   // 지금 상황 설명 (필수, 자유 텍스트)
   question: string;    // 궁금한 점 — 어떤 질문이든 (필수, 자유 텍스트)
+  relationshipType?: RelationshipType;
 };
 
-const SYSTEM_BASE = `당신은 15년 경력의 연애·결혼·재회 전문 상담가입니다. 지금까지 11,000건이 넘는 실제 상담을 진행해왔고, 상황 설명만으로 상대방의 심리와 관계의 역학을 정확히 짚어내는 것으로 알려져 있습니다.
+const SYSTEM_BASE = `당신은 15년 경력의 관계 전문 상담가입니다. 연애·결혼·재회는 물론, 가족·친구·직장동료 같은 다양한 인간관계까지 폭넓게 다뤄왔습니다. 지금까지 11,000건이 넘는 실제 상담을 진행해왔고, 상황 설명만으로 상대방의 심리와 관계의 역학을 정확히 짚어내는 것으로 알려져 있습니다.
 
 [핵심 원칙 — 절대 준수]
 ▶ 사주·명리학·타로 같은 점술적 요소는 절대 언급하지 않는다. 오직 심리학적 통찰, 관계 패턴 분석, 실제 상담 경험에 기반해 조언한다.
@@ -29,15 +39,22 @@ const SYSTEM_BASE = `당신은 15년 경력의 연애·결혼·재회 전문 상
 - ⚠️ 절대 중간에 끊기지 않는다. 요청한 모든 섹션(##)을 끝까지 완성한다`;
 
 function infoBlock(input: LoveCounselPromptInput): string {
+  const relTypeLine = input.relationshipType
+    ? `관계 유형: ${RELATIONSHIP_TYPE_LABEL[input.relationshipType]}\n`
+    : '';
+  const nonRomanticNote = input.relationshipType === 'other'
+    ? `\n⚠️ 이 상담은 연애 관계가 아니라 "${RELATIONSHIP_TYPE_LABEL.other}"에 대한 것이다. 연애·스킨십 관련 조언은 절대 하지 말고, 그 관계의 성격에 맞는 심리·소통 조언으로 서술한다.`
+    : '';
+
   return `[상담 신청자]
 이름: ${input.name}
 성별: ${input.gender === "male" ? "남성" : "여성"}
-
+${relTypeLine}
 [지금 상황]
 ${input.situation}
 
 [${input.name}님이 궁금해하는 점 — 반드시 이 질문에 초점을 맞춘다]
-${input.question}`;
+${input.question}${nonRomanticNote}`;
 }
 
 export function buildLoveCounselCore(input: LoveCounselPromptInput): { system: string; user: string } {
