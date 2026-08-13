@@ -60,6 +60,14 @@ const TYPE_FIELDS: Record<RelationshipType, TypeField[]> = {
   ],
 };
 
+// 모든 관계 유형에 공통으로 물어보는 간단 체크 질문 — 자유 서술(상황 설명·궁금한 점)보다 먼저 노출해
+// 부담 없이 답할 수 있게 한다.
+const UNIVERSAL_FIELDS: TypeField[] = [
+  { key: '지금 기분', label: '지금 기분을 가장 잘 표현하면?', options: ['불안해요', '답답해요', '화가 나요', '서운해요', '그리워요', '후회돼요'] },
+  { key: '연락 빈도', label: '요즘 연락은 어떤 상태인가요?', options: ['매일 연락해요', '가끔 연락해요', '거의 안 해요', '전혀 안 해요'] },
+  { key: '원하는 것', label: '가장 원하는 건 뭐예요?', options: ['관계를 더 좋게 만들고 싶어요', '다시 가까워지고 싶어요', '지금 이대로 괜찮은지 확인하고 싶어요', '거리를 둬야 할지 고민돼요', '그냥 마음 정리가 필요해요'] },
+];
+
 const PACKAGES: Record<Tier, { price: number; original: number; label: string; desc: string; popular?: boolean }> = {
   basic:   { price: 59900, original: 109800, label: '상담 리포트', desc: '핵심 진단 + 전문가 조언 (4개 섹션)' },
   premium: { price: 89900, original: 169800, label: '심층 상담', desc: '상담 리포트 전부 + 전략·장기 조언 (8개 섹션)', popular: true },
@@ -365,14 +373,14 @@ function LoveCounselInner() {
   }
 
   if (screen === 'form') {
-    const typeFields = TYPE_FIELDS[relationshipType ?? 'couple'];
-    const typeFieldsAnswered = typeFields.every(f => !!typeAnswers[f.key]);
-    const canProceed = name.trim().length > 0 && /.+@.+\..+/.test(email) && situation.trim().length >= 10 && question.trim().length >= 5 && typeFieldsAnswered;
+    const allQuickFields = [...TYPE_FIELDS[relationshipType ?? 'couple'], ...UNIVERSAL_FIELDS];
+    const quickFieldsAnswered = allQuickFields.every(f => !!typeAnswers[f.key]);
+    const canProceed = name.trim().length > 0 && /.+@.+\..+/.test(email) && situation.trim().length >= 10 && question.trim().length >= 5 && quickFieldsAnswered;
     return (
       <div className="min-h-screen bg-canvas">
         <div className="container max-w-md py-12">
           <p className="text-xs font-semibold tracking-widest text-purple-bright uppercase mb-2 text-center">상담 신청</p>
-          <h1 className="text-xl font-bold text-white mb-8 text-center">지금 상황을<br />편하게 들려주세요</h1>
+          <h1 className="text-xl font-bold text-white mb-8 text-center">몇 가지만<br />간단히 체크해주세요</h1>
 
           <div className="flex flex-col gap-5">
             <div className="grid grid-cols-2 gap-3">
@@ -399,7 +407,7 @@ function LoveCounselInner() {
               </div>
             </div>
 
-            {typeFields.map(f => (
+            {allQuickFields.map(f => (
               <div key={f.key}>
                 <label className="block text-xs text-body mb-1.5">{f.label}</label>
                 <div className="flex flex-wrap gap-2">
@@ -426,6 +434,10 @@ function LoveCounselInner() {
                 className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60"
                 placeholder="example@email.com" />
             </div>
+
+            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
+            <p className="text-xs text-mute -mb-2">마지막으로, 조금 더 자세히 들려주시면 상담이 훨씬 정확해져요</p>
+
             <div>
               <label className="block text-xs text-body mb-1.5">지금 상황을 편하게 설명해주세요</label>
               <textarea value={situation} onChange={e => setSituation(e.target.value)} rows={5}
