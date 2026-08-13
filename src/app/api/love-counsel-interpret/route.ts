@@ -20,6 +20,7 @@ const bodySchema = z.object({
   situation: z.string().min(1),
   question: z.string().min(1),
   relationshipType: z.enum(["couple", "married", "some", "other"]).optional(),
+  details: z.string().optional(),
   email: z.string().email().optional(),
 });
 
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
   }
 
   const d = parsed.data;
-  const promptInput = { name: d.name, gender: d.gender, situation: d.situation, question: d.question, relationshipType: d.relationshipType };
+  const promptInput = { name: d.name, gender: d.gender, situation: d.situation, question: d.question, relationshipType: d.relationshipType, details: d.details };
 
   let sections: string[];
   try {

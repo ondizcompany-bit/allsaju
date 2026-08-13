@@ -19,6 +19,7 @@ export type LoveCounselPromptInput = {
   situation: string;   // 지금 상황 설명 (필수, 자유 텍스트)
   question: string;    // 궁금한 점 — 어떤 질문이든 (필수, 자유 텍스트)
   relationshipType?: RelationshipType;
+  details?: string;    // 관계 유형별 추가 정보 (예: "교제 기간: 1~3년 / 지금 상태: 헤어졌고, 재회를 원해요")
 };
 
 const SYSTEM_BASE = `당신은 15년 경력의 관계 전문 상담가입니다. 연애·결혼·재회는 물론, 가족·친구·직장동료 같은 다양한 인간관계까지 폭넓게 다뤄왔습니다. 지금까지 11,000건이 넘는 실제 상담을 진행해왔고, 상황 설명만으로 상대방의 심리와 관계의 역학을 정확히 짚어내는 것으로 알려져 있습니다.
@@ -45,11 +46,14 @@ function infoBlock(input: LoveCounselPromptInput): string {
   const nonRomanticNote = input.relationshipType === 'other'
     ? `\n⚠️ 이 상담은 연애 관계가 아니라 "${RELATIONSHIP_TYPE_LABEL.other}"에 대한 것이다. 연애·스킨십 관련 조언은 절대 하지 말고, 그 관계의 성격에 맞는 심리·소통 조언으로 서술한다.`
     : '';
+  const detailsLine = input.details
+    ? `\n[추가 정보 — 반드시 분석에 반영한다]\n${input.details}\n`
+    : '';
 
   return `[상담 신청자]
 이름: ${input.name}
 성별: ${input.gender === "male" ? "남성" : "여성"}
-${relTypeLine}
+${relTypeLine}${detailsLine}
 [지금 상황]
 ${input.situation}
 

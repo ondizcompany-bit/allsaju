@@ -39,6 +39,27 @@ const QUESTION_PLACEHOLDER: Record<RelationshipType, string> = {
   other: '예: 제가 먼저 연락해서 괜찮은지 물어봐도 될까요?',
 };
 
+// 관계 유형별로 상황을 더 구체적으로 파악하기 위한 추가 질문
+type TypeField = { key: string; label: string; options: string[] };
+const TYPE_FIELDS: Record<RelationshipType, TypeField[]> = {
+  couple: [
+    { key: '교제 기간', label: '만난 지 얼마나 되셨어요?', options: ['3개월 미만', '3개월~1년', '1~3년', '3년 이상'] },
+    { key: '지금 상태', label: '지금 상태는요?', options: ['사귀는 중이에요', '헤어졌고, 재회를 원해요', '헤어졌고, 아직 고민 중이에요'] },
+  ],
+  married: [
+    { key: '결혼 기간', label: '결혼하신 지 얼마나 되셨어요?', options: ['1년 미만', '1~5년', '5~10년', '10년 이상'] },
+    { key: '자녀 유무', label: '자녀가 있으신가요?', options: ['없어요', '있어요'] },
+  ],
+  some: [
+    { key: '만난 기간', label: '만난 지 얼마나 되셨어요?', options: ['2주 미만', '1개월 정도', '2~3개월', '3개월 이상'] },
+    { key: '만난 계기', label: '어떻게 만나셨어요?', options: ['소개팅', '지인 소개', '자연스럽게', '소개팅 앱'] },
+  ],
+  other: [
+    { key: '관계', label: '어떤 관계이신가요?', options: ['친구', '가족', '직장동료', '기타'] },
+    { key: '알고 지낸 기간', label: '알고 지내신 지 얼마나 되셨어요?', options: ['1년 미만', '1~5년', '5년 이상'] },
+  ],
+};
+
 const PACKAGES: Record<Tier, { price: number; original: number; label: string; desc: string; popular?: boolean }> = {
   basic:   { price: 59900, original: 109800, label: '상담 리포트', desc: '핵심 진단 + 전문가 조언 (4개 섹션)' },
   premium: { price: 89900, original: 169800, label: '심층 상담', desc: '상담 리포트 전부 + 전략·장기 조언 (8개 섹션)', popular: true },
@@ -71,6 +92,7 @@ function LoveCounselInner() {
   const [situation, setSituation] = useState('');
   const [question, setQuestion] = useState('');
   const [relationshipType, setRelationshipType] = useState<RelationshipType | null>(null);
+  const [typeAnswers, setTypeAnswers] = useState<Record<string, string>>({});
   const [introStep, setIntroStep] = useState(0);
   // bubbles: 소개 문구 순차 노출 → qualify: 예/아니오 질문 → typeSelect: 고민 유형 선택
   const [introPhase, setIntroPhase] = useState<'bubbles' | 'qualify' | 'typeSelect'>('bubbles');
@@ -118,6 +140,7 @@ function LoveCounselInner() {
       const savedSituation = localStorage.getItem('love_counsel_situation') ?? '';
       const savedQuestion = localStorage.getItem('love_counsel_question') ?? '';
       const savedRelType = localStorage.getItem('love_counsel_relationship_type') || undefined;
+      const savedDetails = localStorage.getItem('love_counsel_details') || undefined;
 
       if (!savedName || !savedSituation || !savedQuestion) {
         setScreen('error');
@@ -135,6 +158,7 @@ function LoveCounselInner() {
           situation: savedSituation,
           question: savedQuestion,
           relationshipType: savedRelType,
+          details: savedDetails,
           email: savedEmail || undefined,
         }),
       })
@@ -166,6 +190,8 @@ function LoveCounselInner() {
     localStorage.setItem('love_counsel_situation', situation);
     localStorage.setItem('love_counsel_question', question);
     if (relationshipType) localStorage.setItem('love_counsel_relationship_type', relationshipType);
+    const detailsText = Object.entries(typeAnswers).map(([k, v]) => `${k}: ${v}`).join(' / ');
+    if (detailsText) localStorage.setItem('love_counsel_details', detailsText);
     localStorage.setItem('saju_result_email', email); // 체크아웃 위젯이 재사용하는 키
 
     const pkg = PACKAGES[selectedTier];
@@ -339,7 +365,9 @@ function LoveCounselInner() {
   }
 
   if (screen === 'form') {
-    const canProceed = name.trim().length > 0 && /.+@.+\..+/.test(email) && situation.trim().length >= 10 && question.trim().length >= 5;
+    const typeFields = TYPE_FIELDS[relationshipType ?? 'couple'];
+    const typeFieldsAnswered = typeFields.every(f => !!typeAnswers[f.key]);
+    const canProceed = name.trim().length > 0 && /.+@.+\..+/.test(email) && situation.trim().length >= 10 && question.trim().length >= 5 && typeFieldsAnswered;
     return (
       <div className="min-h-screen bg-canvas">
         <div className="container max-w-md py-12">
@@ -370,6 +398,28 @@ function LoveCounselInner() {
                 </div>
               </div>
             </div>
+
+            {typeFields.map(f => (
+              <div key={f.key}>
+                <label className="block text-xs text-body mb-1.5">{f.label}</label>
+                <div className="flex flex-wrap gap-2">
+                  {f.options.map(opt => (
+                    <button
+                      key={opt}
+                      type="button"
+                      onClick={() => setTypeAnswers(a => ({ ...a, [f.key]: opt }))}
+                      className="rounded-full px-4 py-2 text-xs font-medium transition-colors"
+                      style={typeAnswers[f.key] === opt
+                        ? { background: 'rgba(225,29,72,0.25)', border: '1px solid rgba(225,29,72,0.6)', color: '#fda4af' }
+                        : { background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', color: 'rgba(255,255,255,0.55)' }}
+                    >
+                      {opt}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+
             <div>
               <label className="block text-xs text-body mb-1.5">결과지 받을 이메일 (간단하게만 발송됩니다)</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
