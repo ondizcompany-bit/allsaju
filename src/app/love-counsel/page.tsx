@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { ChapterResult } from '@/components/saju/ChapterResult';
 
-type Screen = 'intro' | 'form' | 'package' | 'loading' | 'result' | 'error';
+type Screen = 'intro' | 'form' | 'concern' | 'package' | 'loading' | 'result' | 'error';
 type Tier = 'basic' | 'premium';
 type Gender = 'male' | 'female';
 type RelationshipType = 'couple' | 'married' | 'some' | 'other';
@@ -375,7 +375,7 @@ function LoveCounselInner() {
   if (screen === 'form') {
     const allQuickFields = [...TYPE_FIELDS[relationshipType ?? 'couple'], ...UNIVERSAL_FIELDS];
     const quickFieldsAnswered = allQuickFields.every(f => !!typeAnswers[f.key]);
-    const canProceed = name.trim().length > 0 && /.+@.+\..+/.test(email) && situation.trim().length >= 10 && question.trim().length >= 5 && quickFieldsAnswered;
+    const canProceed = name.trim().length > 0 && /.+@.+\..+/.test(email) && quickFieldsAnswered;
     return (
       <div className="min-h-screen bg-canvas">
         <div className="container max-w-md py-12">
@@ -434,10 +434,30 @@ function LoveCounselInner() {
                 className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60"
                 placeholder="example@email.com" />
             </div>
+          </div>
 
-            <div style={{ height: 1, background: 'rgba(255,255,255,0.08)', margin: '4px 0' }} />
-            <p className="text-xs text-mute -mb-2">마지막으로, 조금 더 자세히 들려주시면 상담이 훨씬 정확해져요</p>
+          <button
+            disabled={!canProceed}
+            onClick={() => setScreen('concern')}
+            className="w-full h-14 rounded-full text-white font-bold text-base mt-8 disabled:opacity-30 transition-opacity"
+            style={{ background: 'linear-gradient(135deg,#881337,#e11d48)' }}
+          >
+            다음으로 →
+          </button>
+        </div>
+      </div>
+    );
+  }
 
+  if (screen === 'concern') {
+    const canProceed = situation.trim().length >= 10 && question.trim().length >= 5;
+    return (
+      <div className="min-h-screen bg-canvas">
+        <div className="container max-w-md py-12">
+          <p className="text-xs font-semibold tracking-widest text-purple-bright uppercase mb-2 text-center">상담 신청</p>
+          <h1 className="text-xl font-bold text-white mb-8 text-center">조금 더 자세히<br />들려주시면 상담이 정확해져요</h1>
+
+          <div className="flex flex-col gap-5">
             <div>
               <label className="block text-xs text-body mb-1.5">지금 상황을 편하게 설명해주세요</label>
               <textarea value={situation} onChange={e => setSituation(e.target.value)} rows={5}
@@ -459,6 +479,13 @@ function LoveCounselInner() {
             style={{ background: 'linear-gradient(135deg,#881337,#e11d48)' }}
           >
             {preselectedTier ? `${fmt(PACKAGES[preselectedTier].price)} 결제하러 가기 →` : '다음으로 →'}
+          </button>
+
+          <button
+            onClick={() => setScreen('form')}
+            className="w-full text-center text-xs text-mute mt-4"
+          >
+            ← 이전으로
           </button>
         </div>
       </div>
