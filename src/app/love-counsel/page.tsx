@@ -343,24 +343,31 @@ function LoveCounselInner() {
       <div className="min-h-screen bg-canvas">
         <div className="container max-w-lg py-12">
           <p className="text-xs font-semibold tracking-widest text-purple-bright uppercase mb-2 text-center">연애상담 결과</p>
-          <h1 className="text-xl font-bold text-white mb-6 text-center">{name}님을 위한 상담이에요</h1>
+          <h1 className="text-xl font-bold text-white mb-2 text-center">{name}님을 위한 상담이에요</h1>
 
           {availableTabs.length > 1 ? (
-            <div className="flex gap-2 mb-6">
-              {availableTabs.map(t => (
-                <button
-                  key={t.key}
-                  onClick={() => setActiveTab(t.key)}
-                  className="flex-1 py-2.5 rounded-full text-xs font-bold transition-colors"
-                  style={activeTab === t.key
-                    ? { background: 'linear-gradient(135deg,#881337,#e11d48)', color: 'white' }
-                    : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}
-                >
-                  {t.label}
-                </button>
-              ))}
-            </div>
-          ) : null}
+            <>
+              <p className="text-xs text-mute text-center mb-4">
+                총 {sections.length * 6}개 섹션이 두 탭에 나뉘어 있어요 — 아래 탭을 눌러 심층 전략까지 모두 확인해보세요
+              </p>
+              <div className="flex gap-2 mb-6">
+                {availableTabs.map(t => (
+                  <button
+                    key={t.key}
+                    onClick={() => setActiveTab(t.key)}
+                    className="flex-1 py-2.5 rounded-full text-xs font-bold transition-colors"
+                    style={activeTab === t.key
+                      ? { background: 'linear-gradient(135deg,#881337,#e11d48)', color: 'white' }
+                      : { background: 'rgba(255,255,255,0.05)', color: 'rgba(255,255,255,0.5)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  >
+                    {t.label} {activeTab !== t.key ? '👉' : ''}
+                  </button>
+                ))}
+              </div>
+            </>
+          ) : (
+            <div className="mb-6" />
+          )}
 
           {sections[activeTab] ? <ChapterResult sections={[sections[activeTab]]} /> : null}
 
