@@ -24,6 +24,27 @@ const SITUATION_PLACEHOLDER: Record<RelationshipType, string> = {
   other: '예: 친한 친구인데 최근에 사소한 일로 연락이 뜸해졌어요. 제가 뭘 잘못했는지 모르겠어요.',
 };
 
+// 상황 설명을 더 입체적으로 파악하기 위한 추가 서술형 질문 — 상담사가 실제로
+// 근거를 갖고 진단하려면 '최근에 있었던 구체적 사건'과 '상대방의 실제 언행'이 필요하다.
+const RECENT_EVENT_PLACEHOLDER: Record<RelationshipType, string> = {
+  couple: '예: 지난주에 사소한 일로 다퉜는데, 그 후로 연락이 눈에 띄게 줄었어요.',
+  married: '예: 어제 대화하다가 서로 언성이 높아졌어요. 그 전에는 그냥 조용히 지내던 편이었어요.',
+  some: '예: 지난 데이트 이후로 먼저 연락이 뜸해진 것 같아요.',
+  other: '예: 며칠 전부터 메시지 답장이 눈에 띄게 늦어졌어요.',
+};
+const PARTNER_WORDS_PLACEHOLDER: Record<RelationshipType, string> = {
+  couple: '예: "요즘 좀 지친다"는 말을 했는데, 정확히 무슨 뜻인지 모르겠어요.',
+  married: '예: "우리 이렇게 사는 게 맞나 싶다"고 말했어요.',
+  some: '예: "다음에 또 보자"고는 하는데, 구체적인 약속은 안 잡아요.',
+  other: '예: "요즘 좀 바빠서"라고만 하고 자세한 얘기는 안 해요.',
+};
+const TRIED_PLACEHOLDER: Record<RelationshipType, string> = {
+  couple: '예: 먼저 연락해봤는데 반응이 뜨뜻미지근했어요.',
+  married: '예: 대화를 시도했지만 서로 감정만 상하고 끝났어요.',
+  some: '예: 먼저 약속을 잡아보려 했는데 계속 미뤄졌어요.',
+  other: '예: 안부 메시지를 보냈는데 짧게만 답이 왔어요.',
+};
+
 const COUNSELOR_NAME = '다연';
 const INTRO_BUBBLES = [
   `안녕하세요, 저는 관계 상담사 ${COUNSELOR_NAME}이에요 🙂`,
@@ -130,6 +151,9 @@ function LoveCounselInner() {
   const [gender, setGender] = useState<Gender>('female');
   const [email, setEmail] = useState('');
   const [situation, setSituation] = useState('');
+  const [recentEvent, setRecentEvent] = useState('');
+  const [partnerWords, setPartnerWords] = useState('');
+  const [triedSoFar, setTriedSoFar] = useState('');
   const [question, setQuestion] = useState('');
   const [relationshipType, setRelationshipType] = useState<RelationshipType | null>(null);
   const [typeAnswers, setTypeAnswers] = useState<Record<string, string>>({});
@@ -224,10 +248,18 @@ function LoveCounselInner() {
   }, []);
 
   function goCheckout(selectedTier: Tier) {
+    // 상황 설명 + 최근 있었던 일 / 상대방의 말·행동 / 시도해본 것을 하나로 묶어
+    // 상담 프롬프트에 그대로 전달한다 (API 스키마는 situation 필드 그대로 재사용).
+    const extraParts: string[] = [];
+    if (recentEvent.trim()) extraParts.push(`[최근 있었던 일] ${recentEvent.trim()}`);
+    if (partnerWords.trim()) extraParts.push(`[상대방의 말·행동] ${partnerWords.trim()}`);
+    if (triedSoFar.trim()) extraParts.push(`[지금까지 시도해본 것] ${triedSoFar.trim()}`);
+    const combinedSituation = [situation.trim(), ...extraParts].join('\n\n');
+
     localStorage.setItem('love_counsel_name', name);
     localStorage.setItem('love_counsel_gender', gender);
     localStorage.setItem('love_counsel_email', email);
-    localStorage.setItem('love_counsel_situation', situation);
+    localStorage.setItem('love_counsel_situation', combinedSituation);
     localStorage.setItem('love_counsel_question', question);
     if (relationshipType) localStorage.setItem('love_counsel_relationship_type', relationshipType);
     const detailsText = Object.entries(typeAnswers).map(([k, v]) => `${k}: ${v}`).join(' / ');
@@ -495,6 +527,24 @@ function LoveCounselInner() {
               <textarea value={situation} onChange={e => setSituation(e.target.value)} rows={5}
                 className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
                 placeholder={SITUATION_PLACEHOLDER[relationshipType ?? 'couple']} />
+            </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">최근에 있었던 일 <span className="text-mute">(선택)</span></label>
+              <textarea value={recentEvent} onChange={e => setRecentEvent(e.target.value)} rows={3}
+                className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
+                placeholder={RECENT_EVENT_PLACEHOLDER[relationshipType ?? 'couple']} />
+            </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">상대방이 최근에 했던 말이나 행동 <span className="text-mute">(선택)</span></label>
+              <textarea value={partnerWords} onChange={e => setPartnerWords(e.target.value)} rows={3}
+                className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
+                placeholder={PARTNER_WORDS_PLACEHOLDER[relationshipType ?? 'couple']} />
+            </div>
+            <div>
+              <label className="block text-xs text-body mb-1.5">지금까지 시도해본 것이 있다면 <span className="text-mute">(선택)</span></label>
+              <textarea value={triedSoFar} onChange={e => setTriedSoFar(e.target.value)} rows={3}
+                className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
+                placeholder={TRIED_PLACEHOLDER[relationshipType ?? 'couple']} />
             </div>
             <div>
               <label className="block text-xs text-body mb-1.5">궁금한 점 — 어떤 질문이든 괜찮아요</label>
