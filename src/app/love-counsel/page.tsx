@@ -198,6 +198,7 @@ function LoveCounselInner() {
   const [deepAnswers, setDeepAnswers] = useState<Record<string, string>>({});
   const [question, setQuestion] = useState('');
   const [coreAsk, setCoreAsk] = useState('');
+  const [loadingProgress, setLoadingProgress] = useState(0);
   const [relationshipType, setRelationshipType] = useState<RelationshipType | null>(null);
   const [typeAnswers, setTypeAnswers] = useState<Record<string, string>>({});
   const [introStep, setIntroStep] = useState(0);
@@ -232,6 +233,21 @@ function LoveCounselInner() {
     const t = setTimeout(() => setIntroStep(s => s + 1), introStep === 0 ? 500 : 1000);
     return () => clearTimeout(t);
   }, [screen, introPhase, introStep]);
+
+  // 로딩 화면 — 실제 생성이 몇 초 만에 끝나도 "심층 분석 중"이라는 느낌이 들도록
+  // 진행률을 시간에 따라 서서히 올린다. 92%에서 멈춰 있다가, 실제 응답이 오면
+  // 100%로 채우고 결과 화면으로 넘어간다.
+  useEffect(() => {
+    if (screen !== 'loading') return;
+    setLoadingProgress(0);
+    const start = Date.now();
+    const id = setInterval(() => {
+      const elapsed = (Date.now() - start) / 1000;
+      const target = 92 * (1 - Math.exp(-elapsed / 6));
+      setLoadingProgress(p => Math.max(p, Math.min(92, target)));
+    }, 200);
+    return () => clearInterval(id);
+  }, [screen]);
 
   // 결제 완료 후 돌아온 경우 — localStorage에서 입력 내용을 읽어 바로 결과 생성
   useEffect(() => {
@@ -273,7 +289,8 @@ function LoveCounselInner() {
         .then((data: { status: string; sections?: string[]; error?: string }) => {
           if (data.status === 'success' && data.sections) {
             setSections(data.sections);
-            setScreen('result');
+            setLoadingProgress(100);
+            setTimeout(() => setScreen('result'), 500);
           } else {
             setScreen('error');
             setErrorMsg(data.error ?? '결과 생성에 실패했어요.');
@@ -332,10 +349,28 @@ function LoveCounselInner() {
   }
 
   if (screen === 'loading') {
+    const pct = Math.round(loadingProgress);
+    const stage =
+      pct < 20 ? '상황을 꼼꼼히 읽고 있어요' :
+      pct < 45 ? '심리 패턴을 분석하고 있어요' :
+      pct < 70 ? '프레임·애착 유형을 진단하고 있어요' :
+      pct < 90 ? '맞춤 액션 플랜을 작성하고 있어요' :
+      '상담 리포트를 마무리하고 있어요';
     return (
       <div className="min-h-screen bg-canvas flex flex-col items-center justify-center gap-6 px-6">
         <div className="w-16 h-16 rounded-full border-4 border-purple-rich/30 border-t-purple-rich animate-spin" />
-        <p className="text-sm text-body">전문가 상담 리포트를 준비하고 있어요...</p>
+        <div className="w-full max-w-xs">
+          <div className="flex items-baseline justify-between mb-2">
+            <p className="text-sm text-body">{stage}</p>
+            <p className="text-sm font-bold text-purple-bright">{pct}%</p>
+          </div>
+          <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all duration-200 ease-out"
+              style={{ width: `${pct}%`, background: 'linear-gradient(90deg,#881337,#e11d48)' }}
+            />
+          </div>
+        </div>
       </div>
     );
   }
