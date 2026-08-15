@@ -83,6 +83,17 @@ const TYPE_Q10: Record<RelationshipType, DeepField> = {
   other:   { key: '원하는 도움', label: '어떤 도움이 더 필요하신가요?', kind: 'choice', options: ['관계 개선을 위한 소통 스킬이 필요해요', '거리를 두는 관계 정리가 필요해요'] },
 };
 
+// 고민 작성 화면 — 맨 마지막: 명확한 결론을 원하는 핵심 질문. "이별해야 하나요 말아야
+// 하나요" 같은 판단이 필요한 질문을 적으면, 상담사가 애매하게 돌려 말하지 않고
+// 분명한 결론을 먼저 제시하도록 프롬프트에서 강하게 지시한다.
+const CORE_ASK_LABEL = '가장 명확한 답을 듣고 싶은 것이 있다면 적어주세요';
+const CORE_ASK_PLACEHOLDER: Record<RelationshipType, string> = {
+  couple: '예: 저는 이 사람과 이별을 해야 할까요, 하지 말아야 할까요?',
+  married: '예: 저는 이 결혼을 계속 유지해야 할까요, 이혼을 고민해야 할까요?',
+  some: '예: 저는 이 사람에게 계속 마음을 쏟아야 할까요, 그만둬야 할까요?',
+  other: '예: 저는 이 관계를 계속 이어가야 할까요, 정리해야 할까요?',
+};
+
 const COUNSELOR_NAME = '다연';
 const INTRO_BUBBLES = [
   `안녕하세요, 저는 관계 상담사 ${COUNSELOR_NAME}이에요 🙂`,
@@ -186,6 +197,7 @@ function LoveCounselInner() {
   const [immediateEmotion, setImmediateEmotion] = useState('');
   const [deepAnswers, setDeepAnswers] = useState<Record<string, string>>({});
   const [question, setQuestion] = useState('');
+  const [coreAsk, setCoreAsk] = useState('');
   const [relationshipType, setRelationshipType] = useState<RelationshipType | null>(null);
   const [typeAnswers, setTypeAnswers] = useState<Record<string, string>>({});
   const [introStep, setIntroStep] = useState(0);
@@ -292,11 +304,17 @@ function LoveCounselInner() {
       ...deepParts,
     ].filter(Boolean).join('\n\n');
 
+    // 명확한 결론을 원하는 핵심 질문이 있다면 맨 앞에 붙여서, 프롬프트가
+    // 가장 먼저 눈에 띄게 하고 반드시 단정적으로 답하도록 한다.
+    const combinedQuestion = coreAsk.trim()
+      ? `[반드시 명확한 결론으로 답할 것] ${coreAsk.trim()}\n\n${question.trim()}`
+      : question.trim();
+
     localStorage.setItem('love_counsel_name', name);
     localStorage.setItem('love_counsel_gender', gender);
     localStorage.setItem('love_counsel_email', email);
     localStorage.setItem('love_counsel_situation', combinedSituation);
-    localStorage.setItem('love_counsel_question', question);
+    localStorage.setItem('love_counsel_question', combinedQuestion);
     if (relationshipType) localStorage.setItem('love_counsel_relationship_type', relationshipType);
     const detailsText = Object.entries(typeAnswers).map(([k, v]) => `${k}: ${v}`).join(' / ');
     if (detailsText) localStorage.setItem('love_counsel_details', detailsText);
@@ -654,6 +672,14 @@ function LoveCounselInner() {
                   className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
                   placeholder={q10.placeholder} />
               )}
+            </div>
+
+            <div>
+              <label className="block text-xs text-body mb-1.5">{CORE_ASK_LABEL} <span className="text-mute">(선택)</span></label>
+              <textarea value={coreAsk} onChange={e => setCoreAsk(e.target.value)} rows={2}
+                className="w-full rounded-xl bg-surface-soft border border-hairline text-ink text-sm px-4 py-3 outline-none focus:border-purple-rich/60 resize-none"
+                placeholder={CORE_ASK_PLACEHOLDER[rType]} />
+              <p className="text-[11px] text-mute mt-1.5">이런 질문일수록 상담사가 애매하게 넘기지 않고 분명한 결론을 드려요</p>
             </div>
           </div>
 
