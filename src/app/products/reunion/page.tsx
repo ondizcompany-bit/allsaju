@@ -254,7 +254,7 @@ function BottomCTA() {
             </p>
             <div className="flex items-center justify-center gap-3 mb-3">
               <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>
-                24,900원
+                27,900원
               </span>
               <span className="rounded-full px-3 py-1 text-xs font-bold"
                 style={{ background: 'rgba(236,72,153,0.15)', color: '#f9a8d4', border: '1px solid rgba(236,72,153,0.4)' }}>
@@ -264,7 +264,7 @@ function BottomCTA() {
             <div className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-black"
               style={{ background: 'linear-gradient(90deg,#be185d,#ec4899)',
                 color: 'white', boxShadow: '0 6px 28px rgba(236,72,153,0.5)' }}>
-              지금 결제 시 50% 할인!
+              지금 결제 시 44% 할인!
             </div>
           </div>
 

@@ -165,10 +165,10 @@ function BottomCTA() {
           <div className="text-center mb-8">
             <p className="text-sm line-through mb-2" style={{ color: 'rgba(255,255,255,0.28)' }}>정가 49,800원</p>
             <div className="flex items-center justify-center gap-3 mb-3">
-              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>24,900원</span>
+              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>27,900원</span>
               <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(167,139,250,0.15)', color: '#c4b5fd', border: '1px solid rgba(167,139,250,0.4)' }}>한정 할인</span>
             </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-black" style={{ background: 'linear-gradient(90deg,#7c3aed,#a855f7)', color: 'white', boxShadow: '0 6px 28px rgba(167,139,250,0.4)' }}>지금 결제 시 50% 할인!</div>
+            <div className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-black" style={{ background: 'linear-gradient(90deg,#7c3aed,#a855f7)', color: 'white', boxShadow: '0 6px 28px rgba(167,139,250,0.4)' }}>지금 결제 시 44% 할인!</div>
           </div>
           <div className="text-center mb-8">
             <p className="text-[11px] font-bold tracking-[0.25em] uppercase mb-5" style={{ color: 'rgba(255,255,255,0.3)' }}>할인 혜택 종료까지</p>

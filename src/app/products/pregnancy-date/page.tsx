@@ -118,7 +118,7 @@ function BottomCTA() {
           <div className="text-center mb-8">
             <p className="text-sm line-through mb-2" style={{ color: 'rgba(255,255,255,0.28)' }}>정가 49,800원</p>
             <div className="flex items-center justify-center gap-3 mb-3">
-              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>24,900원</span>
+              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>27,900원</span>
               <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(167,139,250,0.15)', color: '#c4b5fd', border: '1px solid rgba(167,139,250,0.4)' }}>한정 할인</span>
             </div>
           </div>
