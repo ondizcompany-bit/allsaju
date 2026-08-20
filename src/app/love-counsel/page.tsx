@@ -164,8 +164,8 @@ const UNIVERSAL_FIELDS: TypeField[] = [
 ];
 
 const PACKAGES: Record<Tier, { price: number; original: number; label: string; desc: string; popular?: boolean }> = {
-  basic:   { price: 59900, original: 109800, label: '상담 리포트', desc: '핵심 진단 + 전문가 조언 (6개 섹션)' },
-  premium: { price: 89900, original: 169800, label: '심층 상담', desc: '상담 리포트 전부 + 전략·장기 조언 (12개 섹션)', popular: true },
+  basic:   { price: 27900, original: 49800, label: '상담 리포트', desc: '핵심 진단 + 전문가 조언 (6개 섹션)' },
+  premium: { price: 39900, original: 69800, label: '심층 상담', desc: '상담 리포트 전부 + 전략·장기 조언 (12개 섹션)', popular: true },
 };
 
 const fmt = (n: number) => n.toLocaleString('ko-KR') + '원';

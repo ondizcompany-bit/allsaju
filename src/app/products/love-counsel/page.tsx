@@ -140,10 +140,10 @@ function BottomCTA() {
               ))}
             </div>
             <div className="text-center mb-5">
-              <p className="text-sm line-through mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>정가 169,800원</p>
+              <p className="text-sm line-through mb-1" style={{ color: 'rgba(255,255,255,0.35)' }}>정가 69,800원</p>
               <div className="flex items-center justify-center gap-3">
-                <span className="font-black text-white" style={{ fontSize: 'clamp(2.6rem,11vw,3.8rem)', letterSpacing: '-0.02em' }}>89,900원</span>
-                <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(253,164,175,0.15)', color: '#fda4af', border: '1px solid rgba(253,164,175,0.4)' }}>47% 할인</span>
+                <span className="font-black text-white" style={{ fontSize: 'clamp(2.6rem,11vw,3.8rem)', letterSpacing: '-0.02em' }}>39,900원</span>
+                <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(253,164,175,0.15)', color: '#fda4af', border: '1px solid rgba(253,164,175,0.4)' }}>43% 할인</span>
               </div>
             </div>
             <Link href="/love-counsel?tier=premium" className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]" style={{ background: ACCENT_GRAD, boxShadow: '0 0 70px rgba(225,29,72,0.45), 0 10px 40px rgba(0,0,0,0.5)' }}>
@@ -155,7 +155,7 @@ function BottomCTA() {
           <Link href="/love-counsel?tier=basic" className="flex items-center justify-between rounded-2xl px-5 py-4 mb-6" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)' }}>
             <div>
               <p className="text-sm font-semibold text-white">상담 리포트 <span style={{ color: 'rgba(255,255,255,0.35)' }}>· 핵심만 간단하게</span></p>
-              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>정가 109,800원 → <span style={{ color: '#fda4af' }}>59,900원</span></p>
+              <p className="text-xs mt-0.5" style={{ color: 'rgba(255,255,255,0.4)' }}>정가 49,800원 → <span style={{ color: '#fda4af' }}>27,900원</span></p>
             </div>
             <span className="text-xs" style={{ color: 'rgba(255,255,255,0.3)' }}>선택 →</span>
           </Link>
@@ -173,7 +173,7 @@ function BottomCTA() {
             </p>
           </div>
           <Link href="/love-counsel?tier=premium" className="flex-1 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all active:scale-[0.97]" style={{ background: 'linear-gradient(90deg,#881337,#e11d48)', boxShadow: '0 0 24px rgba(225,29,72,0.45)' }}>
-            심층 상담 89,900원 →
+            심층 상담 39,900원 →
           </Link>
         </div>
       </div>
