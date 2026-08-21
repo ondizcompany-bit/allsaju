@@ -68,6 +68,21 @@ function CheckoutSuccessInner() {
         };
         firePurchase();
 
+        // Google Ads — 전환 이벤트 (gtag 로드 대기 후 발사)
+        const fireGoogleAdsConversion = (retries = 10) => {
+          if (typeof window !== 'undefined' && (window as any).gtag) {
+            (window as any).gtag('event', 'conversion', {
+              send_to: 'AW-18382968874/wCeVCJzvl-UcEKqw171E',
+              value: amount,
+              currency: 'KRW',
+              transaction_id: orderId,
+            });
+          } else if (retries > 0) {
+            setTimeout(() => fireGoogleAdsConversion(retries - 1), 300);
+          }
+        };
+        fireGoogleAdsConversion();
+
         setTimeout(() => {
           if (cat === 'followup') {
             router.replace('/followup?paid=true');

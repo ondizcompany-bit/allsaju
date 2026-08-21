@@ -8,6 +8,7 @@ import Logo from "@/components/ui/Logo";
 import "./globals.css";
 
 const META_PIXEL_ID = "1922615195096737";
+const GOOGLE_ADS_ID = "AW-18382968874";
 
 const notoSerifKR = Noto_Serif_KR({
   weight: ["900"],
@@ -32,6 +33,19 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" className={notoSerifKR.variable}>
       <body suppressHydrationWarning>
+        {/* Google Ads (gtag.js) */}
+        <Script
+          id="google-ads-src"
+          strategy="afterInteractive"
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        />
+        <Script id="google-ads-init" strategy="afterInteractive">{`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GOOGLE_ADS_ID}');
+        `}</Script>
+
         {/* Meta Pixel */}
         <Script id="meta-pixel" strategy="afterInteractive">{`
           !function(f,b,e,v,n,t,s)
