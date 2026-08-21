@@ -9,6 +9,7 @@ import "./globals.css";
 
 const META_PIXEL_ID = "1922615195096737";
 const GOOGLE_ADS_ID = "AW-18382968874";
+const GTM_ID = "GTM-W473WFJ2";
 
 const notoSerifKR = Noto_Serif_KR({
   weight: ["900"],
@@ -33,6 +34,18 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="ko" className={notoSerifKR.variable}>
       <body suppressHydrationWarning>
+        {/* Google Tag Manager */}
+        <Script id="gtm-init" strategy="beforeInteractive">{`
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','${GTM_ID}');
+        `}</Script>
+        <noscript><iframe src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+          height="0" width="0" style={{ display: 'none', visibility: 'hidden' }}
+        /></noscript>
+
         {/* Google Ads (gtag.js) */}
         <Script
           id="google-ads-src"
