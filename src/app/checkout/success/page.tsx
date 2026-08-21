@@ -68,7 +68,7 @@ function CheckoutSuccessInner() {
         };
         firePurchase();
 
-        // Google Ads — 전환 이벤트 (gtag 로드 대기 후 발사)
+        // Google Ads — 전환 이벤트 + GA4 — purchase 이벤트 (gtag 로드 대기 후 발사)
         const fireGoogleAdsConversion = (retries = 10) => {
           if (typeof window !== 'undefined' && (window as any).gtag) {
             (window as any).gtag('event', 'conversion', {
@@ -76,6 +76,12 @@ function CheckoutSuccessInner() {
               value: amount,
               currency: 'KRW',
               transaction_id: orderId,
+            });
+            (window as any).gtag('event', 'purchase', {
+              transaction_id: orderId,
+              value: amount,
+              currency: 'KRW',
+              items: [{ item_id: cat ?? 'unknown', item_name: `${cat ?? ''} ${tier ?? ''}`.trim() }],
             });
           } else if (retries > 0) {
             setTimeout(() => fireGoogleAdsConversion(retries - 1), 300);

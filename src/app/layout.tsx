@@ -9,6 +9,7 @@ import "./globals.css";
 
 const META_PIXEL_ID = "1922615195096737";
 const GOOGLE_ADS_ID = "AW-18382968874";
+const GA4_ID = "G-V3K4WFZBFC";
 const GTM_ID = "GTM-W473WFJ2";
 
 const notoSerifKR = Noto_Serif_KR({
@@ -57,6 +58,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
           gtag('config', '${GOOGLE_ADS_ID}');
+          gtag('config', '${GA4_ID}');
         `}</Script>
 
         {/* Meta Pixel */}
