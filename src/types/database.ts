@@ -46,6 +46,25 @@ type OrderRow = {
   created_at: string;
 };
 
+// 결제 이벤트 안전망 — 고객 브라우저가 결제 승인 요청을 끝까지 못 보내는 경우에도
+// 토스 웹훅이 독립적으로 서버에 기록을 남기도록 한다. 기존 orders 테이블은 product_id가
+// 실제 상품 카탈로그(레거시)를 참조해야 해서, 지금 쓰는 카테고리 기반 상품과 안 맞아
+// 별도 테이블로 둔다.
+export type PaymentEventSource = "client" | "webhook";
+
+type PaymentEventRow = {
+  id: string;
+  order_id: string;
+  payment_key: string | null;
+  amount: number | null;
+  category: string | null;
+  tier: string | null;
+  status: string;
+  source: PaymentEventSource;
+  raw: Json | null;
+  created_at: string;
+};
+
 type SajuInputRow = {
   id: string;
   order_id: string;
@@ -172,6 +191,23 @@ export type Database = {
           created_at?: string;
         };
         Update: Partial<ReviewRow>;
+        Relationships: [];
+      };
+      payment_events: {
+        Row: PaymentEventRow;
+        Insert: {
+          id?: string;
+          order_id: string;
+          payment_key?: string | null;
+          amount?: number | null;
+          category?: string | null;
+          tier?: string | null;
+          status: string;
+          source: PaymentEventSource;
+          raw?: Json | null;
+          created_at?: string;
+        };
+        Update: Partial<PaymentEventRow>;
         Relationships: [];
       };
     };

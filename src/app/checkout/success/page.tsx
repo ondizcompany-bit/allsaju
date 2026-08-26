@@ -47,7 +47,7 @@ function CheckoutSuccessInner() {
         res = await fetch("/api/payments/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentKey, orderId, amount }),
+          body: JSON.stringify({ paymentKey, orderId, amount, category: cat ?? undefined, tier: tier ?? undefined }),
         });
       } catch (networkErr) {
         if (retriesLeft > 0) {
