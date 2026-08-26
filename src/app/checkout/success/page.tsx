@@ -36,77 +36,91 @@ function CheckoutSuccessInner() {
       return;
     }
 
-    // 토스 결제 승인(confirm) — 이 호출이 성공해야 실제로 결제가 확정된다
-    fetch("/api/payments/confirm", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ paymentKey, orderId, amount }),
-    })
-      .then(async (res) => {
-        const data = await res.json().catch(() => null);
-        if (!res.ok || !data?.success) {
-          setState("error");
-          setMessage(data?.error ?? "결제 승인에 실패했어요. 카드사에 문의해주세요.");
-          return;
+    // 토스 결제 승인(confirm) — 이 호출이 성공해야 실제로 결제가 확정된다.
+    // 결제 직후 네트워크가 순간적으로 끊기거나 모바일에서 앱이 전환되는 경우
+    // confirm 요청 자체가 서버에 도달하지 못할 수 있어, 네트워크 오류(fetch가
+    // throw하는 경우)에 한해 짧은 간격으로 재시도한다. 서버가 응답을 준 실패
+    // (금액 불일치 등 로직상 실패)는 재시도하지 않는다.
+    async function confirmWithRetry(retriesLeft: number): Promise<void> {
+      let res: Response;
+      try {
+        res = await fetch("/api/payments/confirm", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ paymentKey, orderId, amount }),
+        });
+      } catch (networkErr) {
+        if (retriesLeft > 0) {
+          await new Promise(r => setTimeout(r, 1200));
+          return confirmWithRetry(retriesLeft - 1);
         }
-
-        setState("ok");
-
-        // Meta Pixel — Purchase 이벤트 (fbq 로드 대기 후 발사)
-        const firePurchase = (retries = 10) => {
-          if (typeof window !== 'undefined' && (window as any).fbq) {
-            (window as any).fbq('track', 'Purchase', {
-              value: amount,
-              currency: 'KRW',
-              content_ids: [cat ?? 'unknown'],
-              content_type: 'product',
-              content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
-            });
-          } else if (retries > 0) {
-            setTimeout(() => firePurchase(retries - 1), 300);
-          }
-        };
-        firePurchase();
-
-        // Google Ads — 전환 이벤트 + GA4 — purchase 이벤트 (gtag 로드 대기 후 발사)
-        const fireGoogleAdsConversion = (retries = 10) => {
-          if (typeof window !== 'undefined' && (window as any).gtag) {
-            (window as any).gtag('event', 'conversion', {
-              send_to: 'AW-18382968874/wCeVCJzvl-UcEKqw171E',
-              value: amount,
-              currency: 'KRW',
-              transaction_id: orderId,
-            });
-            (window as any).gtag('event', 'purchase', {
-              transaction_id: orderId,
-              value: amount,
-              currency: 'KRW',
-              items: [{ item_id: cat ?? 'unknown', item_name: `${cat ?? ''} ${tier ?? ''}`.trim() }],
-            });
-          } else if (retries > 0) {
-            setTimeout(() => fireGoogleAdsConversion(retries - 1), 300);
-          }
-        };
-        fireGoogleAdsConversion();
-
-        setTimeout(() => {
-          if (cat === 'followup') {
-            router.replace('/followup?paid=true');
-          } else if (cat === 'attachment') {
-            router.replace(`/attachment?paid=true&tier=${tier}`);
-          } else if (cat === 'love-counsel') {
-            router.replace(`/love-counsel?paid=true&tier=${tier}`);
-          } else if (cat && tier) {
-            router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
-          } else {
-            router.replace("/");
-          }
-        }, 1800);
-      })
-      .catch(() => {
         setState("error");
-        setMessage("결제 승인 중 오류가 발생했어요. 잠시 후 다시 시도해주세요.");
-      });
+        setMessage("네트워크 연결이 불안정해요. 아래 버튼으로 다시 시도해주세요.");
+        return;
+      }
+
+      const data = await res.json().catch(() => null);
+      if (!res.ok || !data?.success) {
+        setState("error");
+        setMessage(data?.error ?? "결제 승인에 실패했어요. 카드사에 문의해주세요.");
+        return;
+      }
+
+      setState("ok");
+
+      // Meta Pixel — Purchase 이벤트 (fbq 로드 대기 후 발사)
+      const firePurchase = (retries = 10) => {
+        if (typeof window !== 'undefined' && (window as any).fbq) {
+          (window as any).fbq('track', 'Purchase', {
+            value: amount,
+            currency: 'KRW',
+            content_ids: [cat ?? 'unknown'],
+            content_type: 'product',
+            content_name: `${cat ?? ''} ${tier ?? ''}`.trim(),
+          });
+        } else if (retries > 0) {
+          setTimeout(() => firePurchase(retries - 1), 300);
+        }
+      };
+      firePurchase();
+
+      // Google Ads — 전환 이벤트 + GA4 — purchase 이벤트 (gtag 로드 대기 후 발사)
+      const fireGoogleAdsConversion = (retries = 10) => {
+        if (typeof window !== 'undefined' && (window as any).gtag) {
+          (window as any).gtag('event', 'conversion', {
+            send_to: 'AW-18382968874/wCeVCJzvl-UcEKqw171E',
+            value: amount,
+            currency: 'KRW',
+            transaction_id: orderId,
+          });
+          (window as any).gtag('event', 'purchase', {
+            transaction_id: orderId,
+            value: amount,
+            currency: 'KRW',
+            items: [{ item_id: cat ?? 'unknown', item_name: `${cat ?? ''} ${tier ?? ''}`.trim() }],
+          });
+        } else if (retries > 0) {
+          setTimeout(() => fireGoogleAdsConversion(retries - 1), 300);
+        }
+      };
+      fireGoogleAdsConversion();
+
+      setTimeout(() => {
+        if (cat === 'followup') {
+          router.replace('/followup?paid=true');
+        } else if (cat === 'attachment') {
+          router.replace(`/attachment?paid=true&tier=${tier}`);
+        } else if (cat === 'love-counsel') {
+          router.replace(`/love-counsel?paid=true&tier=${tier}`);
+        } else if (cat && tier) {
+          router.replace(`/start?cat=${cat}&tier=${tier}&paid=true&bi=${encodeURIComponent(bi)}`);
+        } else {
+          router.replace("/");
+        }
+      }, 1800);
+    }
+
+    confirmWithRetry(2);
   }, [router, search]);
 
   if (state === "loading") {
@@ -126,6 +140,14 @@ function CheckoutSuccessInner() {
           <div className="text-4xl mb-4">😢</div>
           <h1 className="text-lg font-bold text-white mb-2">결제 처리 실패</h1>
           <p className="text-sm text-body mb-6">{message}</p>
+          <p className="text-xs text-mute mb-4">이미 결제가 되었는데 이 화면이 보인다면, 아래 버튼으로 다시 시도해주세요. 그래도 안 되면 고객센터로 문의해주세요.</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="inline-flex items-center justify-center w-full h-11 rounded-full text-white text-sm font-semibold mb-3 transition-all"
+            style={{ background: 'linear-gradient(135deg,#6d28d9,#a855f7)' }}
+          >
+            다시 시도
+          </button>
           <Link
             href="/"
             className="inline-flex items-center justify-center w-full h-11 rounded-full border border-purple-rich/40 text-purple-light text-sm font-semibold hover:bg-purple-rich/10 transition-all"
