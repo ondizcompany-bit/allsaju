@@ -11,6 +11,7 @@ const META_PIXEL_ID = "1922615195096737";
 const GOOGLE_ADS_ID = "AW-18382968874";
 const GA4_ID = "G-V3K4WFZBFC";
 const GTM_ID = "GTM-W473WFJ2";
+const CLARITY_ID = "yxcxujg5jr";
 
 const notoSerifKR = Noto_Serif_KR({
   weight: ["900"],
@@ -59,6 +60,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           gtag('js', new Date());
           gtag('config', '${GOOGLE_ADS_ID}');
           gtag('config', '${GA4_ID}');
+        `}</Script>
+
+        {/* Microsoft Clarity */}
+        <Script id="ms-clarity" strategy="afterInteractive">{`
+          (function(c,l,a,r,i,t,y){
+            c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};
+            t=l.createElement(r);t.async=1;t.src="https://www.clarity.ms/tag/"+i+"?ref=bwt";
+            y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y);
+          })(window, document, "clarity", "script", "${CLARITY_ID}");
         `}</Script>
 
         {/* Meta Pixel */}
