@@ -23,18 +23,6 @@ function FadeIn({ children, delay = 0, className = '' }: { children: React.React
   );
 }
 
-function useCountdown() {
-  const getTick = () => {
-    const tick = Math.floor(Date.now() / 333);
-    const totalSecs = 3599 - (tick % 3600);
-    return { m: Math.floor(totalSecs / 60), s: totalSecs % 60 };
-  };
-  const [time, setTime] = useState(getTick);
-  useEffect(() => { const id = setInterval(() => setTime(getTick()), 333); return () => clearInterval(id); }, []);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return { m: pad(time.m), s: pad(time.s) };
-}
-
 function useCountUp(target: number, suffix = '') {
   const ref = useRef<HTMLSpanElement>(null);
   const started = useRef(false);
@@ -139,7 +127,6 @@ function StatItem({ target, suffix, label, big }: { target: number; suffix: stri
 }
 
 function BottomCTA() {
-  const { m, s } = useCountdown();
   return (
     <>
       <section className="relative overflow-hidden" style={{ background: '#04020a' }}>
@@ -166,23 +153,6 @@ function BottomCTA() {
             ))}
           </div>
           <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', marginBottom: 32 }} />
-          <div className="text-center mb-8">
-            <p className="text-sm line-through mb-2" style={{ color: 'rgba(255,255,255,0.28)' }}>정가 49,800원</p>
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>27,900원</span>
-              <span className="rounded-full px-3 py-1 text-xs font-bold" style={{ background: 'rgba(99,102,241,0.15)', color: '#a5b4fc', border: '1px solid rgba(99,102,241,0.4)' }}>한정 할인</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-black" style={{ background: 'linear-gradient(90deg,#3730a3,#6366f1)', color: 'white', boxShadow: '0 6px 28px rgba(99,102,241,0.4)' }}>지금 결제 시 44% 할인!</div>
-          </div>
-          <div className="text-center mb-8">
-            <p className="text-[11px] font-bold tracking-[0.25em] uppercase mb-5" style={{ color: 'rgba(255,255,255,0.3)' }}>할인 혜택 종료까지</p>
-            <div className="inline-flex items-center rounded-2xl px-10 py-4" style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <span className="tabular-nums font-black text-white" style={{ fontSize: 'clamp(2.6rem,11vw,4rem)', lineHeight: 1, letterSpacing: '-0.03em', textShadow: `0 0 28px rgba(99,102,241,0.5)` }}>{m}</span>
-              <span className="font-black mx-1.5" style={{ color: 'rgba(255,255,255,0.25)', fontSize: 'clamp(2rem,8vw,3rem)', lineHeight: 1 }}>:</span>
-              <span className="tabular-nums font-black text-white" style={{ fontSize: 'clamp(2.6rem,11vw,4rem)', lineHeight: 1, letterSpacing: '-0.03em', textShadow: `0 0 28px rgba(99,102,241,0.5)` }}>{s}</span>
-            </div>
-            <p className="text-[10px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>할인 종료 후 자동 갱신</p>
-          </div>
           <Link href="/start?cat=career" className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]" style={{ background: ACCENT_GRAD, boxShadow: '0 0 70px rgba(99,102,241,0.45), 0 10px 40px rgba(0,0,0,0.5)' }}>
             커리어 타이밍 확인하기 →
           </Link>
@@ -192,12 +162,6 @@ function BottomCTA() {
       </section>
       <div className="fixed bottom-0 left-0 right-0 z-50" style={{ background: 'rgba(4,2,10,0.97)', borderTop: '1px solid rgba(99,102,241,0.18)', backdropFilter: 'blur(20px)' }}>
         <div className="max-w-md mx-auto px-4 py-2.5 flex items-center gap-3">
-          <div className="flex-shrink-0">
-            <p className="text-[9px] font-bold tracking-[0.18em] uppercase leading-none mb-0.5" style={{ color: 'rgba(255,255,255,0.3)' }}>할인혜택 종료까지</p>
-            <p className="font-black tabular-nums leading-none" style={{ fontSize: '1.55rem', letterSpacing: '-0.03em', color: ACCENT_COLOR, textShadow: `0 0 18px rgba(99,102,241,0.7)` }}>
-              {m}<span style={{ color: 'rgba(255,255,255,0.22)', fontSize: '1.1rem', margin: '0 1px' }}>:</span>{s}
-            </p>
-          </div>
           <Link href="/start?cat=career" className="flex-1 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all active:scale-[0.97]" style={{ background: 'linear-gradient(90deg,#3730a3,#6366f1)', boxShadow: '0 0 24px rgba(99,102,241,0.45)' }}>
             커리어 운세 신청하기 →
           </Link>
