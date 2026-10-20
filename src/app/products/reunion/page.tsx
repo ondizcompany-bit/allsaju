@@ -31,30 +31,6 @@ function FadeIn({ children, delay = 0, className = '' }: { children: React.React
 }
 
 /* ══════════════════════════════════════════════════
-   카운트다운 타이머 — 3배속 MM:SS
-   333ms마다 갱신 → 실제보다 3배 빠르게 흘러가는 느낌
-   59:59 → 00:00 (~20분) 반복
-══════════════════════════════════════════════════ */
-function useCountdown() {
-  const getTick = () => {
-    // 333ms = 1 display-tick, 3600 ticks = 1 cycle (~20 real minutes)
-    const tick = Math.floor(Date.now() / 333);
-    const totalSecs = 3599 - (tick % 3600);
-    return {
-      m: Math.floor(totalSecs / 60),
-      s: totalSecs % 60,
-    };
-  };
-  const [time, setTime] = useState(getTick);
-  useEffect(() => {
-    const id = setInterval(() => setTime(getTick()), 333);
-    return () => clearInterval(id);
-  }, []);
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return { m: pad(time.m), s: pad(time.s) };
-}
-
-/* ══════════════════════════════════════════════════
    카운트업
 ══════════════════════════════════════════════════ */
 function useCountUp(target: number, suffix = '') {
@@ -185,8 +161,6 @@ function StatItem({ target, suffix, label, big }: { target: number; suffix: stri
    하단 CTA + 고정 스티키 바
 ══════════════════════════════════════════════════ */
 function BottomCTA() {
-  const { m, s } = useCountdown();
-
   return (
     <>
       {/* ────────────────────────────────
@@ -247,54 +221,6 @@ function BottomCTA() {
           {/* 구분선 */}
           <div style={{ height: 1, background: 'rgba(255,255,255,0.06)', marginBottom: 32 }} />
 
-          {/* 가격 표시 */}
-          <div className="text-center mb-8">
-            <p className="text-sm line-through mb-2" style={{ color: 'rgba(255,255,255,0.28)', letterSpacing: '0.02em' }}>
-              정가 49,800원
-            </p>
-            <div className="flex items-center justify-center gap-3 mb-3">
-              <span className="font-black text-white" style={{ fontSize: 'clamp(2.4rem,10vw,3.5rem)', letterSpacing: '-0.02em' }}>
-                27,900원
-              </span>
-              <span className="rounded-full px-3 py-1 text-xs font-bold"
-                style={{ background: 'rgba(236,72,153,0.15)', color: '#f9a8d4', border: '1px solid rgba(236,72,153,0.4)' }}>
-                한정 할인
-              </span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full px-5 py-2 text-sm font-black"
-              style={{ background: 'linear-gradient(90deg,#be185d,#ec4899)',
-                color: 'white', boxShadow: '0 6px 28px rgba(236,72,153,0.5)' }}>
-              지금 결제 시 44% 할인!
-            </div>
-          </div>
-
-          {/* 카운트다운 — 레퍼런스 스타일 */}
-          <div className="text-center mb-8">
-            <p className="text-[11px] font-bold tracking-[0.25em] uppercase mb-5"
-              style={{ color: 'rgba(255,255,255,0.3)' }}>
-              할인 혜택 종료까지
-            </p>
-            {/* MM:SS 빠른 카운트다운 */}
-            <div className="inline-flex items-center rounded-2xl px-10 py-4"
-              style={{ background: 'rgba(0,0,0,0.5)', border: '1px solid rgba(255,255,255,0.07)' }}>
-              <span className="tabular-nums font-black text-white"
-                style={{ fontSize: 'clamp(2.6rem,11vw,4rem)', lineHeight: 1, letterSpacing: '-0.03em',
-                  textShadow: '0 0 28px rgba(244,114,182,0.4)' }}>
-                {m}
-              </span>
-              <span className="font-black mx-1.5" style={{ color: 'rgba(255,255,255,0.25)',
-                fontSize: 'clamp(2rem,8vw,3rem)', lineHeight: 1 }}>:</span>
-              <span className="tabular-nums font-black text-white"
-                style={{ fontSize: 'clamp(2.6rem,11vw,4rem)', lineHeight: 1, letterSpacing: '-0.03em',
-                  textShadow: '0 0 28px rgba(244,114,182,0.4)' }}>
-                {s}
-              </span>
-            </div>
-            <p className="text-[10px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>
-              할인 종료 후 자동 갱신
-            </p>
-          </div>
-
           {/* 메인 CTA 버튼 */}
           <Link href="/start?cat=reunion"
             className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]"
@@ -319,20 +245,6 @@ function BottomCTA() {
         style={{ background: 'rgba(4,2,10,0.97)', borderTop: '1px solid rgba(236,72,153,0.18)',
           backdropFilter: 'blur(20px)', WebkitBackdropFilter: 'blur(20px)' }}>
         <div className="max-w-md mx-auto px-4 py-2.5 flex items-center gap-3">
-          {/* 카운트다운 — 레퍼런스 HH:MM:SS 인라인 포맷 */}
-          <div className="flex-shrink-0">
-            <p className="text-[9px] font-bold tracking-[0.18em] uppercase leading-none mb-0.5"
-              style={{ color: 'rgba(255,255,255,0.3)' }}>
-              할인혜택 종료까지
-            </p>
-            <p className="font-black tabular-nums leading-none"
-              style={{ fontSize: '1.65rem', letterSpacing: '-0.04em', color: '#f472b6',
-                textShadow: '0 0 20px rgba(244,114,182,0.8)' }}>
-              {m}
-              <span style={{ color: 'rgba(255,255,255,0.2)', fontSize: '1.2rem', margin: '0 1px' }}>:</span>
-              {s}
-            </p>
-          </div>
           {/* CTA 버튼 */}
           <Link href="/start?cat=reunion"
             className="flex-1 h-12 rounded-full flex items-center justify-center text-white font-bold text-sm transition-all active:scale-[0.97]"
