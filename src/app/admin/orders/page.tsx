@@ -101,7 +101,17 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
         })}
       </div>
 
-      <p className="text-xs text-mute font-mono mb-3">{orders.length} ROWS</p>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs text-mute font-mono">{orders.length} ROWS</p>
+        {!demoMode ? (
+          <a
+            href={status ? `/admin/orders/export?status=${status}` : "/admin/orders/export"}
+            className="px-4 h-8 inline-flex items-center rounded-full text-sm border border-ink bg-ink text-canvas hover:opacity-90"
+          >
+            CSV 다운로드 (전체 기간)
+          </a>
+        ) : null}
+      </div>
 
       <div className="border border-hairline rounded-lg overflow-hidden">
         {orders.length === 0 ? (
