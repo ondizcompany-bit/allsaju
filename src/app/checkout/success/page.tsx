@@ -3,6 +3,7 @@
 import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { collectCustomerInfo } from "@/lib/checkout/customer";
 
 export default function CheckoutSuccessPage() {
   return (
@@ -47,7 +48,14 @@ function CheckoutSuccessInner() {
         res = await fetch("/api/payments/confirm", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ paymentKey, orderId, amount, category: cat ?? undefined, tier: tier ?? undefined }),
+          body: JSON.stringify({
+            paymentKey,
+            orderId,
+            amount,
+            category: cat ?? undefined,
+            tier: tier ?? undefined,
+            customer: collectCustomerInfo(cat, bi),
+          }),
         });
       } catch (networkErr) {
         if (retriesLeft > 0) {

@@ -540,6 +540,7 @@ function FormScreen({
     // 결제 후 돌아올 때 사용할 수 있도록 저장
     localStorage.setItem('saju_birth_me', JSON.stringify(me));
     if (category.needsPartner) localStorage.setItem('saju_birth_partner', JSON.stringify(partner));
+    else localStorage.removeItem('saju_birth_partner'); // 이전 주문의 상대방 정보가 결제 기록에 섞이지 않도록
     localStorage.setItem('saju_result_email', email);
     localStorage.setItem('saju_concerns', concerns);
     onSubmit({ me: me as PersonInfo, partner: category.needsPartner ? (partner as PersonInfo) : undefined });

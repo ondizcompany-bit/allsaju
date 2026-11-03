@@ -62,6 +62,9 @@ type PaymentEventRow = {
   status: string;
   source: PaymentEventSource;
   raw: Json | null;
+  customer_name: string | null;
+  customer_email: string | null;
+  customer: Json | null;
   created_at: string;
 };
 
@@ -205,6 +208,9 @@ export type Database = {
           status: string;
           source: PaymentEventSource;
           raw?: Json | null;
+          customer_name?: string | null;
+          customer_email?: string | null;
+          customer?: Json | null;
           created_at?: string;
         };
         Update: Partial<PaymentEventRow>;
