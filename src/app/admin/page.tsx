@@ -23,10 +23,19 @@ export default async function AdminHome() {
       <ul className="divide-y divide-hairline border-y border-hairline">
         <li>
           <Link
+            href="/admin/payments"
+            className="flex items-center justify-between py-4 text-[15px] font-medium text-ink hover:text-body"
+          >
+            <span>결제 고객 (이름·이메일·생년월일 + CSV)</span>
+            <span className="text-mute">→</span>
+          </Link>
+        </li>
+        <li>
+          <Link
             href="/admin/orders"
             className="flex items-center justify-between py-4 text-[15px] font-medium text-ink hover:text-body"
           >
-            <span>결제 내역</span>
+            <span>결제 내역 (구버전 회원 주문)</span>
             <span className="text-mute">→</span>
           </Link>
         </li>
