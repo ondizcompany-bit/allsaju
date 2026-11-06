@@ -21,8 +21,8 @@ const TABS = [
 const SLIDES = [
   {
     id: 'new-year',
-    category: '2026 신년 총운',
-    title: '2026 병오년\n신년 총운',
+    category: '2027 신년 총운',
+    title: '2027 정미년\n신년 총운',
     desc: '새해 운기 · 월별 흐름 · 주의 시기까지\n한 해의 모든 운명을 완전 분석',
     image: 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?w=1200&q=85&fit=crop',
     href: '/products/new-year',

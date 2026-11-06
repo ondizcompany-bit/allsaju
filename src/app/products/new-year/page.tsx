@@ -143,14 +143,14 @@ function BottomCTA() {
         <div className="absolute inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse 110% 50% at 50% 100%, rgba(124,58,237,0.22), transparent)' }} />
         <div className="relative z-10 px-6 pt-14 pb-10 max-w-md mx-auto">
           <div className="text-center mb-10">
-            <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold" style={{ background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.35)', color: '#c4b5fd' }}>🔥 2026년 한정 신년 할인</span>
+            <span className="inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-xs font-bold" style={{ background: 'rgba(167,139,250,0.12)', border: '1px solid rgba(167,139,250,0.35)', color: '#c4b5fd' }}>🔥 2027년 한정 신년 할인</span>
           </div>
           <div className="text-center mb-10">
-            <p className="font-black leading-[1.1]" style={{ fontSize: 'clamp(2.8rem,13vw,5rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,#fff 10%,rgba(255,255,255,0.5) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>2026<br />신년 총운</p>
+            <p className="font-black leading-[1.1]" style={{ fontSize: 'clamp(2.8rem,13vw,5rem)', letterSpacing: '-0.03em', background: 'linear-gradient(180deg,#fff 10%,rgba(255,255,255,0.5) 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>2027<br />신년 총운</p>
           </div>
           <div className="mb-10 space-y-3 max-w-xs mx-auto">
             {[
-              { text: '2026 병오년 전체 운기 흐름 분석', dim: false },
+              { text: '2027 정미년 전체 운기 흐름 분석', dim: false },
               { text: '기회가 오는 달 vs 조심해야 할 달', dim: false },
               { text: '재물·직업·건강·연애운 종합', dim: false },
               { text: '10년 대운과 올해의 연관성', dim: false },
@@ -180,7 +180,7 @@ function BottomCTA() {
             <p className="text-[10px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>할인 종료 후 자동 갱신</p>
           </div>
           <Link href="/start?cat=new-year" className="w-full h-16 rounded-full flex items-center justify-center text-white font-black text-[16px] transition-all hover:scale-[1.015] active:scale-[0.97]" style={{ background: 'linear-gradient(90deg,#6d28d9,#8b5cf6,#a78bfa)', boxShadow: '0 0 70px rgba(167,139,250,0.45), 0 10px 40px rgba(0,0,0,0.5)' }}>
-            2026 운세 확인하기 →
+            2027 운세 확인하기 →
           </Link>
           <p className="text-center text-[11px] mt-3" style={{ color: 'rgba(255,255,255,0.2)' }}>결과 확인 전 전액 환불 · 회원가입 불필요 · 24시간 이용 가능</p>
           <div className="h-20" />
@@ -218,9 +218,9 @@ export default function NewYearPage() {
         <div className="absolute inset-0" style={{ background: 'linear-gradient(to right,rgba(76,29,149,0.4),transparent 65%)' }} />
         <div className="absolute bottom-0 left-0 w-full px-5 pb-7">
           <div className="flex items-center gap-2 mb-2.5">
-            <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: 'linear-gradient(90deg,#7c3aed,#a855f7)' }}>✦ 2026 신년 총운</span>
+            <span className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-semibold text-white" style={{ background: 'linear-gradient(90deg,#7c3aed,#a855f7)' }}>✦ 2027 신년 총운</span>
           </div>
-          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">2026 병오년 신년 총운</h1>
+          <h1 className="text-2xl md:text-3xl font-bold text-white leading-tight drop-shadow-lg">2027 정미년 신년 총운</h1>
           <p className="text-sm mt-2" style={{ color: 'rgba(255,255,255,0.52)' }}>사주×자미두수 통합 분석 · 기질·운세·대운 완전 해석</p>
           <div className="flex items-center gap-2 mt-3">
             <div className="flex gap-0.5">{[1,2,3,4,5].map(i => (<svg key={i} width="13" height="13" viewBox="0 0 14 14" fill="#f59e0b" stroke="#f59e0b" strokeWidth="1.2"><path d="M7 1L8.6 5.2H13L9.7 7.8L10.9 12L7 9.4L3.1 12L4.3 7.8L1 5.2H5.4L7 1Z"/></svg>))}</div>
@@ -289,7 +289,7 @@ export default function NewYearPage() {
             <div className="flex items-start gap-3 flex-row-reverse">
               <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-black" style={{ background: 'linear-gradient(135deg,#7c3aed,#a855f7)', color: 'white' }}>命</div>
               <div className="rounded-2xl rounded-tr-md px-4 py-3" style={{ background: 'rgba(109,40,217,0.18)', border: '1px solid rgba(167,139,250,0.25)', maxWidth: 'calc(100% - 52px)' }}>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>병오년 운기가 당신의 사주와 어떻게 맞물리는지, 어떤 달이 기회이고 어떤 달을 조심해야 하는지 월별로 정밀하게 풀어드릴게요. 🌟</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>정미년 운기가 당신의 사주와 어떻게 맞물리는지, 어떤 달이 기회이고 어떤 달을 조심해야 하는지 월별로 정밀하게 풀어드릴게요. 🌟</p>
               </div>
             </div>
           </FadeIn>
@@ -300,7 +300,7 @@ export default function NewYearPage() {
       <section className="px-6 py-16 max-w-md mx-auto text-center">
         <FadeIn>
           <p className="font-black leading-[1.08]" style={{ fontSize: 'clamp(1.9rem,8vw,3rem)', letterSpacing: '-0.02em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>2026년은</span><br />
+            <span style={{ color: 'rgba(255,255,255,0.2)' }}>2027년은</span><br />
             <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>당신에게</span><br />
             <span style={{ color: 'rgba(255,255,255,0.75)' }}>어떤 해일까요?</span>
           </p>
@@ -312,7 +312,7 @@ export default function NewYearPage() {
       <section className="px-5 pb-16 max-w-md mx-auto">
         <FadeIn className="mb-7"><p className="text-[10px] font-bold tracking-[0.35em] uppercase mb-3" style={{ color: 'rgba(255,255,255,0.2)' }}>분석 항목</p><h2 className="text-2xl font-black" style={{ color: 'rgba(255,255,255,0.85)' }}>이런 걸 알 수 있어요</h2></FadeIn>
         <div className="space-y-2">
-          {[['🌟', '2026 병오년 총운 — 내 일간과 올해 에너지의 관계'], ['✨', '타고난 기질·강점·삶의 패턴 분석'], ['💼', '직업·커리어운 — 승진·이직·사업 흐름'], ['💰', '재물운 — 수입·지출·투자 주의 시기'], ['💕', '연애·관계운 — 새 인연 또는 부부 흐름'], ['🌿', '건강운 — 주의 신체 부위와 관리법'], ['🔭', '현재 대운 10년의 방향과 올해의 의미'], ['🌠', '사주×자미두수 핵심 조언']].map(([icon, text], i) => (
+          {[['🌟', '2027 정미년 총운 — 내 일간과 올해 에너지의 관계'], ['✨', '타고난 기질·강점·삶의 패턴 분석'], ['💼', '직업·커리어운 — 승진·이직·사업 흐름'], ['💰', '재물운 — 수입·지출·투자 주의 시기'], ['💕', '연애·관계운 — 새 인연 또는 부부 흐름'], ['🌿', '건강운 — 주의 신체 부위와 관리법'], ['🔭', '현재 대운 10년의 방향과 올해의 의미'], ['🌠', '사주×자미두수 핵심 조언']].map(([icon, text], i) => (
             <FadeIn key={i} delay={i * 55}>
               <div className="flex items-center gap-4 rounded-2xl px-5 py-3.5" style={{ background: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.06)' }}>
                 <span className="text-lg flex-shrink-0">{icon}</span>
@@ -331,7 +331,7 @@ export default function NewYearPage() {
             <div className="p-5 space-y-2.5" style={{ background: 'rgba(10,8,20,0.9)' }}>
               {[
                 '✨ 타고난 기질 — 경금(庚金) 일간, 강한 의지와 날카로운 판단력을 타고났어요',
-                '💰 재물운 — 병오년 병화가 일간과 충(沖)을 이뤄 3월·9월 지출 주의',
+                '💰 재물운 — 정미년 정화(丁火)가 재성 흐름을 흔들어 4월·10월 지출 주의',
                 '💼 커리어운 — 식신 흐름이 살아나는 하반기, 새 기회를 잡을 타이밍',
                 '💕 연애운 · 🌿 건강운 · 🔭 대운 10년 · 🌠 핵심 조언 (분석 후 공개)',
               ].map((t, i) => (

@@ -802,3 +802,18 @@ export const BASIC_CONFIGS: Record<CategoryId, { s1: SectionDef; s2: SectionDef;
 
 // 프리미엄은 베이직 configs를 재사용 (더 긴 문단, 타로 통합이 차이)
 export const PREMIUM_CONFIGS = BASIC_CONFIGS;
+
+// ── 신년운세 대상 연도 ───────────────────────────────────────────────────────
+// 신년운세는 "오늘 날짜의 연도"가 아니라 판매 중인 신년 연도를 기준으로 풀이한다.
+// (예: 2026년 11월에 구매해도 2027 정미년 운세가 나와야 함) 해가 바뀌면 이 값만 올리면 된다.
+export const NEW_YEAR_TARGET_YEAR = 2027;
+
+const STEMS = ['갑(甲)', '을(乙)', '병(丙)', '정(丁)', '무(戊)', '기(己)', '경(庚)', '신(辛)', '임(壬)', '계(癸)'];
+const BRANCHES = ['자(子)', '축(丑)', '인(寅)', '묘(卯)', '진(辰)', '사(巳)', '오(午)', '미(未)', '신(申)', '유(酉)', '술(戌)', '해(亥)'];
+
+// 연도의 세운 간지 (예: 2027 → "정(丁)미(未)"). LLM이 간지를 잘못 계산하지 않도록 직접 넣어준다.
+export function yearGanji(year: number): string {
+  const s = STEMS[(((year - 4) % 10) + 10) % 10];
+  const b = BRANCHES[(((year - 4) % 12) + 12) % 12];
+  return `${s[0]}${b[0]}(${s[2]}${b[2]})`;
+}
