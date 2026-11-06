@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 const CATEGORY_OPTIONS = [
-  { id: "new-year", title: "2026 병오년 신년 총운" },
+  { id: "new-year", title: "2027 정미년 신년 총운" },
   { id: "reunion", title: "헤어진 그 사람과의 재회 사주" },
   { id: "career", title: "취업·이직·승진 커리어 타이밍" },
   { id: "investment", title: "내 팔자에 맞는 재테크 성향" },

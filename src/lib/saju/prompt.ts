@@ -3,7 +3,7 @@
 // =====================================================
 
 import type { Myeongsik } from "./manseryeok";
-import { DANPUM_CONFIGS, BASIC_CONFIGS, PREMIUM_CONFIGS, type CategoryId, type ChapterDef } from "./category-configs";
+import { DANPUM_CONFIGS, BASIC_CONFIGS, PREMIUM_CONFIGS, yearGanji, type CategoryId, type ChapterDef } from "./category-configs";
 
 // orders/confirm 에서 사용하는 레거시 타입 — DB 기반 플로우용
 export type LegacyPromptInput = {
@@ -103,7 +103,7 @@ const SYSTEM_BASE = `당신은 정통 명리학 기반의 사주 분석 전문�
 예) "경금 일간에 비겁이 강한 사주는 혼자 결정하는 걸 좋아하고, 남이 자기 일에 간섭하면 본능적으로 거부감이 생겨요 — 맞죠?" 이런 식으로 공감을 유도한다.
 
 ▶ 운세 서술 방식: 막연히 "좋다/나쁘다"가 아닌, "왜 그 시기에 그 에너지가 오는지" 명리학 근거를 반드시 설명한다.
-예) "올해 재물이 들어오기 어려워요" (X) → "올해 병오년 병화가 OO님 일간 경금과 충(沖)을 이뤄서, 재성이 불안정해져요. 특히 3월·9월에 지출이 갑자기 생길 수 있으니 여유 자금을 꼭 마련해두세요." (O)
+예) "올해 재물이 들어오기 어려워요" (X) → "올해 세운 천간 정화(丁火)가 OO님 일간 경금(庚金)을 극(剋)해서, 재성이 불안정해져요. 특히 4월·10월에 지출이 갑자기 생길 수 있으니 여유 자금을 꼭 마련해두세요." (O)
 
 [말투 규칙]
 - 말투: "~이에요", "~랍니다", "~거든요", "~해요" 등 친근하고 따뜻한 경어체
@@ -112,7 +112,7 @@ const SYSTEM_BASE = `당신은 정통 명리학 기반의 사주 분석 전문�
 - 첫 문장은 그 단락의 핵심을 날카롭게 요약한 한 줄로 시작한다
 - 마크다운 헤딩(##)으로 소제목을 구분하고, 소제목은 감성적이고 시적인 한 줄 문장으로 만든다
 - 각 소제목 단락은 문단 2~3개로 작성하고, 문단 사이 빈 줄을 넣는다
-- 구체적인 연도(2026년, 2027년)와 나이를 명시한다
+- 구체적인 연도(기준 연도와 그 다음 해 등)와 나이를 명시한다
 - ⚠️ 나이는 절대 직접 계산하지 않는다. [분석 대상]에 적힌 "현재 나이: 만 OO세"를 그대로 사용한다
 - 한국어로 작성한다
 - ⚠️ 절대 중간에 끊기지 않는다. 요청한 모든 섹션(##)을 반드시 마지막 문장까지 완전히 작성한다. 공간이 부족하면 문단을 줄이더라도 모든 섹션을 완성한다`;
@@ -151,7 +151,7 @@ const BASIC_INFO = (input: PromptInput) => {
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
-기준 연도: ${input.currentYear}년
+기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -234,7 +234,7 @@ export function buildBasicJami(input: PromptInput): { system: string; user: stri
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
-기준 연도: ${input.currentYear}년
+기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -419,7 +419,7 @@ const PREMIUM_INFO = (input: PromptInput) => {
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
-기준 연도: ${input.currentYear}년
+기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -515,7 +515,7 @@ export function buildPremiumJami(input: PromptInput): { system: string; user: st
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
-기준 연도: ${input.currentYear}년
+기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -705,7 +705,7 @@ export function buildPremiumTarot(input: PromptInput): { system: string; user: s
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
-기준 연도: ${input.currentYear}년
+기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -783,7 +783,7 @@ const DANPUM_INFO = (input: PromptInput) => {
 생년월일: ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
-기준 연도: ${input.currentYear}년
+기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}${emotionNote}${tarotBlock}${concernsBlock}`;

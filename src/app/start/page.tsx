@@ -37,7 +37,7 @@ const CATEGORIES: Category[] = [
   {
     id: 'new-year',
     symbol: '辛',
-    title: '2026 병오년 신년 총운',
+    title: '2027 정미년 신년 총운',
     subtitle: '새해 운기 · 월별 흐름 · 주의 시기 완전 분석',
     needsPartner: false,
     adult: false,

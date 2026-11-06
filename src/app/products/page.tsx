@@ -7,9 +7,9 @@ import { Suspense } from "react";
 const ALL_PRODUCTS = [
   {
     slug: "new-year",
-    name: "2026 병오년 신년 총운",
+    name: "2027 정미년 신년 총운",
     subtitle: "한 해의 운기를 한눈에",
-    description: "새해 운기·월별 흐름·주의 시기까지 나만의 2026년을 완전 분석",
+    description: "새해 운기·월별 흐름·주의 시기까지 나만의 2027년을 완전 분석",
     price: 27900,
     emoji: "🎆",
     color: "#fbbf24",

@@ -55,7 +55,7 @@ async function callOpenAI(req: LlmRequest, model: string, key: string | undefine
       { role: "user", content: req.user },
     ],
     temperature: 0.7,
-    max_completion_tokens: 8000,
+    max_completion_tokens: 16000,
   });
   const choice = completion.choices[0];
   const text = choice?.message?.content ?? "";
@@ -74,7 +74,7 @@ async function callAnthropic(req: LlmRequest, model: string, key: string | undef
   const client = new Anthropic({ apiKey: key });
   const message = await client.messages.create({
     model,
-    max_tokens: 8000,
+    max_tokens: 16000,
     system: req.system,
     messages: [{ role: "user", content: req.user }],
   });
@@ -95,7 +95,7 @@ async function callGemini(req: LlmRequest, model: string, key: string | undefine
   const m = client.getGenerativeModel({
     model,
     systemInstruction: req.system,
-    generationConfig: { maxOutputTokens: 8000 },
+    generationConfig: { maxOutputTokens: 16000 },
   });
   const result = await m.generateContent(req.user);
   const text = result.response.text();

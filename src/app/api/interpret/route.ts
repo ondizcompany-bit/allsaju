@@ -16,9 +16,10 @@
 import { NextResponse, type NextRequest } from "next/server";
 
 export const runtime = 'edge';
-export const maxDuration = 60;
+export const maxDuration = 300;
 import { z } from "zod";
 import { generateInterpretationWithRetry } from "@/lib/saju/llm";
+import { NEW_YEAR_TARGET_YEAR } from "@/lib/saju/category-configs";
 import { sendResultEmailWithRetry, type SendResultEmailResult } from "@/lib/email/send-result-email";
 import {
   buildDanpumSection1,
@@ -87,7 +88,8 @@ export async function POST(request: NextRequest) {
   }
 
   const d = parsed.data;
-  const currentYear = new Date().getFullYear();
+  // 신년운세는 오늘 날짜의 연도가 아니라 판매 중인 신년 연도(NEW_YEAR_TARGET_YEAR) 기준으로 풀이한다.
+  const currentYear = d.catId === 'new-year' ? NEW_YEAR_TARGET_YEAR : new Date().getFullYear();
   const currentAge = getAge(d.birthDate);
 
   const isBasic = d.productSlug.startsWith('basic-');
@@ -112,6 +114,7 @@ export async function POST(request: NextRequest) {
 
   let sections: string[];
 
+  const run = async (): Promise<Record<string, unknown>> => {
   try {
     if (isBasic) {
       sections = await Promise.all([
@@ -136,10 +139,7 @@ export async function POST(request: NextRequest) {
       ]);
     }
   } catch (err) {
-    return NextResponse.json(
-      { status: "error" as const, error: err instanceof Error ? err.message : "해석 생성 실패" },
-      { status: 502 },
-    );
+    return { status: "error" as const, error: err instanceof Error ? err.message : "해석 생성 실패" };
   }
 
   // 이메일은 클라이언트가 페이지를 닫아도 발송이 완료되도록 서버에서 직접 처리한다.
@@ -155,5 +155,38 @@ export async function POST(request: NextRequest) {
     }).catch((e): SendResultEmailResult => ({ status: "error", error: String(e) }));
   }
 
-  return NextResponse.json({ status: "success" as const, sections, emailResult });
+  return { status: "success" as const, sections, emailResult };
+  };
+
+  // 결과 생성(LLM 3~5회 + 이메일)은 1~3분이 걸린다. 응답을 다 만든 뒤에 한 번에 보내면
+  // Vercel Edge의 "25초 안에 응답 시작" 제한에 걸려 중간에 끊기므로,
+  // 응답을 즉시 스트리밍으로 열어 5초마다 공백(keep-alive)을 보내고, 마지막에 JSON을 보낸다.
+  // JSON 앞의 공백은 JSON.parse / res.json()이 그대로 무시하므로 클라이언트는 수정이 필요 없다.
+  const encoder = new TextEncoder();
+  const stream = new ReadableStream<Uint8Array>({
+    async start(controller) {
+      controller.enqueue(encoder.encode(" "));
+      const keepAlive = setInterval(() => {
+        try { controller.enqueue(encoder.encode(" ")); } catch { /* 이미 닫힘 */ }
+      }, 5000);
+      let payload: Record<string, unknown>;
+      try {
+        payload = await run();
+      } catch (err) {
+        payload = { status: "error", error: err instanceof Error ? err.message : "해석 생성 실패" };
+      } finally {
+        clearInterval(keepAlive);
+      }
+      controller.enqueue(encoder.encode(JSON.stringify(payload)));
+      controller.close();
+    },
+  });
+
+  return new Response(stream, {
+    headers: {
+      "Content-Type": "application/json; charset=utf-8",
+      "Cache-Control": "no-store",
+      "X-Accel-Buffering": "no",
+    },
+  });
 }

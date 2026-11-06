@@ -4,8 +4,8 @@ const PRODUCTS = [
   {
     id: 'new-year',
     emoji: '🎆',
-    name: '2026 병오년 신년 총운',
-    desc: '한 해의 운기·월별 흐름·주의 시기까지\n나만의 2026년을 완전 분석',
+    name: '2027 정미년 신년 총운',
+    desc: '한 해의 운기·월별 흐름·주의 시기까지\n나만의 2027년을 완전 분석',
     from: 24_900,
     popular: 34_900,
     badge: null,
