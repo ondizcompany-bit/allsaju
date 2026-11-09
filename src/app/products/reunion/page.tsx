@@ -4,11 +4,6 @@ import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
 /* ══════════════════════════════════════════════════
-   유틸
-══════════════════════════════════════════════════ */
-function rnd(a: number, b: number) { return a + Math.random() * (b - a); }
-
-/* ══════════════════════════════════════════════════
    스크롤 페이드인
 ══════════════════════════════════════════════════ */
 function useFadeIn(threshold = 0.1) {
@@ -58,58 +53,6 @@ function useCountUp(target: number, suffix = '') {
 }
 
 /* ══════════════════════════════════════════════════
-   폰 캔버스
-══════════════════════════════════════════════════ */
-type S = Record<string, unknown>;
-function initPhone(w: number, h: number): S {
-  return { pulses: [] as { r: number; a: number }[], next: 1.2, notifA: 0.4, notifDir: 1, msgs: [0, 1, 2].map(i => ({ x: (w - Math.min(w * 0.52, 145)) / 2 + (i % 2 === 0 ? 0 : 12), y: h * 0.52 + i * 24, w: Math.min(w * 0.52, 145) - i * 16, a: 0.65 - i * 0.12, sent: i % 2 === 0 })) };
-}
-function drawPhone(ctx: CanvasRenderingContext2D, w: number, h: number, s: S, t: number) {
-  ctx.clearRect(0, 0, w, h);
-  ctx.fillStyle = '#080612'; ctx.fillRect(0, 0, w, h);
-  const pw = Math.min(w * 0.38, 140), ph = pw * 1.95, px = (w - pw) / 2, py = (h - ph) / 2, r2 = pw * 0.13;
-  ctx.beginPath(); ctx.roundRect(px, py, pw, ph, r2);
-  ctx.fillStyle = 'rgba(14,9,28,0.97)'; ctx.strokeStyle = 'rgba(147,100,255,0.25)'; ctx.lineWidth = 1.2; ctx.fill(); ctx.stroke();
-  const gl = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, pw);
-  gl.addColorStop(0, `rgba(120,50,210,${0.08 + 0.04 * Math.sin(t * 1.4)})`); gl.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = gl; ctx.fillRect(0, 0, w, h);
-  const notifA = s.notifA as number; const notifDir = s.notifDir as number;
-  (s as Record<string, unknown>).notifA = notifA + notifDir * 0.018;
-  if ((s.notifA as number) > 1) (s as Record<string, unknown>).notifDir = -1;
-  if ((s.notifA as number) < 0.3) (s as Record<string, unknown>).notifDir = 1;
-  ctx.beginPath(); ctx.arc(w / 2, py + ph * 0.19, 8, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(236,72,153,${s.notifA as number})`; ctx.shadowBlur = 15 * (s.notifA as number); ctx.shadowColor = 'rgba(236,72,153,0.8)'; ctx.fill(); ctx.shadowBlur = 0;
-  ctx.font = 'bold 10px sans-serif'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('1', w / 2, py + ph * 0.19);
-  const msgs = s.msgs as { x: number; y: number; w: number; a: number; sent: boolean }[];
-  for (const m of msgs) { ctx.beginPath(); ctx.roundRect(m.x, m.y, m.w, 18, 9); ctx.fillStyle = m.sent ? `rgba(120,70,230,${m.a})` : `rgba(45,38,65,${m.a})`; ctx.fill(); }
-  const pulses = s.pulses as { r: number; a: number }[]; const next = s.next as number;
-  if (t > next) { (s as Record<string, unknown>).next = t + rnd(2.5, 4); pulses.push({ r: 11, a: 0.65 }); }
-  for (let i = pulses.length - 1; i >= 0; i--) {
-    pulses[i].r += 1.2; pulses[i].a -= 0.009;
-    if (pulses[i].a <= 0) { pulses.splice(i, 1); continue; }
-    ctx.beginPath(); ctx.arc(w / 2, py + ph * 0.19, pulses[i].r, 0, Math.PI * 2);
-    ctx.strokeStyle = `rgba(236,72,153,${pulses[i].a})`; ctx.lineWidth = 1; ctx.stroke();
-  }
-}
-function PhoneCanvas() {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = ref.current; if (!canvas) return;
-    let st: S | null = null, time = 0, last = performance.now(), raf: number;
-    const loop = (now: number) => {
-      const dt = Math.min((now - last) / 1000, 0.05); last = now; time += dt;
-      const w = canvas.offsetWidth, h = canvas.offsetHeight;
-      if (w > 0 && h > 0) {
-        if (!st || canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; time = 0; st = initPhone(w, h); }
-        const ctx = canvas.getContext('2d'); if (ctx && st) drawPhone(ctx, w, h, st, time);
-      }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
-  }, []);
-  return <canvas ref={ref} className="absolute inset-0 w-full h-full" />;
-}
-
-/* ══════════════════════════════════════════════════
    데이터
 ══════════════════════════════════════════════════ */
 const STATS = [
@@ -119,18 +62,18 @@ const STATS = [
   { target: 91, suffix: '%', label: '감정 예측 정확도', big: false },
 ];
 
-const CONCERNS = [
-  { emoji: '😔', text: '헤어진 지 8개월이 됐는데 아직도 잊질 못해요. 이 마음이 언제쯤 사라질까요...', delay: 0 },
-  { emoji: '😶', text: '먼저 연락하면 싫어할까봐 무서워요. 연락해도 될 타이밍인지 알고 싶어요.', delay: 140 },
-  { emoji: '💭', text: '혹시 그 사람도 가끔은 저를 생각할까요? 아직 마음이 남아 있는 건지...', delay: 280 },
-  { emoji: '🌙', text: '재회할 수 있는 시기가 있다면 알고 싶어요. 사주로 볼 수 있다고 해서요.', delay: 420 },
+// 이탈률 개선: 감정 묘사 대신 고객이 실제로 궁금해하는 질문(연락이 올지 / 재회 가능한지)을 바로 보여준다
+const QUESTIONS = [
+  { emoji: '💔', text: '단호하게 거절한 그 사람과도 가능성이 있을까요?', delay: 0 },
+  { emoji: '📱', text: '끝이라던 그 사람, 후회하고 먼저 연락할까요?', delay: 120 },
+  { emoji: '💍', text: '결혼까지 생각했던 우리, 이대로 끝일까요?', delay: 240 },
+  { emoji: '🥀', text: '먼저 헤어지자고 한 걸 후회해요. 다시 돌이킬 수 있을까요?', delay: 360 },
 ];
 
 const REVIEWS = [
   { emoji: '🐰', name: '이○○', age: '20대 여성', rating: 5, text: '사주에서 6월에 연락 온다고 했는데, 6월 3일에 정말로 연락이 왔어요. 소름 돋아서 눈물이 났어요.' },
   { emoji: '🦊', name: '김○○', age: '30대 여성', rating: 5, text: '상대 마음이 아직 있다고 했는데 실제로 연락해보니 맞았어요. 접근 방법 조언도 너무 도움됐어요.' },
   { emoji: '🐻', name: '박○○', age: '20대 남성', rating: 5, text: '재회 가능성 퍼센트 보고 반신반의했는데 딱 그 시기에 연락이 왔어요. 믿기 힘든 일이 일어났어요.' },
-  { emoji: '🐱', name: '한○○', age: '30대 여성', rating: 4, text: '될지 안될지가 아니라 어떻게 접근할지까지 알려줘서 실용적이에요.' },
 ];
 
 /* ══════════════════════════════════════════════════
@@ -337,100 +280,42 @@ export default function ReunionPage() {
       </section>
 
       {/* ══════════════════════════════
-          공감 인트로
+          핵심 질문 — "내 상황도 봐주나?"에 바로 답하기
       ══════════════════════════════ */}
-      <section className="px-6 py-14 max-w-md mx-auto text-center">
-        <FadeIn>
-          <p className="font-black leading-[1.1]"
-            style={{ fontSize: 'clamp(1.8rem,7vw,2.8rem)', letterSpacing: '-0.01em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.18)' }}>혹시</span>{' '}
-            <span style={{ color: 'rgba(255,255,255,0.85)' }}>이런 마음,</span>
+      <section className="px-5 pt-10 pb-12 max-w-md mx-auto">
+        <FadeIn className="text-center mb-7">
+          <p className="font-black leading-[1.15]"
+            style={{ fontSize: 'clamp(1.7rem,7vw,2.6rem)', letterSpacing: '-0.02em' }}>
+            <span style={{ color: 'rgba(255,255,255,0.85)' }}>끝내자는 그 사람,</span>
             <br />
-            <span style={{ background: 'linear-gradient(90deg,#e879f9,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>있으신가요?</span>
+            <span style={{ background: 'linear-gradient(90deg,#e879f9,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>다시 돌아올까요?</span>
           </p>
         </FadeIn>
-      </section>
-
-      {/* ══════════════════════════════
-          폰 씬
-      ══════════════════════════════ */}
-      <div className="relative w-full overflow-hidden" style={{ height: 'clamp(240px, 55vw, 340px)' }}>
-        <PhoneCanvas />
-        <div className="absolute inset-x-0 top-0 pointer-events-none"
-          style={{ height: '40%', background: 'linear-gradient(to bottom,#07070e 0%,rgba(7,7,14,0.5) 60%,transparent 100%)' }} />
-        <div className="absolute inset-x-0 bottom-0 pointer-events-none"
-          style={{ height: '50%', background: 'linear-gradient(to top,#07070e 0%,rgba(7,7,14,0.6) 55%,transparent 100%)' }} />
-        <span className="absolute top-5 left-5 text-[10px] font-bold tracking-widest"
-          style={{ color: 'rgba(255,255,255,0.18)' }}>01</span>
-        <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
-          <FadeIn>
-            <p className="font-black leading-[1.1] mb-1"
-              style={{ fontSize: 'clamp(1.5rem,6vw,2.2rem)', letterSpacing: '-0.01em' }}>
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>아직도 폰을 </span>
-              <span style={{ background: 'linear-gradient(90deg,#e879f9,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>확인해요</span>
-            </p>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.28)' }}>혹시 연락이 왔나 하고</p>
-          </FadeIn>
-        </div>
-      </div>
-
-      {/* ══════════════════════════════
-          말풍선
-      ══════════════════════════════ */}
-      <section className="px-5 pt-6 pb-12 max-w-md mx-auto">
-        <FadeIn className="mb-7 text-center">
-          <p className="text-[10px] font-bold tracking-[0.35em] uppercase"
-            style={{ color: 'rgba(255,255,255,0.2)' }}>많은 분들이 이렇게 말해요</p>
-        </FadeIn>
-        <div className="space-y-3">
-          {CONCERNS.map((c, i) => (
-            <FadeIn key={i} delay={c.delay}>
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-base"
-                  style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>
-                  {c.emoji}
-                </div>
-                <div className="rounded-2xl rounded-tl-md px-4 py-3"
-                  style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', maxWidth: 'calc(100% - 52px)' }}>
-                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{c.text}</p>
-                </div>
+        <div className="space-y-2.5">
+          {QUESTIONS.map((q, i) => (
+            <FadeIn key={i} delay={q.delay}>
+              <div className="flex items-center gap-3 rounded-2xl px-4 py-3"
+                style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <span className="text-base flex-shrink-0">{q.emoji}</span>
+                <p className="text-sm leading-snug" style={{ color: 'rgba(255,255,255,0.78)' }}>{q.text}</p>
               </div>
             </FadeIn>
           ))}
-          <FadeIn delay={580}>
-            <div className="flex items-start gap-3 flex-row-reverse">
+          <FadeIn delay={480}>
+            <div className="flex items-start gap-3 flex-row-reverse pt-2">
               <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-black"
                 style={{ background: 'linear-gradient(135deg,#7c3aed,#ec4899)', color: 'white' }}>
                 命
               </div>
               <div className="rounded-2xl rounded-tr-md px-4 py-3"
                 style={{ background: 'rgba(124,58,237,0.18)', border: '1px solid rgba(167,139,250,0.25)', maxWidth: 'calc(100% - 52px)' }}>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>
-                  사주로 재회 가능성과 최적의 타이밍을 알 수 있어요. 두 사람의 인연이 끝난 건지, 아직 이어질 수 있는지 확인해드릴게요. 💜
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.85)' }}>
+                  두 사람의 사주로 <strong>상대방의 지금 마음</strong>, <strong>재회 가능성</strong>, <strong>연락이 닿는 시기</strong>까지 짚어드려요. 💜
                 </p>
               </div>
             </div>
           </FadeIn>
         </div>
-      </section>
-
-      {/* ══════════════════════════════
-          감정 훅
-      ══════════════════════════════ */}
-      <section className="px-6 py-16 max-w-md mx-auto text-center">
-        <FadeIn>
-          <p className="font-black leading-[1.08]"
-            style={{ fontSize: 'clamp(1.9rem,8vw,3rem)', letterSpacing: '-0.02em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>그 인연,</span>
-            <br />
-            <span style={{ background: 'linear-gradient(90deg,#e879f9,#f472b6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>아직 끝나지</span>
-            <br />
-            <span style={{ color: 'rgba(255,255,255,0.75)' }}>않았을 수 있어요.</span>
-          </p>
-          <p className="text-sm mt-5" style={{ color: 'rgba(255,255,255,0.3)' }}>
-            사주가 두 사람의 인연을 솔직하게 알려드립니다.
-          </p>
-        </FadeIn>
       </section>
 
       {/* ══════════════════════════════
@@ -465,7 +350,7 @@ export default function ReunionPage() {
         <FadeIn>
           <div className="rounded-2xl overflow-hidden relative" style={{ border: '1px solid rgba(255,255,255,0.07)' }}>
             <div className="p-5 space-y-2.5" style={{ background: 'rgba(10,8,20,0.9)' }}>
-              {['두 사람의 인연지수: ██% (분석 후 공개)', '재회 최적 시기: 2026년 ○월 전후', '상대방 감정: 아직 ○○한 마음이 남아 있음', '연락 방법: ○○한 방식으로 접근하는 것이 유리'].map((t, i) => (
+              {['두 사람의 인연지수: ██% (분석 후 공개)', '재회 최적 시기: 2027년 ○월 전후', '상대방 감정: 아직 ○○한 마음이 남아 있음', '연락 방법: ○○한 방식으로 접근하는 것이 유리'].map((t, i) => (
                 <div key={i} className="rounded-xl px-4 py-3 text-sm"
                   style={{ background: 'rgba(25,15,50,0.7)', border: '1px solid rgba(100,70,200,0.15)', color: 'rgba(255,255,255,0.7)', filter: i > 0 ? 'blur(5px)' : 'none', userSelect: i > 0 ? 'none' : 'auto' }}>
                   {t}
