@@ -2,8 +2,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 
-function rnd(a: number, b: number) { return a + Math.random() * (b - a); }
-
 function useFadeIn(threshold = 0.1) {
   const ref = useRef<HTMLDivElement>(null);
   const [v, setV] = useState(false);
@@ -47,45 +45,6 @@ function useCountUp(target: number, suffix = '') {
   return { ref, display };
 }
 
-type S = Record<string, unknown>;
-function initPhone(w: number, h: number): S {
-  return { pulses: [] as { r: number; a: number }[], next: 1.2, notifA: 0.4, notifDir: 1, msgs: [0, 1, 2].map(i => ({ x: (w - Math.min(w * 0.52, 145)) / 2 + (i % 2 === 0 ? 0 : 12), y: h * 0.52 + i * 24, w: Math.min(w * 0.52, 145) - i * 16, a: 0.65 - i * 0.12, sent: i % 2 === 0 })) };
-}
-function drawPhone(ctx: CanvasRenderingContext2D, w: number, h: number, s: S, t: number) {
-  ctx.clearRect(0, 0, w, h); ctx.fillStyle = '#060810'; ctx.fillRect(0, 0, w, h);
-  const pw = Math.min(w * 0.38, 140), ph = pw * 1.95, px = (w - pw) / 2, py = (h - ph) / 2, r2 = pw * 0.13;
-  ctx.beginPath(); ctx.roundRect(px, py, pw, ph, r2);
-  ctx.fillStyle = 'rgba(10,12,30,0.97)'; ctx.strokeStyle = 'rgba(99,102,241,0.28)'; ctx.lineWidth = 1.2; ctx.fill(); ctx.stroke();
-  const gl = ctx.createRadialGradient(w / 2, h / 2, 0, w / 2, h / 2, pw);
-  gl.addColorStop(0, `rgba(60,70,200,${0.08 + 0.04 * Math.sin(t * 1.4)})`); gl.addColorStop(1, 'rgba(0,0,0,0)'); ctx.fillStyle = gl; ctx.fillRect(0, 0, w, h);
-  (s as Record<string, unknown>).notifA = (s.notifA as number) + (s.notifDir as number) * 0.018;
-  if ((s.notifA as number) > 1) (s as Record<string, unknown>).notifDir = -1;
-  if ((s.notifA as number) < 0.3) (s as Record<string, unknown>).notifDir = 1;
-  ctx.beginPath(); ctx.arc(w / 2, py + ph * 0.19, 8, 0, Math.PI * 2);
-  ctx.fillStyle = `rgba(99,102,241,${s.notifA as number})`; ctx.shadowBlur = 15 * (s.notifA as number); ctx.shadowColor = 'rgba(99,102,241,0.8)'; ctx.fill(); ctx.shadowBlur = 0;
-  ctx.font = 'bold 10px sans-serif'; ctx.fillStyle = 'white'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('1', w / 2, py + ph * 0.19);
-  const msgs = s.msgs as { x: number; y: number; w: number; a: number; sent: boolean }[];
-  for (const m of msgs) { ctx.beginPath(); ctx.roundRect(m.x, m.y, m.w, 18, 9); ctx.fillStyle = m.sent ? `rgba(60,70,200,${m.a})` : `rgba(30,35,70,${m.a})`; ctx.fill(); }
-  const pulses = s.pulses as { r: number; a: number }[]; const next = s.next as number;
-  if (t > next) { (s as Record<string, unknown>).next = t + rnd(2.5, 4); pulses.push({ r: 11, a: 0.65 }); }
-  for (let i = pulses.length - 1; i >= 0; i--) { pulses[i].r += 1.2; pulses[i].a -= 0.009; if (pulses[i].a <= 0) { pulses.splice(i, 1); continue; } ctx.beginPath(); ctx.arc(w / 2, py + ph * 0.19, pulses[i].r, 0, Math.PI * 2); ctx.strokeStyle = `rgba(99,102,241,${pulses[i].a})`; ctx.lineWidth = 1; ctx.stroke(); }
-}
-function PhoneCanvas() {
-  const ref = useRef<HTMLCanvasElement>(null);
-  useEffect(() => {
-    const canvas = ref.current; if (!canvas) return;
-    let st: S | null = null, time = 0, last = performance.now(), raf: number;
-    const loop = (now: number) => {
-      const dt = Math.min((now - last) / 1000, 0.05); last = now; time += dt;
-      const w = canvas.offsetWidth, h = canvas.offsetHeight;
-      if (w > 0 && h > 0) { if (!st || canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; time = 0; st = initPhone(w, h); } const ctx = canvas.getContext('2d'); if (ctx && st) drawPhone(ctx, w, h, st, time); }
-      raf = requestAnimationFrame(loop);
-    };
-    raf = requestAnimationFrame(loop); return () => cancelAnimationFrame(raf);
-  }, []);
-  return <canvas ref={ref} className="absolute inset-0 w-full h-full" />;
-}
-
 const ACCENT = 'linear-gradient(90deg,#818cf8,#6366f1)';
 const ACCENT_COLOR = '#818cf8';
 const ACCENT_GRAD = 'linear-gradient(90deg,#4338ca,#6366f1,#818cf8)';
@@ -96,17 +55,17 @@ const STATS = [
   { target: 95, suffix: '%', label: '이용자 만족도', big: false },
   { target: 88, suffix: '%', label: '이직 타이밍 예측률', big: false },
 ];
-const CONCERNS = [
-  { emoji: '😤', text: '이직하고 싶은데 지금이 맞는 타이밍인지 모르겠어요. 뛰어나가도 될까요?', delay: 0 },
-  { emoji: '😞', text: '열심히 하는데 승진이 안 돼요. 사주 때문인지, 아니면 지금 때를 못 만난 건지...', delay: 140 },
-  { emoji: '💭', text: '취업 준비 중인데 도통 풀리질 않아요. 제 사주에 취업운이 없는 건 아닐까요?', delay: 280 },
-  { emoji: '🤔', text: '창업을 생각하고 있는데, 제 팔자에 맞는 건지, 지금이 맞는 시기인지 궁금해요.', delay: 420 },
+// 이탈률 개선: 공감 대신 실제 고민(취업 시기·직종 / 정규직 전환 / 승진)을 바로 보여준다
+const QUESTIONS = [
+  { emoji: '📝', text: '계속 준비하고 있는데, 저는 언제쯤 취업할까요?', delay: 0 },
+  { emoji: '🧭', text: '어떤 일을 해야 저도 오래 자리 잡을 수 있을까요?', delay: 120 },
+  { emoji: '📄', text: '계약직 생활은 언제 끝날까요? 저도 정규직이 될 수 있을까요?', delay: 240 },
+  { emoji: '📈', text: '지난번엔 놓친 승진, 이번에는 제 차례가 올까요?', delay: 360 },
 ];
 const REVIEWS = [
   { emoji: '🌟', name: '김○○', age: '30대 남성', rating: 5, text: '이직 시기를 딱 맞혔어요. 4월에 좋은 기회 온다고 했는데 4월 초에 헤드헌터 연락 받고 이직했어요. 놀라웠습니다.' },
   { emoji: '⭐', name: '이○○', age: '20대 여성', rating: 5, text: '취업 타이밍 분석이 정확했어요. 9월이 좋다고 해서 그때 집중 지원했더니 최종 합격했어요.' },
   { emoji: '✨', name: '박○○', age: '40대 남성', rating: 5, text: '창업 시기를 고민하다 봤는데, 내년 상반기가 맞다고 해서 준비 중이에요. 믿음이 가는 분석이에요.' },
-  { emoji: '💫', name: '최○○', age: '30대 여성', rating: 4, text: '지금 조직에서 버텨야 할지 나가야 할지 고민이었는데, 구체적인 시기와 방향을 알려줘서 결정하는 데 도움이 됐어요.' },
 ];
 
 function StatItem({ target, suffix, label, big }: { target: number; suffix: string; label: string; big: boolean }) {
@@ -211,69 +170,33 @@ export default function CareerPage() {
         </FadeIn>
       </section>
 
-      {/* 인트로 */}
-      <section className="px-6 py-14 max-w-md mx-auto text-center">
-        <FadeIn>
-          <p className="font-black leading-[1.1]" style={{ fontSize: 'clamp(1.8rem,7vw,2.8rem)', letterSpacing: '-0.01em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.18)' }}>지금</span>{' '}
-            <span style={{ color: 'rgba(255,255,255,0.85)' }}>움직여야 할까요,</span>
+      {/* 핵심 질문 — 내 고민에 대한 답을 바로 보여주기 */}
+      <section className="px-5 pt-10 pb-12 max-w-md mx-auto">
+        <FadeIn className="text-center mb-7">
+          <p className="font-black leading-[1.15]" style={{ fontSize: 'clamp(1.6rem,6.6vw,2.5rem)', letterSpacing: '-0.02em' }}>
+            <span style={{ color: 'rgba(255,255,255,0.85)' }}>취업도, 이직도, 승진도.</span>
             <br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>기다려야 할까요?</span>
+            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>내 차례는 언제 올까요?</span>
           </p>
         </FadeIn>
-      </section>
-
-      {/* 폰 씬 */}
-      <div className="relative w-full overflow-hidden" style={{ height: 'clamp(240px, 55vw, 340px)' }}>
-        <PhoneCanvas />
-        <div className="absolute inset-x-0 top-0 pointer-events-none" style={{ height: '40%', background: `linear-gradient(to bottom,${BG_COLOR} 0%,rgba(6,7,14,0.5) 60%,transparent 100%)` }} />
-        <div className="absolute inset-x-0 bottom-0 pointer-events-none" style={{ height: '50%', background: `linear-gradient(to top,${BG_COLOR} 0%,rgba(6,7,14,0.6) 55%,transparent 100%)` }} />
-        <div className="absolute bottom-8 left-0 right-0 px-6 text-center">
-          <FadeIn>
-            <p className="font-black leading-[1.1] mb-1" style={{ fontSize: 'clamp(1.5rem,6vw,2.2rem)', letterSpacing: '-0.01em' }}>
-              <span style={{ color: 'rgba(255,255,255,0.5)' }}>지금 </span>
-              <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>타이밍이 맞나요?</span>
-            </p>
-            <p className="text-sm" style={{ color: 'rgba(255,255,255,0.28)' }}>많은 분들이 이렇게 고민해요</p>
-          </FadeIn>
-        </div>
-      </div>
-
-      {/* 말풍선 */}
-      <section className="px-5 pt-6 pb-12 max-w-md mx-auto">
-        <FadeIn className="mb-7 text-center"><p className="text-[10px] font-bold tracking-[0.35em] uppercase" style={{ color: 'rgba(255,255,255,0.2)' }}>많은 분들이 이렇게 말해요</p></FadeIn>
-        <div className="space-y-3">
-          {CONCERNS.map((c, i) => (
-            <FadeIn key={i} delay={c.delay}>
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-base" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.09)' }}>{c.emoji}</div>
-                <div className="rounded-2xl rounded-tl-md px-4 py-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)', maxWidth: 'calc(100% - 52px)' }}>
-                  <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.65)' }}>{c.text}</p>
-                </div>
+        <div className="space-y-2.5">
+          {QUESTIONS.map((q, i) => (
+            <FadeIn key={i} delay={q.delay}>
+              <div className="flex items-center gap-3 rounded-2xl px-4 py-3" style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}>
+                <span className="text-base flex-shrink-0">{q.emoji}</span>
+                <p className="text-sm leading-snug" style={{ color: 'rgba(255,255,255,0.78)' }}>{q.text}</p>
               </div>
             </FadeIn>
           ))}
-          <FadeIn delay={580}>
-            <div className="flex items-start gap-3 flex-row-reverse">
+          <FadeIn delay={480}>
+            <div className="flex items-start gap-3 flex-row-reverse pt-2">
               <div className="w-9 h-9 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-black" style={{ background: 'linear-gradient(135deg,#3730a3,#6366f1)', color: 'white' }}>命</div>
               <div className="rounded-2xl rounded-tr-md px-4 py-3" style={{ background: 'rgba(67,56,202,0.18)', border: '1px solid rgba(99,102,241,0.25)', maxWidth: 'calc(100% - 52px)' }}>
-                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.82)' }}>사주에는 반드시 움직여야 할 때와 참아야 할 때가 있어요. 지금이 어느 쪽인지, 이직·승진·창업의 최적 타이밍을 사주 원국과 운의 흐름으로 정밀하게 짚어드릴게요. 🎯</p>
+                <p className="text-sm leading-relaxed" style={{ color: 'rgba(255,255,255,0.85)' }}>사주로 <strong>취업·정규직 전환·승진이 열리는 구체적인 시기</strong>와 <strong>나에게 맞는 직종</strong>까지 짚어드려요. 🎯</p>
               </div>
             </div>
           </FadeIn>
         </div>
-      </section>
-
-      {/* 감정 훅 */}
-      <section className="px-6 py-16 max-w-md mx-auto text-center">
-        <FadeIn>
-          <p className="font-black leading-[1.08]" style={{ fontSize: 'clamp(1.9rem,8vw,3rem)', letterSpacing: '-0.02em' }}>
-            <span style={{ color: 'rgba(255,255,255,0.2)' }}>지금이 바로</span><br />
-            <span style={{ background: ACCENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>움직여야 할</span><br />
-            <span style={{ color: 'rgba(255,255,255,0.75)' }}>타이밍일 수 있어요.</span>
-          </p>
-          <p className="text-sm mt-5" style={{ color: 'rgba(255,255,255,0.3)' }}>타이밍을 알면, 같은 노력도 결과가 달라집니다.</p>
-        </FadeIn>
       </section>
 
       {/* 분석 항목 */}
