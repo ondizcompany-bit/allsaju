@@ -7,6 +7,7 @@
 // Body: { name, birthDate, birthTime, timeUnknown, gender, manseryeokText, categoryTitle, tarotCard, question }
 // Response: { status: "success", answer: string } | { status: "error" }
 
+import { timingGuardBlock } from "@/lib/saju/date-guard";
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { generateInterpretation } from "@/lib/saju/llm";
@@ -54,6 +55,8 @@ export async function POST(request: NextRequest) {
 이름: ${d.name}
 생년월일: ${d.birthDate}${d.timeUnknown ? " (시 미상)" : d.birthTime ? ` ${d.birthTime}` : ""}
 성별: ${d.gender === "male" ? "남성" : "여성"}
+
+${timingGuardBlock()}
 
 [만세력 명식 데이터]
 ${d.manseryeokText}
