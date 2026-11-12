@@ -3,6 +3,7 @@
 // =====================================================
 
 import type { Myeongsik } from "./manseryeok";
+import { timingGuardBlock } from "./date-guard";
 import { DANPUM_CONFIGS, BASIC_CONFIGS, PREMIUM_CONFIGS, yearGanji, type CategoryId, type ChapterDef } from "./category-configs";
 
 // orders/confirm 에서 사용하는 레거시 타입 — DB 기반 플로우용
@@ -45,6 +46,8 @@ ${sajuSection}
 [생년월일] ${input.birthDate}${input.timeUnknown ? " (시 미상)" : input.birthTime ? ` ${input.birthTime}` : ""}
 [성별] ${input.gender === "male" ? "남성" : "여성"}
 [고민] ${input.concerns.length > 0 ? input.concerns.join(", ") : "(미입력)"}
+
+${timingGuardBlock()}
 
 위 정보를 바탕으로 마크다운 리포트를 작성해 주세요.`;
 
@@ -102,6 +105,8 @@ const SYSTEM_BASE = `당신은 정통 명리학 기반의 사주 분석 전문�
 ▶ 신뢰감 만들기: 읽는 사람의 실제 삶 패턴을 짚어주는 문장을 반드시 포함한다.
 예) "경금 일간에 비겁이 강한 사주는 혼자 결정하는 걸 좋아하고, 남이 자기 일에 간섭하면 본능적으로 거부감이 생겨요 — 맞죠?" 이런 식으로 공감을 유도한다.
 
+▶ 시기는 반드시 미래로: [분석 대상]의 [오늘 날짜]와 [시기 표기 규칙]이 아래 모든 섹션 지시문보다 우선한다. 고객은 오늘 결제하고 결과지를 읽으므로, 오늘보다 이전의 달을 "연락이 오는 시기", "기회의 달"처럼 예측으로 쓰면 결과지 전체의 신뢰가 무너진다.
+
 ▶ 운세 서술 방식: 막연히 "좋다/나쁘다"가 아닌, "왜 그 시기에 그 에너지가 오는지" 명리학 근거를 반드시 설명한다.
 예) "올해 재물이 들어오기 어려워요" (X) → "올해 세운 천간 정화(丁火)가 OO님 일간 경금(庚金)을 극(剋)해서, 재성이 불안정해져요. 특히 4월·10월에 지출이 갑자기 생길 수 있으니 여유 자금을 꼭 마련해두세요." (O)
 
@@ -152,6 +157,8 @@ const BASIC_INFO = (input: PromptInput) => {
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
 기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
+
+${timingGuardBlock(input.currentYear)}
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -235,6 +242,8 @@ export function buildBasicJami(input: PromptInput): { system: string; user: stri
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
 기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
+
+${timingGuardBlock(input.currentYear)}
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -420,6 +429,8 @@ const PREMIUM_INFO = (input: PromptInput) => {
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
 기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
+
+${timingGuardBlock(input.currentYear)}
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -516,6 +527,8 @@ export function buildPremiumJami(input: PromptInput): { system: string; user: st
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
 기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
+
+${timingGuardBlock(input.currentYear)}
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}
@@ -707,6 +720,8 @@ export function buildPremiumTarot(input: PromptInput): { system: string; user: s
 현재 나이: 만 ${input.currentAge}세
 기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
 
+${timingGuardBlock(input.currentYear)}
+
 [만세력 명식 데이터]
 ${input.manseryeokText}
 
@@ -784,6 +799,8 @@ const DANPUM_INFO = (input: PromptInput) => {
 성별: ${input.gender === "male" ? "남성" : "여성"}
 현재 나이: 만 ${input.currentAge}세
 기준 연도: ${input.currentYear}년 — 세운 간지 ${yearGanji(input.currentYear)}년 (세운은 반드시 이 간지로 해석한다. 다른 해의 간지를 쓰지 않는다)
+
+${timingGuardBlock(input.currentYear)}
 ${partnerBlock}
 [만세력 명식 데이터]
 ${input.manseryeokText}${emotionNote}${tarotBlock}${concernsBlock}`;
